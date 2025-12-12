@@ -114,7 +114,7 @@
         </div>
     </div>`;
 
-    // --- EJERCICIO 2 (ACTUALIZADO Y RECUPERADO) ---
+    // --- EJERCICIO 2 (ESTRUCTURA SEPARADA POR BLOQUES) ---
     document.getElementById('ej2').innerHTML = `
     <h2 class="text-2xl font-bold brand-orange mb-4">2. Plan de Acción para la Consolidación Financiera</h2>
     <div class="instructions-box">
@@ -123,9 +123,10 @@
         <h4 class="font-bold text-brand-blue mb-2">Instrucciones</h4>
         <p>Convierte las políticas del ejercicio anterior en compromisos escritos. Define a quién comunicarás estos cambios y establece acciones concretas a corto, mediano y largo plazo.</p>
     </div>
+    
     <div class="space-y-10">
         
-        <div class="bg-gray-50 p-6 rounded-lg border">
+        <div class="bg-gray-50 p-6 rounded-lg border shadow-sm">
             <h3 class="text-xl font-bold text-gray-800 mb-4">Apartado A: Definición de Políticas de Compensación y Utilidades</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div>
@@ -182,12 +183,13 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-span-2">
-                            <label class="block text-sm font-medium text-gray-600">Regla Clara de Asignación</label>
-                            <input type="text" placeholder="Ej: 15% sobre utilidad neta trimestral si se cumple meta de ventas" class="autosave-input mt-1 w-full p-2 border rounded-md" data-section="ej2" data-id="ej2_var_monto">
-                        </div>
-                         <div>
-                            <label class="block text-sm font-medium text-gray-600">Fecha de Vigencia</label>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-600">Regla Clara de Asignación</label>
+                        <input type="text" placeholder="Ej: 15% sobre utilidad neta trimestral si se cumple meta de ventas" class="autosave-input mt-1 w-full p-2 border rounded-md" data-section="ej2" data-id="ej2_var_monto">
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600">Fecha Vigencia</label>
                             <input type="date" class="autosave-input mt-1 w-full p-2 border rounded-md" data-section="ej2" data-id="ej2_var_fecha_vigencia">
                         </div>
                         <div>
@@ -199,7 +201,7 @@
             </div>
         </div>
 
-        <div class="bg-gray-50 p-6 rounded-lg border">
+        <div class="bg-gray-50 p-6 rounded-lg border shadow-sm">
             <h3 class="text-xl font-bold text-gray-800 mb-4">Apartado B: Formalización y Comunicación</h3>
             <p class="text-sm text-gray-600 mb-4">Las reglas no escritas se las lleva el viento. Define cómo harás oficiales estos cambios.</p>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -220,7 +222,7 @@
             </div>
         </div>
 
-        <div class="bg-gray-50 p-6 rounded-lg border">
+        <div class="bg-gray-50 p-6 rounded-lg border shadow-sm">
             <h3 class="text-xl font-bold text-gray-800 mb-4">Apartado C: Cronograma de Implementación</h3>
             <div class="overflow-x-auto">
                 <table class="w-full text-sm">
@@ -251,6 +253,7 @@
                 </table>
             </div>
         </div>
+
     </div>`;
 
     // --- EJERCICIO 3 ---
