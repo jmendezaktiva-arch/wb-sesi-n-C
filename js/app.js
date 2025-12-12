@@ -203,21 +203,45 @@
 
         <div class="bg-gray-50 p-6 rounded-lg border shadow-sm">
             <h3 class="text-xl font-bold text-gray-800 mb-4">Apartado B: Formalización y Comunicación</h3>
-            <p class="text-sm text-gray-600 mb-4">Las reglas no escritas se las lleva el viento. Define cómo harás oficiales estos cambios.</p>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                    <label class="block font-semibold text-gray-700 mb-2">¿A quién se lo comunicarás oficialmente?</label>
-                    <input type="text" placeholder="Ej: Socio, Contador, Cónyuge..." class="autosave-input w-full p-2 border rounded-md" data-section="ej2" data-id="ej2_comunicacion_quien">
+            <p class="text-sm text-gray-600 mb-6">Para que esto sea real, debe salir de tu mente y quedar por escrito. Define los pasos para ambos rubros:</p>
+            
+            <div class="mb-6 border-b pb-6">
+                <h4 class="font-bold text-brand-blue mb-3">1. Para tu Nuevo Sueldo de Director:</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">¿A quién se lo comunicarás para ejecutarlo?</label>
+                        <input type="text" placeholder="Ej: Encargado de Nómina / Contador" class="autosave-input w-full p-2 border rounded-md" data-section="ej2" data-id="ej2_comunicacion_sueldo_quien">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">¿Dónde quedará documentado?</label>
+                        <select class="autosave-input w-full p-2 border rounded-md" data-section="ej2" data-id="ej2_doc_sueldo_donde">
+                            <option value="">Selecciona...</option>
+                            <option value="correo">Correo oficial a Contabilidad</option>
+                            <option value="contrato">Adendum al Contrato</option>
+                            <option value="nomina">Sistema de Nómina</option>
+                            <option value="otro">Otro</option>
+                        </select>
+                    </div>
                 </div>
-                <div>
-                    <label class="block font-semibold text-gray-700 mb-2">¿Dónde quedará documentada la política?</label>
-                    <select class="autosave-input w-full p-2 border rounded-md" data-section="ej2" data-id="ej2_documentacion_donde">
-                        <option value="">Selecciona...</option>
-                        <option value="acta">Acta de Asamblea</option>
-                        <option value="contrato">Contrato / Anexo</option>
-                        <option value="correo">Correo oficial a Contabilidad</option>
-                        <option value="minuta">Minuta de reunión de socios</option>
-                    </select>
+            </div>
+
+            <div>
+                <h4 class="font-bold text-brand-blue mb-3">2. Para la Política de Utilidades:</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">¿A quién se lo comunicarás?</label>
+                        <input type="text" placeholder="Ej: Socios / Consejo / Abogado" class="autosave-input w-full p-2 border rounded-md" data-section="ej2" data-id="ej2_comunicacion_utilidades_quien">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">¿Dónde quedará documentado?</label>
+                        <select class="autosave-input w-full p-2 border rounded-md" data-section="ej2" data-id="ej2_doc_utilidades_donde">
+                            <option value="">Selecciona...</option>
+                            <option value="acta">Acta de Asamblea de Socios</option>
+                            <option value="minuta">Minuta de Reunión Directiva</option>
+                            <option value="estatutos">Reforma de Estatutos</option>
+                            <option value="otro">Otro</option>
+                        </select>
+                    </div>
                 </div>
             </div>
         </div>
@@ -228,25 +252,38 @@
                 <table class="w-full text-sm">
                     <thead>
                         <tr class="bg-gray-200">
-                            <th class="p-2 text-left">Horizonte</th>
-                            <th class="p-2 text-left">Acción Concreta (Financiera)</th>
-                            <th class="p-2 text-left w-32">Fecha Límite</th>
+                            <th class="p-2 text-left w-1/4">Horizonte</th>
+                            <th class="p-2 text-left w-1/3">Acción Concreta (Financiera)</th>
+                            <th class="p-2 text-left w-1/4">Responsable</th>
+                            <th class="p-2 text-left w-1/6">Fecha Límite</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y">
                         <tr class="bg-white">
-                            <td class="p-3 font-bold text-brand-blue">Corto Plazo<br><span class="text-xs font-normal text-gray-500">(Esta semana)</span></td>
-                            <td><input type="text" placeholder="Ej: Enviar correo al contador con nuevos sueldos" class="autosave-input w-full p-1 border-b border-gray-300 focus:border-brand-blue outline-none" data-section="ej2" data-id="ej2_accion_corto"></td>
+                            <td class="p-3">
+                                <span class="font-bold text-brand-blue block">Corto Plazo</span>
+                                <span class="text-xs text-gray-500">(Esta semana)</span>
+                            </td>
+                            <td><input type="text" placeholder="Ej: Enviar correo al contador..." class="autosave-input w-full p-1 border-b border-gray-300 focus:border-brand-blue outline-none" data-section="ej2" data-id="ej2_accion_corto"></td>
+                            <td><input type="text" placeholder="Ej: Yo (Dueño)" class="autosave-input w-full p-1 border-b border-gray-300 focus:border-brand-blue outline-none" data-section="ej2" data-id="ej2_resp_corto"></td>
                             <td><input type="date" class="autosave-input w-full p-1 border rounded" data-section="ej2" data-id="ej2_fecha_corto"></td>
                         </tr>
                         <tr class="bg-gray-50">
-                            <td class="p-3 font-bold text-brand-blue">Mediano Plazo<br><span class="text-xs font-normal text-gray-500">(90 Días)</span></td>
-                            <td><input type="text" placeholder="Ej: Crear fondo de reserva de 1 mes de nómina" class="autosave-input w-full p-1 border-b border-gray-300 focus:border-brand-blue outline-none" data-section="ej2" data-id="ej2_accion_mediano"></td>
+                            <td class="p-3">
+                                <span class="font-bold text-brand-blue block">Mediano Plazo</span>
+                                <span class="text-xs text-gray-500">(90 Días)</span>
+                            </td>
+                            <td><input type="text" placeholder="Ej: Crear fondo de reserva..." class="autosave-input w-full p-1 border-b border-gray-300 focus:border-brand-blue outline-none" data-section="ej2" data-id="ej2_accion_mediano"></td>
+                            <td><input type="text" placeholder="Ej: Tesorería" class="autosave-input w-full p-1 border-b border-gray-300 focus:border-brand-blue outline-none" data-section="ej2" data-id="ej2_resp_mediano"></td>
                             <td><input type="date" class="autosave-input w-full p-1 border rounded" data-section="ej2" data-id="ej2_fecha_mediano"></td>
                         </tr>
                         <tr class="bg-white">
-                            <td class="p-3 font-bold text-brand-blue">Largo Plazo<br><span class="text-xs font-normal text-gray-500">(1 Año)</span></td>
-                            <td><input type="text" placeholder="Ej: Alcanzar 3 meses de FCL como reserva" class="autosave-input w-full p-1 border-b border-gray-300 focus:border-brand-blue outline-none" data-section="ej2" data-id="ej2_accion_largo"></td>
+                            <td class="p-3">
+                                <span class="font-bold text-brand-blue block">Largo Plazo</span>
+                                <span class="text-xs text-gray-500">(1 Año)</span>
+                            </td>
+                            <td><input type="text" placeholder="Ej: Alcanzar 3 meses de FCL..." class="autosave-input w-full p-1 border-b border-gray-300 focus:border-brand-blue outline-none" data-section="ej2" data-id="ej2_accion_largo"></td>
+                            <td><input type="text" placeholder="Ej: Consejo Administración" class="autosave-input w-full p-1 border-b border-gray-300 focus:border-brand-blue outline-none" data-section="ej2" data-id="ej2_resp_largo"></td>
                             <td><input type="date" class="autosave-input w-full p-1 border rounded" data-section="ej2" data-id="ej2_fecha_largo"></td>
                         </tr>
                     </tbody>
