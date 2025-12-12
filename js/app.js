@@ -182,9 +182,18 @@
                             </div>
                         </div>
                     </div>
-                    <div class="mt-4">
-                        <label class="block text-sm font-medium text-gray-600">Regla Clara de Asignación</label>
-                        <input type="text" placeholder="Ej: 15% sobre utilidad neta trimestral si se cumple meta de ventas" class="autosave-input mt-1 w-full p-2 border rounded-md" data-section="ej2" data-id="ej2_var_monto">
+                    <div class="col-span-2">
+                            <label class="block text-sm font-medium text-gray-600">Regla Clara de Asignación</label>
+                            <input type="text" placeholder="Ej: 15% sobre utilidad neta trimestral si se cumple meta de ventas" class="autosave-input mt-1 w-full p-2 border rounded-md" data-section="ej2" data-id="ej2_var_monto">
+                        </div>
+                         <div>
+                            <label class="block text-sm font-medium text-gray-600">Fecha de Vigencia</label>
+                            <input type="date" class="autosave-input mt-1 w-full p-2 border rounded-md" data-section="ej2" data-id="ej2_var_fecha_vigencia">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600">Próxima Fecha Revisión</label>
+                            <input type="date" class="autosave-input mt-1 w-full p-2 border rounded-md" data-section="ej2" data-id="ej2_var_fecha_revision">
+                        </div>
                     </div>
                 </div>
             </div>
