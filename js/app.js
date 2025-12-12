@@ -114,31 +114,132 @@
         </div>
     </div>`;
 
-    // --- EJERCICIO 2 ---
+    // --- EJERCICIO 2 (ACTUALIZADO Y RECUPERADO) ---
     document.getElementById('ej2').innerHTML = `
     <h2 class="text-2xl font-bold brand-orange mb-4">2. Plan de Acción para la Consolidación Financiera</h2>
     <div class="instructions-box">
         <h4 class="font-bold text-brand-blue mb-2">Objetivo Transformacional</h4>
         <p class="mb-4">Formalizar la relación financiera con tu negocio para alinearla con tus metas de crecimiento.</p>
         <h4 class="font-bold text-brand-blue mb-2">Instrucciones</h4>
-        <p>Convierte las políticas del ejercicio anterior en compromisos escritos y define fechas claras para su ejecución.</p>
+        <p>Convierte las políticas del ejercicio anterior en compromisos escritos. Define a quién comunicarás estos cambios y establece acciones concretas a corto, mediano y largo plazo.</p>
     </div>
     <div class="space-y-10">
+        
         <div class="bg-gray-50 p-6 rounded-lg border">
-            <h3 class="text-xl font-bold text-gray-800 mb-4">Apartado A: Políticas de Compensación y Utilidades</h3>
+            <h3 class="text-xl font-bold text-gray-800 mb-4">Apartado A: Definición de Políticas</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div><label class="block font-semibold text-gray-700 mb-2">1. Tipo de Compensación</label><div id="tipo-compensacion-group" class="flex flex-col space-y-2"><label><input type="radio" name="tipo_compensacion" value="fijo" class="autosave-input form-radio" data-section="ej2" data-id="ej2_tipo_comp"> Sueldo Fijo</label><label><input type="radio" name="tipo_compensacion" value="variable" class="autosave-input form-radio" data-section="ej2" data-id="ej2_tipo_comp"> Compensación Variable</label><label><input type="radio" name="tipo_compensacion" value="mixto" class="autosave-input form-radio" data-section="ej2" data-id="ej2_tipo_comp" checked> Mixto</label></div></div>
-                <div><label class="block font-semibold text-gray-700 mb-2">2. Prioridad Utilidades</label><div class="flex flex-col space-y-2"><label><input type="radio" name="prioridad_utilidades" value="sostenimiento" class="autosave-input form-radio" data-section="ej2" data-id="ej2_prio_util"> Sostenimiento Operativo</label><label><input type="radio" name="prioridad_utilidades" value="reinversion" class="autosave-input form-radio" data-section="ej2" data-id="ej2_prio_util" checked> Reinversión</label><label><input type="radio" name="prioridad_utilidades" value="monetizacion" class="autosave-input form-radio" data-section="ej2" data-id="ej2_prio_util"> Monetización</label></div></div>
+                <div>
+                    <label class="block font-semibold text-gray-700 mb-2">1. Tipo de Compensación</label>
+                    <div id="tipo-compensacion-group" class="flex flex-col space-y-2">
+                        <label><input type="radio" name="tipo_compensacion" value="fijo" class="autosave-input form-radio" data-section="ej2" data-id="ej2_tipo_comp"> Sueldo Fijo</label>
+                        <label><input type="radio" name="tipo_compensacion" value="variable" class="autosave-input form-radio" data-section="ej2" data-id="ej2_tipo_comp"> Compensación Variable</label>
+                        <label><input type="radio" name="tipo_compensacion" value="mixto" class="autosave-input form-radio" data-section="ej2" data-id="ej2_tipo_comp" checked> Mixto</label>
+                    </div>
+                </div>
+                <div>
+                    <label class="block font-semibold text-gray-700 mb-2">2. Prioridad de Utilidades</label>
+                    <div class="flex flex-col space-y-2">
+                        <label><input type="radio" name="prioridad_utilidades" value="sostenimiento" class="autosave-input form-radio" data-section="ej2" data-id="ej2_prio_util"> Sostenimiento Operativo (Reservas)</label>
+                        <label><input type="radio" name="prioridad_utilidades" value="reinversion" class="autosave-input form-radio" data-section="ej2" data-id="ej2_prio_util" checked> Reinversión (Crecimiento)</label>
+                        <label><input type="radio" name="prioridad_utilidades" value="monetizacion" class="autosave-input form-radio" data-section="ej2" data-id="ej2_prio_util"> Monetización (Retiro socios)</label>
+                    </div>
+                </div>
             </div>
+            
             <div class="mt-6 space-y-6">
-                <div id="sueldo-fijo-section"><h4 class="font-semibold text-gray-700 border-b pb-2 mb-4">Política de Sueldo Fijo</h4><div class="grid grid-cols-1 sm:grid-cols-2 gap-4"><div><label class="block text-sm font-medium text-gray-600">Sueldo fijo actualizado</label><input type="text" id="sueldo-fijo-actualizado" placeholder="$50,000 MXN" class="autosave-input mt-1 w-full p-2 border rounded-md" data-section="ej2" data-id="ej2_sueldo_fijo"></div><div><label class="block text-sm font-medium text-gray-600">Fecha vigencia</label><input type="date" class="autosave-input mt-1 w-full p-2 border rounded-md" data-section="ej2" data-id="ej2_fecha_fijo"></div></div></div>
-                <div id="sueldo-variable-section"><h4 class="font-semibold text-gray-700 border-b pb-2 mb-4">Política de Sueldo Variable</h4><div class="grid grid-cols-1 sm:grid-cols-2 gap-6"><div><label class="block text-sm font-medium text-gray-600 mb-2">Periodicidad</label><select class="autosave-input w-full p-2 border rounded-md" data-section="ej2" data-id="ej2_var_periodo"><option>Mensual</option><option>Bimestral</option><option selected>Trimestral</option><option>Semestral</option><option>Anual</option></select></div><div><label class="block text-sm font-medium text-gray-600 mb-2">Tipo Reparto</label><div class="flex space-x-4"><label><input type="radio" name="tipo_reparto" value="porcentual" class="autosave-input form-radio" data-section="ej2" data-id="ej2_var_tipo_reparto" checked> Porcentual</label><label><input type="radio" name="tipo_reparto" value="monto_base" class="autosave-input form-radio" data-section="ej2" data-id="ej2_var_tipo_reparto"> Monto Base</label></div></div></div><div class="mt-4"><label class="block text-sm font-medium text-gray-600">Porcentaje o Monto Base</label><input type="text" placeholder="Ej: 15% sobre utilidad neta" class="autosave-input mt-1 w-full p-2 border rounded-md" data-section="ej2" data-id="ej2_var_monto"></div></div>
+                <div id="sueldo-fijo-section">
+                    <h4 class="font-semibold text-gray-700 border-b pb-2 mb-4">Detalle de Política: Sueldo Fijo</h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600">Monto Mensual Neto</label>
+                            <input type="text" id="sueldo-fijo-actualizado" placeholder="$50,000 MXN" class="autosave-input mt-1 w-full p-2 border rounded-md" data-section="ej2" data-id="ej2_sueldo_fijo">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600">Fecha de inicio de vigencia</label>
+                            <input type="date" class="autosave-input mt-1 w-full p-2 border rounded-md" data-section="ej2" data-id="ej2_fecha_fijo">
+                        </div>
+                    </div>
+                </div>
+
+                <div id="sueldo-variable-section">
+                    <h4 class="font-semibold text-gray-700 border-b pb-2 mb-4">Detalle de Política: Sueldo Variable / Bonos</h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600 mb-2">Periodicidad de Pago</label>
+                            <select class="autosave-input w-full p-2 border rounded-md" data-section="ej2" data-id="ej2_var_periodo">
+                                <option>Mensual</option>
+                                <option>Bimestral</option>
+                                <option selected>Trimestral</option>
+                                <option>Semestral</option>
+                                <option>Anual</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600 mb-2">Base de Cálculo</label>
+                            <div class="flex space-x-4">
+                                <label><input type="radio" name="tipo_reparto" value="porcentual" class="autosave-input form-radio" data-section="ej2" data-id="ej2_var_tipo_reparto" checked> % de Utilidad</label>
+                                <label><input type="radio" name="tipo_reparto" value="monto_base" class="autosave-input form-radio" data-section="ej2" data-id="ej2_var_tipo_reparto"> Monto por Objetivos</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <label class="block text-sm font-medium text-gray-600">Regla Clara de Asignación</label>
+                        <input type="text" placeholder="Ej: 15% sobre utilidad neta trimestral si se cumple meta de ventas" class="autosave-input mt-1 w-full p-2 border rounded-md" data-section="ej2" data-id="ej2_var_monto">
+                    </div>
+                </div>
             </div>
         </div>
+
         <div class="bg-gray-50 p-6 rounded-lg border">
-            <h3 class="text-xl font-bold text-gray-800 mb-4">Apartado B: Alineación Estratégica</h3>
-            <div class="space-y-6">
-                <div><h4 class="font-semibold text-gray-700">Iniciativas de Inversión Estratégicas</h4><div class="space-y-2 mt-2"><div class="grid grid-cols-1 md:grid-cols-3 gap-2"><input type="text" placeholder="Proyecto 1: Nombre" class="autosave-input p-2 border rounded-md" data-section="ej2" data-id="ej2_proy1_nombre"><input type="text" placeholder="Enfoque" class="autosave-input p-2 border rounded-md" data-section="ej2" data-id="ej2_proy1_enfoque"><input type="text" placeholder="Monto Estimado" class="autosave-input p-2 border rounded-md" data-section="ej2" data-id="ej2_proy1_monto"></div></div></div>
+            <h3 class="text-xl font-bold text-gray-800 mb-4">Apartado B: Formalización y Comunicación</h3>
+            <p class="text-sm text-gray-600 mb-4">Las reglas no escritas se las lleva el viento. Define cómo harás oficiales estos cambios.</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block font-semibold text-gray-700 mb-2">¿A quién se lo comunicarás oficialmente?</label>
+                    <input type="text" placeholder="Ej: Socio, Contador, Cónyuge..." class="autosave-input w-full p-2 border rounded-md" data-section="ej2" data-id="ej2_comunicacion_quien">
+                </div>
+                <div>
+                    <label class="block font-semibold text-gray-700 mb-2">¿Dónde quedará documentada la política?</label>
+                    <select class="autosave-input w-full p-2 border rounded-md" data-section="ej2" data-id="ej2_documentacion_donde">
+                        <option value="">Selecciona...</option>
+                        <option value="acta">Acta de Asamblea</option>
+                        <option value="contrato">Contrato / Anexo</option>
+                        <option value="correo">Correo oficial a Contabilidad</option>
+                        <option value="minuta">Minuta de reunión de socios</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-gray-50 p-6 rounded-lg border">
+            <h3 class="text-xl font-bold text-gray-800 mb-4">Apartado C: Cronograma de Implementación</h3>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="bg-gray-200">
+                            <th class="p-2 text-left">Horizonte</th>
+                            <th class="p-2 text-left">Acción Concreta (Financiera)</th>
+                            <th class="p-2 text-left w-32">Fecha Límite</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y">
+                        <tr class="bg-white">
+                            <td class="p-3 font-bold text-brand-blue">Corto Plazo<br><span class="text-xs font-normal text-gray-500">(Esta semana)</span></td>
+                            <td><input type="text" placeholder="Ej: Enviar correo al contador con nuevos sueldos" class="autosave-input w-full p-1 border-b border-gray-300 focus:border-brand-blue outline-none" data-section="ej2" data-id="ej2_accion_corto"></td>
+                            <td><input type="date" class="autosave-input w-full p-1 border rounded" data-section="ej2" data-id="ej2_fecha_corto"></td>
+                        </tr>
+                        <tr class="bg-gray-50">
+                            <td class="p-3 font-bold text-brand-blue">Mediano Plazo<br><span class="text-xs font-normal text-gray-500">(90 Días)</span></td>
+                            <td><input type="text" placeholder="Ej: Crear fondo de reserva de 1 mes de nómina" class="autosave-input w-full p-1 border-b border-gray-300 focus:border-brand-blue outline-none" data-section="ej2" data-id="ej2_accion_mediano"></td>
+                            <td><input type="date" class="autosave-input w-full p-1 border rounded" data-section="ej2" data-id="ej2_fecha_mediano"></td>
+                        </tr>
+                        <tr class="bg-white">
+                            <td class="p-3 font-bold text-brand-blue">Largo Plazo<br><span class="text-xs font-normal text-gray-500">(1 Año)</span></td>
+                            <td><input type="text" placeholder="Ej: Alcanzar 3 meses de FCL como reserva" class="autosave-input w-full p-1 border-b border-gray-300 focus:border-brand-blue outline-none" data-section="ej2" data-id="ej2_accion_largo"></td>
+                            <td><input type="date" class="autosave-input w-full p-1 border rounded" data-section="ej2" data-id="ej2_fecha_largo"></td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>`;
