@@ -40,7 +40,8 @@
     // INYECCIÓN DE CONTENIDO HTML (SESIÓN C)
     // =========================================================================
 
-    // --- EJERCICIO 1 ---
+    // --- EJERCICIO 1 (ACTUALIZADO) ---
+
     document.getElementById('ej1').innerHTML = `
     <h2 class="text-2xl font-bold brand-orange mb-4">1. Diagnóstico de Consolidación de Finanzas</h2>
     <div class="instructions-box">
@@ -62,19 +63,52 @@
                 </div>
             </div>
             <div class="mb-6">
-                 <h4 class="font-semibold text-gray-700 mb-2">Tablas de Referencia (Sueldos en MXN/mes)</h4>
+                 <h4 class="font-semibold text-gray-700 mb-2">Tablas de Referencia (Sueldo autoasignado para un director en MXN/mes)</h4>
                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="overflow-x-auto"><table class="w-full text-sm"><thead><tr class="bg-gray-200"><th colspan="2" class="p-2">1. Referentes de mercado</th></tr></thead><tbody class="divide-y"><tr class="bg-white"><td>Microempresa</td><td class="text-right">$25k – $40k</td></tr><tr class="bg-gray-50"><td>Pequeña empresa</td><td class="text-right">$30k – $45k</td></tr><tr class="bg-white"><td>Mediana empresa</td><td class="text-right">$45k – $60k</td></tr><tr class="bg-gray-50"><td><b>Director General Senior</b></td><td class="text-right"><b>Hasta $120,000+</b></td></tr><tr class="bg-white"><td>Promedio PYME</td><td class="text-right">$30k – $80k</td></tr></tbody></table></div>
-                    <div class="overflow-x-auto"><table class="w-full text-sm"><thead><tr class="bg-gray-200"><th colspan="2" class="p-2">2. Límites por facturación</th></tr></thead><tbody class="divide-y"><tr class="bg-white"><td>$300k – $1M</td><td class="text-right">$18k – $60k</td></tr><tr class="bg-gray-50"><td>$1M – $5M</td><td class="text-right">$30k – $90k</td></tr><tr class="bg-white"><td>$5M – $20M</td><td class="text-right">$60k – $200k</td></tr></tbody></table></div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead>
+                                <tr class="bg-gray-200"><th colspan="2" class="p-2">1. Referentes de mercado</th></tr>
+                                <tr class="bg-gray-100 text-xs text-gray-600">
+                                    <th class="p-2 text-left">Rangos de Facturación</th>
+                                    <th class="p-2 text-right">Monto</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y">
+                                <tr class="bg-white"><td>Microempresa</td><td class="text-right">$25k – $40k</td></tr>
+                                <tr class="bg-gray-50"><td>Pequeña empresa</td><td class="text-right">$30k – $45k</td></tr>
+                                <tr class="bg-white"><td>Mediana empresa</td><td class="text-right">$45k – $60k</td></tr>
+                                <tr class="bg-gray-50"><td><b>Director General Senior</b></td><td class="text-right"><b>Hasta $120,000+</b></td></tr>
+                                <tr class="bg-white"><td>Promedio PYME</td><td class="text-right">$30k – $80k</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead>
+                                <tr class="bg-gray-200"><th colspan="2" class="p-2">2. Límites por facturación</th></tr>
+                                <tr class="bg-gray-100 text-xs text-gray-600">
+                                    <th class="p-2 text-left">Rango de Sueldo recomendable</th>
+                                    <th class="p-2 text-right">Monto</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y">
+                                <tr class="bg-white"><td>$300k – $1M</td><td class="text-right">$18k – $60k</td></tr>
+                                <tr class="bg-gray-50"><td>$1M – $5M</td><td class="text-right">$30k – $90k</td></tr>
+                                <tr class="bg-white"><td>$5M – $20M</td><td class="text-right">$60k – $200k</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
                  </div>
             </div>
             <div class="mb-6">
-                <label class="block font-semibold text-gray-700 mb-2">2. Define un sueldo de mercado para tu puesto si contrataras a un externo competente.</label>
+                <label class="block font-semibold text-gray-700 mb-2">2. Define un sueldo de mercado para tu puesto si contrataras a un externo competente para tus funciones operativas.</label>
                 <div class="pro-tip !mt-0 !mb-4"><p>(Opcional) Busca en bolsas de trabajo perfiles de referencia para validar tu criterio.</p></div>
                 <textarea placeholder="Basado en el mercado, un sueldo justo para mi rol sería..." class="autosave-input w-full p-3 border border-gray-300 rounded-lg h-24" data-section="ej1" data-id="ej1_salario_mercado"></textarea>
             </div>
             <div class="mb-6">
-                <label class="block font-semibold text-gray-700 mb-2">3. Define o valida un rango de sueldo consistente.</label>
+                <label class="block font-semibold text-gray-700 mb-2">3. Define o valida un rango de sueldo consistente y coherente con los criterios analizados.</label>
+                <p class="text-sm text-gray-500 mb-2">(De acuerdo con las tablas de referencia 1 y 2 del ejercicio 1 y el ejercicio 2, definete un sueldo realista coherente con los tres análisis anteriores).</p>
                 <input type="text" placeholder="Mi sueldo fijo mensual será de..." class="autosave-input w-full p-3 border border-gray-300 rounded-lg" data-section="ej1" data-id="ej1_salario_definido">
             </div>
         </div>
