@@ -1,0 +1,119 @@
+body {
+    font-family: 'Open Sans', sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: 'Montserrat', sans-serif;
+}
+
+.brand-blue {
+    color: #00529B;
+}
+
+.brand-orange {
+    color: #F68D2E;
+}
+
+.bg-brand-blue {
+    background-color: #00529B;
+}
+
+.bg-brand-orange {
+    background-color: #F68D2E;
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #00529B;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #003f7a;
+}
+
+.section-content {
+    display: none;
+    transition: opacity 0.5s ease-in-out;
+    opacity: 0;
+}
+
+.section-content.active {
+    display: block;
+    opacity: 1;
+}
+
+.nav-link.active {
+    background-color: #eef2ff;
+    color: #00529B;
+    font-weight: 700;
+}
+
+.completion-icon {
+    transition: all 0.3s ease;
+}
+
+.instructions-box {
+    background-color: #eff6ff;
+    border-left: 4px solid #00529B;
+    padding: 1rem;
+    margin-bottom: 2rem;
+    border-radius: 0 0.5rem 0.5rem 0;
+}
+
+.section-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1f2937;
+    border-bottom: 2px solid #e5e7eb;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.satisfaction-scale {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.satisfaction-scale input[type="radio"] {
+    display: none;
+}
+
+.satisfaction-scale label {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #d1d5db;
+    border-radius: 50%;
+    cursor: pointer;
+    font-weight: 700;
+    transition: all 0.2s ease-in-out;
+}
+
+.satisfaction-scale input[type="radio"]:checked+label {
+    background-color: #00529B;
+    color: white;
+    border-color: #00529B;
+    transform: scale(1.1);
+}
+
+/* --- NUEVO: Estilos para forzar saltos de página en el PDF --- */
+.section-content {
+    page-break-before: always;
+}
