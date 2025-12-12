@@ -126,14 +126,14 @@
     <div class="space-y-10">
         
         <div class="bg-gray-50 p-6 rounded-lg border">
-            <h3 class="text-xl font-bold text-gray-800 mb-4">Apartado A: Definición de Políticas</h3>
+            <h3 class="text-xl font-bold text-gray-800 mb-4">Apartado A: Definición de Políticas de Compensación y Utilidades</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div>
-                    <label class="block font-semibold text-gray-700 mb-2">1. Tipo de Compensación</label>
+                    <label class="block font-semibold text-gray-700 mb-2">1. Tipo de Compensación del Dueño</label>
                     <div id="tipo-compensacion-group" class="flex flex-col space-y-2">
                         <label><input type="radio" name="tipo_compensacion" value="fijo" class="autosave-input form-radio" data-section="ej2" data-id="ej2_tipo_comp"> Sueldo Fijo</label>
-                        <label><input type="radio" name="tipo_compensacion" value="variable" class="autosave-input form-radio" data-section="ej2" data-id="ej2_tipo_comp"> Compensación Variable</label>
-                        <label><input type="radio" name="tipo_compensacion" value="mixto" class="autosave-input form-radio" data-section="ej2" data-id="ej2_tipo_comp" checked> Mixto</label>
+                        <label><input type="radio" name="tipo_compensacion" value="variable" class="autosave-input form-radio" data-section="ej2" data-id="ej2_tipo_comp"> Compensación Variable (Reparto Utilidades)</label>
+                        <label><input type="radio" name="tipo_compensacion" value="mixto" class="autosave-input form-radio" data-section="ej2" data-id="ej2_tipo_comp" checked> Mixto (Sueldo Fijo + Bono por Utilidades)</label>
                     </div>
                 </div>
                 <div>
@@ -148,21 +148,21 @@
             
             <div class="mt-6 space-y-6">
                 <div id="sueldo-fijo-section">
-                    <h4 class="font-semibold text-gray-700 border-b pb-2 mb-4">Detalle de Política: Sueldo Fijo</h4>
+                    <h4 class="font-semibold text-gray-700 border-b pb-2 mb-4">Política de Sueldo Fijo</h4>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-sm font-medium text-gray-600">Monto Mensual Neto</label>
+                            <label class="block text-sm font-medium text-gray-600">Monto de Sueldo Mensual Neto</label>
                             <input type="text" id="sueldo-fijo-actualizado" placeholder="$50,000 MXN" class="autosave-input mt-1 w-full p-2 border rounded-md" data-section="ej2" data-id="ej2_sueldo_fijo">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-600">Fecha de inicio de vigencia</label>
+                            <label class="block text-sm font-medium text-gray-600">Fecha de actualización</label>
                             <input type="date" class="autosave-input mt-1 w-full p-2 border rounded-md" data-section="ej2" data-id="ej2_fecha_fijo">
                         </div>
                     </div>
                 </div>
 
                 <div id="sueldo-variable-section">
-                    <h4 class="font-semibold text-gray-700 border-b pb-2 mb-4">Detalle de Política: Sueldo Variable / Bonos</h4>
+                    <h4 class="font-semibold text-gray-700 border-b pb-2 mb-4">Política: Sueldo Variable / Bonos</h4>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                         <div>
                             <label class="block text-sm font-medium text-gray-600 mb-2">Periodicidad de Pago</label>
