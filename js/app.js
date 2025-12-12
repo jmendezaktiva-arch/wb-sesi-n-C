@@ -253,6 +253,9 @@
                     <thead>
                         <tr class="bg-gray-200">
                             <th class="p-2 text-left w-1/4">Horizonte</th>
+                            <th class="p-2 text-left w-1/3">Iniciativas de Inversión Estratégicas</th>
+                            <th class="p-2 text-left w-1/3">Enfoque</th>
+                            <th class="p-2 text-left w-1/3">Monto estimado</th>
                             <th class="p-2 text-left w-1/3">Acción Concreta (Financiera)</th>
                             <th class="p-2 text-left w-1/4">Responsable</th>
                             <th class="p-2 text-left w-1/6">Fecha Compromiso</th>
