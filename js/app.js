@@ -255,7 +255,7 @@
                             <th class="p-2 text-left w-1/4">Horizonte</th>
                             <th class="p-2 text-left w-1/3">Acción Concreta (Financiera)</th>
                             <th class="p-2 text-left w-1/4">Responsable</th>
-                            <th class="p-2 text-left w-1/6">Fecha Límite</th>
+                            <th class="p-2 text-left w-1/6">Fecha Compromiso</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y">
