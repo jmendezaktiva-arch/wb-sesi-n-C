@@ -256,7 +256,6 @@
                             <th class="p-2 text-left w-1/3">Iniciativas de Inversión Estratégicas</th>
                             <th class="p-2 text-left w-1/3">Enfoque</th>
                             <th class="p-2 text-left w-1/3">Monto estimado</th>
-                            <th class="p-2 text-left w-1/3">Acción Concreta (Financiera)</th>
                             <th class="p-2 text-left w-1/4">Responsable</th>
                             <th class="p-2 text-left w-1/6">Fecha Compromiso</th>
                         </tr>
@@ -267,7 +266,9 @@
                                 <span class="font-bold text-brand-blue block">Corto Plazo</span>
                                 <span class="text-xs text-gray-500">(Esta semana)</span>
                             </td>
-                            <td><input type="text" placeholder="Ej: Enviar correo al contador..." class="autosave-input w-full p-1 border-b border-gray-300 focus:border-brand-blue outline-none" data-section="ej2" data-id="ej2_accion_corto"></td>
+                            <td><input type="text" placeholder="Ej: Proyecto 1: Nombre" class="autosave-input w-full p-1 border-b border-gray-300 focus:border-brand-blue outline-none" data-section="ej2" data-id="ej2_accion_corto"></td>
+                            <td><input type="text" placeholder="Ej: Enfoque (ventas, operaciones, etc." class="autosave-input w-full p-1 border-b border-gray-300 focus:border-brand-blue outline-none" data-section="ej2" data-id="ej2_resp_corto"></td>
+                            <td><input type="text" placeholder="Ej: Monto" class="autosave-input w-full p-1 border-b border-gray-300 focus:border-brand-blue outline-none" data-section="ej2" data-id="ej2_resp_corto"></td>
                             <td><input type="text" placeholder="Ej: Yo (Dueño)" class="autosave-input w-full p-1 border-b border-gray-300 focus:border-brand-blue outline-none" data-section="ej2" data-id="ej2_resp_corto"></td>
                             <td><input type="date" class="autosave-input w-full p-1 border rounded" data-section="ej2" data-id="ej2_fecha_corto"></td>
                         </tr>
@@ -276,7 +277,9 @@
                                 <span class="font-bold text-brand-blue block">Mediano Plazo</span>
                                 <span class="text-xs text-gray-500">(90 Días)</span>
                             </td>
-                            <td><input type="text" placeholder="Ej: Crear fondo de reserva..." class="autosave-input w-full p-1 border-b border-gray-300 focus:border-brand-blue outline-none" data-section="ej2" data-id="ej2_accion_mediano"></td>
+                            <td><input type="text" placeholder="Ej: Proyecto 2: Nombre" class="autosave-input w-full p-1 border-b border-gray-300 focus:border-brand-blue outline-none" data-section="ej2" data-id="ej2_accion_corto"></td>
+                            <td><input type="text" placeholder="Ej: Enfoque (ventas, operaciones, etc." class="autosave-input w-full p-1 border-b border-gray-300 focus:border-brand-blue outline-none" data-section="ej2" data-id="ej2_resp_corto"></td>
+                            <td><input type="text" placeholder="Ej: Monto" class="autosave-input w-full p-1 border-b border-gray-300 focus:border-brand-blue outline-none" data-section="ej2" data-id="ej2_resp_corto"></td>
                             <td><input type="text" placeholder="Ej: Tesorería" class="autosave-input w-full p-1 border-b border-gray-300 focus:border-brand-blue outline-none" data-section="ej2" data-id="ej2_resp_mediano"></td>
                             <td><input type="date" class="autosave-input w-full p-1 border rounded" data-section="ej2" data-id="ej2_fecha_mediano"></td>
                         </tr>
@@ -285,7 +288,9 @@
                                 <span class="font-bold text-brand-blue block">Largo Plazo</span>
                                 <span class="text-xs text-gray-500">(1 Año)</span>
                             </td>
-                            <td><input type="text" placeholder="Ej: Alcanzar 3 meses de FCL..." class="autosave-input w-full p-1 border-b border-gray-300 focus:border-brand-blue outline-none" data-section="ej2" data-id="ej2_accion_largo"></td>
+                            <td><input type="text" placeholder="Ej: Proyecto 3: Nombre" class="autosave-input w-full p-1 border-b border-gray-300 focus:border-brand-blue outline-none" data-section="ej2" data-id="ej2_accion_corto"></td>
+                            <td><input type="text" placeholder="Ej: Enfoque (ventas, operaciones, etc." class="autosave-input w-full p-1 border-b border-gray-300 focus:border-brand-blue outline-none" data-section="ej2" data-id="ej2_resp_corto"></td>
+                            <td><input type="text" placeholder="Ej: Monto" class="autosave-input w-full p-1 border-b border-gray-300 focus:border-brand-blue outline-none" data-section="ej2" data-id="ej2_resp_corto"></td>
                             <td><input type="text" placeholder="Ej: Consejo Administración" class="autosave-input w-full p-1 border-b border-gray-300 focus:border-brand-blue outline-none" data-section="ej2" data-id="ej2_resp_largo"></td>
                             <td><input type="date" class="autosave-input w-full p-1 border rounded" data-section="ej2" data-id="ej2_fecha_largo"></td>
                         </tr>
