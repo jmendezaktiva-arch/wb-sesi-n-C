@@ -1,23 +1,21 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Workbook 3.0 - Sesión C</title>
+    <title>Workbook Interactivo - Sesión C</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="styles.css">
 </head>
-
 <body class="bg-gray-50 text-gray-800">
 
     <div class="flex flex-col md:flex-row min-h-screen">
         <aside class="w-full md:w-80 bg-white shadow-lg p-6 sticky top-0 h-screen overflow-y-auto flex flex-col">
             <div class="flex items-center justify-center mb-6">
-                <img src="logo.png" alt="Logo Mi Empresa Crece" class="h-20">
+                <img src="logo.png" alt="Logo Mi Empresa Crece" class="h-20 object-contain">
             </div>
             
             <div class="mb-6">
@@ -28,12 +26,15 @@
             </div>
 
             <nav id="nav-menu" class="flex-grow">
-                <ul class="space-y-2">
+                <ul class="space-y-1">
                     </ul>
             </nav>
+
             <div class="mt-auto pt-6">
                 <button id="export-pdf" class="w-full flex items-center justify-center gap-2 bg-brand-blue text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-800 transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm5 6a1 1 0 10-2 0v3.586l-1.293-1.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V8z" clip-rule="evenodd" /></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm5 6a1 1 0 10-2 0v3.586l-1.293-1.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V8z" clip-rule="evenodd" />
+                    </svg>
                     Exportar a PDF
                 </button>
             </div>
@@ -43,19 +44,19 @@
         </aside>
 
         <main id="main-content" class="flex-1 p-6 md:p-10 overflow-y-auto">
+            
             <header class="bg-white shadow-md rounded-xl p-6 mb-8">
-                <h1 class="text-4xl font-black brand-blue">Workbook de Decisión Estratégica</h1>
+                <h1 class="text-4xl font-black brand-blue">Workbook de Inversión Estratégica</h1>
                 <p class="text-lg text-gray-600 mt-2">Sesión C: Gasto Inteligente, Inversiones Efectivas</p>
                 <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <input type="text" placeholder="Nombre del participante" class="autosave-input p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-orange focus:border-transparent transition" data-id="sesionb_nombre_participante">
-                    <input type="text" placeholder="Empresa" class="autosave-input p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-orange focus:border-transparent transition" data-id="sesionb_nombre_empresa">
+                    <input type="text" placeholder="Nombre del participante" class="autosave-input p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-orange focus:border-transparent transition" data-id="sesionc_nombre_participante">
+                    <input type="text" placeholder="Empresa" class="autosave-input p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-orange focus:border-transparent transition" data-id="sesionc_nombre_empresa">
                 </div>
             </header>
 
             </main>
     </div>
 
-    <script src="js/app.js"></script>
-
+    <script src="app.js"></script>
 </body>
 </html>
