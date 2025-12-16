@@ -54,6 +54,118 @@
                 </div>
             </header>
 
+            <section id="ej1" class="section-content bg-white shadow-xl rounded-2xl p-8 mb-8 hidden opacity-0 transition-opacity duration-500">
+        <div class="flex items-center gap-4 mb-6">
+            <div class="bg-brand-blue/10 p-3 rounded-xl text-brand-blue">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+            </div>
+            <div>
+                <h2 class="text-2xl font-bold text-gray-800">1. Diagnóstico de Consolidación Financiera</h2>
+                <p class="text-gray-500">Evalúa la salud financiera actual de tu empresa antes de invertir.</p>
+            </div>
+        </div>
+
+        <div class="instructions-box bg-blue-50 border-l-4 border-brand-blue p-4 rounded-r-lg mb-8">
+            <p class="text-gray-700 font-medium">Instrucciones:</p>
+            <p class="text-sm text-gray-600 mt-1">
+                Califica cada afirmación del 1 al 5, donde <strong>1 es "Totalmente en desacuerdo"</strong> y <strong>5 es "Totalmente de acuerdo"</strong>. Sé honesto para obtener un diagnóstico real.
+            </p>
+        </div>
+
+        <form id="form-ej1" class="space-y-6">
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-100 hover:shadow-md transition-shadow">
+                <p class="font-semibold text-gray-800 mb-3">1. Tengo claridad total sobre mis costos fijos y variables, y los monitoreo mensualmente.</p>
+                <div class="satisfaction-scale flex justify-between md:justify-start gap-4">
+                    <label class="flex flex-col items-center cursor-pointer group">
+                        <input type="radio" name="ej1_q1" value="1" class="autosave-input hidden peer" data-id="ej1_q1">
+                        <div class="w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center text-gray-400 peer-checked:border-brand-blue peer-checked:bg-brand-blue peer-checked:text-white transition-all group-hover:border-brand-blue">1</div>
+                        <span class="text-xs mt-1 text-gray-400 peer-checked:text-brand-blue font-medium">Nunca</span>
+                    </label>
+                    <label class="flex flex-col items-center cursor-pointer group">
+                        <input type="radio" name="ej1_q1" value="2" class="autosave-input hidden peer" data-id="ej1_q1">
+                        <div class="w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center text-gray-400 peer-checked:border-brand-blue peer-checked:bg-brand-blue peer-checked:text-white transition-all group-hover:border-brand-blue">2</div>
+                    </label>
+                    <label class="flex flex-col items-center cursor-pointer group">
+                        <input type="radio" name="ej1_q1" value="3" class="autosave-input hidden peer" data-id="ej1_q1">
+                        <div class="w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center text-gray-400 peer-checked:border-brand-blue peer-checked:bg-brand-blue peer-checked:text-white transition-all group-hover:border-brand-blue">3</div>
+                    </label>
+                    <label class="flex flex-col items-center cursor-pointer group">
+                        <input type="radio" name="ej1_q1" value="4" class="autosave-input hidden peer" data-id="ej1_q1">
+                        <div class="w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center text-gray-400 peer-checked:border-brand-blue peer-checked:bg-brand-blue peer-checked:text-white transition-all group-hover:border-brand-blue">4</div>
+                    </label>
+                    <label class="flex flex-col items-center cursor-pointer group">
+                        <input type="radio" name="ej1_q1" value="5" class="autosave-input hidden peer" data-id="ej1_q1">
+                        <div class="w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center text-gray-400 peer-checked:border-brand-blue peer-checked:bg-brand-blue peer-checked:text-white transition-all group-hover:border-brand-blue">5</div>
+                        <span class="text-xs mt-1 text-gray-400 peer-checked:text-brand-blue font-medium">Siempre</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-100 hover:shadow-md transition-shadow">
+                <p class="font-semibold text-gray-800 mb-3">2. Mi flujo de caja es positivo y puedo cubrir mis obligaciones operativas sin estrés.</p>
+                <div class="satisfaction-scale flex justify-between md:justify-start gap-4">
+                    <label class="flex flex-col items-center cursor-pointer group"><input type="radio" name="ej1_q2" value="1" class="autosave-input hidden peer" data-id="ej1_q2"><div class="w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center peer-checked:bg-brand-blue peer-checked:text-white peer-checked:border-brand-blue transition-all">1</div></label>
+                    <label class="flex flex-col items-center cursor-pointer group"><input type="radio" name="ej1_q2" value="2" class="autosave-input hidden peer" data-id="ej1_q2"><div class="w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center peer-checked:bg-brand-blue peer-checked:text-white peer-checked:border-brand-blue transition-all">2</div></label>
+                    <label class="flex flex-col items-center cursor-pointer group"><input type="radio" name="ej1_q2" value="3" class="autosave-input hidden peer" data-id="ej1_q2"><div class="w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center peer-checked:bg-brand-blue peer-checked:text-white peer-checked:border-brand-blue transition-all">3</div></label>
+                    <label class="flex flex-col items-center cursor-pointer group"><input type="radio" name="ej1_q2" value="4" class="autosave-input hidden peer" data-id="ej1_q2"><div class="w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center peer-checked:bg-brand-blue peer-checked:text-white peer-checked:border-brand-blue transition-all">4</div></label>
+                    <label class="flex flex-col items-center cursor-pointer group"><input type="radio" name="ej1_q2" value="5" class="autosave-input hidden peer" data-id="ej1_q2"><div class="w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center peer-checked:bg-brand-blue peer-checked:text-white peer-checked:border-brand-blue transition-all">5</div></label>
+                </div>
+            </div>
+
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-100 hover:shadow-md transition-shadow">
+                <p class="font-semibold text-gray-800 mb-3">3. Tengo un fondo de reserva equivalente a al menos 3 meses de operación.</p>
+                <div class="satisfaction-scale flex justify-between md:justify-start gap-4">
+                    <label class="flex flex-col items-center cursor-pointer group"><input type="radio" name="ej1_q3" value="1" class="autosave-input hidden peer" data-id="ej1_q3"><div class="w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center peer-checked:bg-brand-blue peer-checked:text-white peer-checked:border-brand-blue transition-all">1</div></label>
+                    <label class="flex flex-col items-center cursor-pointer group"><input type="radio" name="ej1_q3" value="2" class="autosave-input hidden peer" data-id="ej1_q3"><div class="w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center peer-checked:bg-brand-blue peer-checked:text-white peer-checked:border-brand-blue transition-all">2</div></label>
+                    <label class="flex flex-col items-center cursor-pointer group"><input type="radio" name="ej1_q3" value="3" class="autosave-input hidden peer" data-id="ej1_q3"><div class="w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center peer-checked:bg-brand-blue peer-checked:text-white peer-checked:border-brand-blue transition-all">3</div></label>
+                    <label class="flex flex-col items-center cursor-pointer group"><input type="radio" name="ej1_q3" value="4" class="autosave-input hidden peer" data-id="ej1_q3"><div class="w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center peer-checked:bg-brand-blue peer-checked:text-white peer-checked:border-brand-blue transition-all">4</div></label>
+                    <label class="flex flex-col items-center cursor-pointer group"><input type="radio" name="ej1_q3" value="5" class="autosave-input hidden peer" data-id="ej1_q3"><div class="w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center peer-checked:bg-brand-blue peer-checked:text-white peer-checked:border-brand-blue transition-all">5</div></label>
+                </div>
+            </div>
+
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-100 hover:shadow-md transition-shadow">
+                <p class="font-semibold text-gray-800 mb-3">4. Mis márgenes de utilidad son consistentes y conozco la rentabilidad de cada producto/servicio.</p>
+                <div class="satisfaction-scale flex justify-between md:justify-start gap-4">
+                    <label class="flex flex-col items-center cursor-pointer group"><input type="radio" name="ej1_q4" value="1" class="autosave-input hidden peer" data-id="ej1_q4"><div class="w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center peer-checked:bg-brand-blue peer-checked:text-white peer-checked:border-brand-blue transition-all">1</div></label>
+                    <label class="flex flex-col items-center cursor-pointer group"><input type="radio" name="ej1_q4" value="2" class="autosave-input hidden peer" data-id="ej1_q4"><div class="w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center peer-checked:bg-brand-blue peer-checked:text-white peer-checked:border-brand-blue transition-all">2</div></label>
+                    <label class="flex flex-col items-center cursor-pointer group"><input type="radio" name="ej1_q4" value="3" class="autosave-input hidden peer" data-id="ej1_q4"><div class="w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center peer-checked:bg-brand-blue peer-checked:text-white peer-checked:border-brand-blue transition-all">3</div></label>
+                    <label class="flex flex-col items-center cursor-pointer group"><input type="radio" name="ej1_q4" value="4" class="autosave-input hidden peer" data-id="ej1_q4"><div class="w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center peer-checked:bg-brand-blue peer-checked:text-white peer-checked:border-brand-blue transition-all">4</div></label>
+                    <label class="flex flex-col items-center cursor-pointer group"><input type="radio" name="ej1_q4" value="5" class="autosave-input hidden peer" data-id="ej1_q4"><div class="w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center peer-checked:bg-brand-blue peer-checked:text-white peer-checked:border-brand-blue transition-all">5</div></label>
+                </div>
+            </div>
+
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-100 hover:shadow-md transition-shadow">
+                <p class="font-semibold text-gray-800 mb-3">5. Tengo separadas completamente mis finanzas personales de las finanzas del negocio.</p>
+                <div class="satisfaction-scale flex justify-between md:justify-start gap-4">
+                    <label class="flex flex-col items-center cursor-pointer group"><input type="radio" name="ej1_q5" value="1" class="autosave-input hidden peer" data-id="ej1_q5"><div class="w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center peer-checked:bg-brand-blue peer-checked:text-white peer-checked:border-brand-blue transition-all">1</div></label>
+                    <label class="flex flex-col items-center cursor-pointer group"><input type="radio" name="ej1_q5" value="2" class="autosave-input hidden peer" data-id="ej1_q5"><div class="w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center peer-checked:bg-brand-blue peer-checked:text-white peer-checked:border-brand-blue transition-all">2</div></label>
+                    <label class="flex flex-col items-center cursor-pointer group"><input type="radio" name="ej1_q5" value="3" class="autosave-input hidden peer" data-id="ej1_q5"><div class="w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center peer-checked:bg-brand-blue peer-checked:text-white peer-checked:border-brand-blue transition-all">3</div></label>
+                    <label class="flex flex-col items-center cursor-pointer group"><input type="radio" name="ej1_q5" value="4" class="autosave-input hidden peer" data-id="ej1_q5"><div class="w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center peer-checked:bg-brand-blue peer-checked:text-white peer-checked:border-brand-blue transition-all">4</div></label>
+                    <label class="flex flex-col items-center cursor-pointer group"><input type="radio" name="ej1_q5" value="5" class="autosave-input hidden peer" data-id="ej1_q5"><div class="w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center peer-checked:bg-brand-blue peer-checked:text-white peer-checked:border-brand-blue transition-all">5</div></label>
+                </div>
+            </div>
+        </form>
+
+        <div id="ej1-result-container" class="mt-8 pt-6 border-t-2 border-gray-100 hidden">
+            <div class="flex flex-col items-center text-center">
+                <h3 class="text-xl font-bold text-gray-800">Resultado del Diagnóstico</h3>
+                <div class="mt-4 relative inline-flex items-center justify-center">
+                    <svg class="w-32 h-32 transform -rotate-90">
+                        <circle class="text-gray-200" stroke-width="8" stroke="currentColor" fill="transparent" r="58" cx="64" cy="64" />
+                        <circle id="ej1-score-circle" class="text-brand-blue transition-all duration-1000 ease-out" stroke-width="8" stroke-dasharray="365" stroke-dashoffset="365" stroke-linecap="round" stroke="currentColor" fill="transparent" r="58" cx="64" cy="64" />
+                    </svg>
+                    <span class="absolute text-4xl font-black text-brand-blue" id="ej1-total-score">0</span>
+                </div>
+                <p class="text-sm text-gray-500 mt-2">Puntos totales (Máx 25)</p>
+            </div>
+
+            <div id="ej1-feedback-box" class="mt-6 p-6 rounded-xl text-center transition-all duration-500">
+                <h4 id="ej1-feedback-title" class="text-lg font-bold mb-2"></h4>
+                <p id="ej1-feedback-text" class="text-gray-700"></p>
+            </div>
+        </div>
+    </section>
+
             </main>
     </div>
 

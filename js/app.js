@@ -70,14 +70,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <span class="flex-grow font-medium">${data.title}</span>
             </a>`;
         navMenu.appendChild(li);
-
-        // 2. Crear Contenedor de Sección (Inicialmente vacío)
-        const section = document.createElement('section');
-        section.id = data.id;
-        section.className = 'section-content bg-white shadow-xl rounded-2xl p-8 mb-8 hidden opacity-0 transition-opacity duration-500';
-        // Aquí insertaremos el contenido HTML de cada ejercicio paso a paso
-        mainContent.appendChild(section);
-    });
+        });
 
     // --- LÓGICA DE NAVEGACIÓN Y AUTOSAVE (Idéntica a Sesión B) ---
     
