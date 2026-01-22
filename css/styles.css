@@ -1,80 +1,62 @@
-/* --- Tipografía --- */
-body { font-family: 'Open Sans', sans-serif; }
-h1, h2, h3, h4, h5, h6, .font-heading { font-family: 'Montserrat', sans-serif; }
+body {
+    font-family: 'Open Sans', sans-serif;
+}
 
-/* --- Colores de Marca --- */
-.text-brand-blue { color: #00529B; }
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Montserrat', sans-serif;
+}
+
+.brand-blue { color: #00529B; }
+.brand-orange { color: #F68D2E; }
 .bg-brand-blue { background-color: #00529B; }
-.text-brand-orange { color: #F68D2E; }
 .bg-brand-orange { background-color: #F68D2E; }
 .border-brand-blue { border-color: #00529B; }
+.border-brand-orange { border-color: #F68D2E; }
 
-/* --- Navegación --- */
-.nav-link {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.75rem 1rem;
-    border-radius: 0.5rem;
-    color: #4b5563;
-    font-weight: 600;
-    transition: all 0.2s;
-    cursor: pointer;
+/* Estilo para la barra de desplazamiento */
+::-webkit-scrollbar {
+    width: 8px;
 }
-.nav-link:hover {
-    background-color: #f3f4f6;
-    color: #00529B;
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
 }
+::-webkit-scrollbar-thumb {
+    background: #00529B;
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #003f7a;
+}
+
+.section-content {
+    display: none;
+    transition: opacity 0.5s ease-in-out;
+    opacity: 0;
+}
+
+.section-content.active {
+    display: block;
+    opacity: 1;
+}
+
 .nav-link.active {
     background-color: #eef2ff;
     color: #00529B;
     font-weight: 700;
-    border-right: 4px solid #00529B;
 }
 
-/* --- Componentes UI (Extraídos de tus workbooks anteriores) --- */
-.instructions-box {
-    background-color: #eff6ff;
-    border-left: 4px solid #00529B;
-    padding: 1rem;
-    margin-bottom: 2rem;
-    border-radius: 0 0.5rem 0.5rem 0;
+.completion-icon {
+    transition: all 0.3s ease;
 }
 
-.pro-tip {
-    background-color: #fffbeb;
-    border-left: 4px solid #f59e0b;
-    padding: 1rem;
-    margin-top: 1.5rem;
-    border-radius: 0 0.5rem 0.5rem 0;
+.semaforo-radio:checked + label {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 3px var(--tw-ring-color);
 }
 
-.analysis-point { 
-    background-color: #eff6ff; 
-    border-left: 4px solid #3b82f6; 
-    padding: 1rem; 
-    border-radius: 0 0.5rem 0.5rem 0; 
-}
-
-/* --- Animaciones --- */
-.section-pane {
-    animation: fadeIn 0.4s ease-out;
-}
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* --- Inputs --- */
-.autosave-input {
-    width: 100%;
-    padding: 0.75rem;
-    border: 1px solid #d1d5db;
-    border-radius: 0.5rem;
-    margin-top: 0.5rem;
-}
-.autosave-input:focus {
-    outline: none;
-    border-color: #00529B;
-    box-shadow: 0 0 0 2px rgba(0, 82, 155, 0.1);
+/* --- NUEVO: Estilos para la exportación a PDF --- */
+@media print {
+  .avoid-break {
+    page-break-inside: avoid;
+  }
 }
