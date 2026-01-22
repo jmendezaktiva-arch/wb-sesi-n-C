@@ -217,11 +217,172 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
         },
         {
-            id: 'ejercicio-2',
-            title: '3. Ejercicio 2',
-            icon: `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>`,
-            content: `<div class="p-6">Contenido Ejercicio 2 pendiente...</div>`,
-            initFunction: () => { /* setupExercise2 logic */ }
+            id: 'ej3',
+            title: '3. Práctica de Inversiones',
+            icon: `<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`,
+            content: `
+                <div class="max-w-4xl mx-auto">
+                    <div class="mb-8">
+                        <h2 class="text-2xl font-bold text-brand-blue mb-4">Práctica de Análisis de Inversiones</h2>
+                        <div class="instructions-box text-sm">
+                            <h4 class="font-bold mb-2 flex items-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                                Calculadora de ROI
+                            </h4>
+                            <p>Utiliza esta herramienta para evaluar la viabilidad de una inversión potencial (maquinaria, software, capacitación, etc.).</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                            <h3 class="font-bold text-gray-700 mb-4 border-b pb-2">1. Datos de la Inversión</h3>
+                            
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-600 mb-1">Nombre del Proyecto / Activo:</label>
+                                    <input type="text" id="e3_project_name" class="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Ej: Nueva Maquinaria">
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-600 mb-1">Costo Total de Inversión ($):</label>
+                                    <input type="number" id="e3_investment_cost" class="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 outline-none" placeholder="0.00">
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-600 mb-1">Ganancia Esperada (Mensual $):</label>
+                                    <input type="number" id="e3_monthly_return" class="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 outline-none" placeholder="0.00">
+                                    <p class="text-xs text-gray-400 mt-1">* Ingreso adicional neto que generará este activo.</p>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-600 mb-1">Costos de Mantenimiento (Mensual $):</label>
+                                    <input type="number" id="e3_monthly_cost" class="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 outline-none" placeholder="0.00">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-50 p-6 rounded-lg border border-gray-200 flex flex-col justify-center">
+                            <h3 class="font-bold text-gray-700 mb-4 border-b pb-2">2. Análisis de Retorno</h3>
+                            
+                            <div class="space-y-6 text-center">
+                                <div>
+                                    <p class="text-sm text-gray-500 mb-1">Retorno de Inversión (ROI) Anual</p>
+                                    <div id="e3_roi_display" class="text-4xl font-black text-gray-300">--- %</div>
+                                </div>
+
+                                <div>
+                                    <p class="text-sm text-gray-500 mb-1">Tiempo de Recuperación</p>
+                                    <div id="e3_payback_display" class="text-2xl font-bold text-gray-600">--- meses</div>
+                                </div>
+
+                                <div id="e3_verdict_box" class="p-4 rounded bg-white border border-gray-200 mt-4 hidden">
+                                    <p class="font-bold text-sm uppercase tracking-wide mb-1">Veredicto Financiero</p>
+                                    <p id="e3_verdict_text" class="text-lg font-medium">---</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 bg-blue-50 p-6 rounded-lg border border-blue-100">
+                        <h3 class="font-bold text-brand-blue mb-4">Reflexión Estratégica</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1">¿Qué riesgos podrían afectar la ganancia esperada?</label>
+                                <textarea id="e3_risk_analysis" rows="2" class="w-full p-2 border border-blue-200 rounded focus:ring-2 focus:ring-blue-500 outline-none bg-white"></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1">¿Es este el mejor uso de tu capital en este momento?</label>
+                                <textarea id="e3_capital_use" rows="2" class="w-full p-2 border border-blue-200 rounded focus:ring-2 focus:ring-blue-500 outline-none bg-white"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                `,
+            initFunction: () => {
+                // --- LÓGICA ORIGINAL DE CÁLCULO (Preservada) ---
+                
+                const costInput = document.getElementById('e3_investment_cost');
+                const returnInput = document.getElementById('e3_monthly_return');
+                const maintInput = document.getElementById('e3_monthly_cost');
+                
+                const roiDisplay = document.getElementById('e3_roi_display');
+                const paybackDisplay = document.getElementById('e3_payback_display');
+                const verdictBox = document.getElementById('e3_verdict_box');
+                const verdictText = document.getElementById('e3_verdict_text');
+
+                function calculate() {
+                    const cost = parseFloat(costInput.value) || 0;
+                    const monthlyReturn = parseFloat(returnInput.value) || 0;
+                    const monthlyCost = parseFloat(maintInput.value) || 0;
+
+                    if (cost > 0) {
+                        // 1. Cálculo de Flujo Neto Mensual
+                        const netMonthly = monthlyReturn - monthlyCost;
+                        
+                        // 2. Cálculo de Payback (Meses para recuperar)
+                        let monthsToRecover = 0;
+                        if (netMonthly > 0) {
+                            monthsToRecover = (cost / netMonthly).toFixed(1);
+                        } else {
+                            monthsToRecover = "Infinity";
+                        }
+
+                        // 3. Cálculo de ROI Anualizado ((Ganancia Neta Anual - Costo) / Costo) * 100
+                        // *Nota: En ROI simple anual, asumimos el flujo neto x 12
+                        const annualNet = netMonthly * 12;
+                        const roi = ((annualNet - cost) / cost) * 100;
+
+                        // --- Actualización de UI ---
+                        
+                        // Payback
+                        if(netMonthly <= 0) {
+                            paybackDisplay.textContent = "Nunca (Flujo negativo)";
+                            paybackDisplay.className = "text-2xl font-bold text-red-500";
+                        } else {
+                            paybackDisplay.textContent = `${monthsToRecover} meses`;
+                            paybackDisplay.className = "text-2xl font-bold text-gray-800";
+                        }
+
+                        // ROI
+                        roiDisplay.textContent = `${roi.toFixed(1)}%`;
+                        
+                        // Colores y Veredicto
+                        verdictBox.classList.remove('hidden');
+                        if (roi > 20) {
+                            roiDisplay.className = "text-4xl font-black text-green-600";
+                            verdictBox.className = "p-4 rounded bg-green-50 border border-green-200 mt-4";
+                            verdictText.textContent = "Excelente Oportunidad";
+                            verdictText.className = "text-lg font-bold text-green-700";
+                        } else if (roi > 0) {
+                            roiDisplay.className = "text-4xl font-black text-yellow-600";
+                            verdictBox.className = "p-4 rounded bg-yellow-50 border border-yellow-200 mt-4";
+                            verdictText.textContent = "Rentable (Evaluar Riesgos)";
+                            verdictText.className = "text-lg font-bold text-yellow-700";
+                        } else {
+                            roiDisplay.className = "text-4xl font-black text-red-600";
+                            verdictBox.className = "p-4 rounded bg-red-50 border border-red-200 mt-4";
+                            verdictText.textContent = "No Rentable / Pérdida";
+                            verdictText.className = "text-lg font-bold text-red-700";
+                        }
+
+                    } else {
+                        // Estado inicial
+                        roiDisplay.textContent = "--- %";
+                        roiDisplay.className = "text-4xl font-black text-gray-300";
+                        paybackDisplay.textContent = "--- meses";
+                        verdictBox.classList.add('hidden');
+                    }
+                }
+
+                // Listeners para cálculo en tiempo real
+                [costInput, returnInput, maintInput].forEach(input => {
+                    if(input) input.addEventListener('input', calculate);
+                });
+
+                // Ejecutar cálculo inicial por si hay datos guardados (localStorage)
+                // Usamos un pequeño delay para asegurar que el 'restoreData' global ya haya llenado los campos
+                setTimeout(calculate, 100);
+                }
         },
         // ... AGREGAR AQUÍ EL RESTO DE EJERCICIOS (5, 6, 7, 8, 9, 10) SIGUIENDO EL MISMO PATRÓN
     ];
