@@ -7,7 +7,11 @@ h1, h2, h3, h4, h5, h6, .font-heading { font-family: 'Montserrat', sans-serif; }
 .bg-brand-blue { background-color: #00529B; }
 .text-brand-orange { color: #F68D2E; }
 .bg-brand-orange { background-color: #F68D2E; }
+/* Esta clase es vital para que coincida con el H1 de la Sesión A */
+.brand-blue { color: #00529B; } 
+.brand-orange { color: #F68D2E; }
 .border-brand-blue { border-color: #00529B; }
+.border-brand-orange { border-color: #F68D2E; }
 
 /* --- Navegación --- */
 .nav-link {
@@ -25,14 +29,29 @@ h1, h2, h3, h4, h5, h6, .font-heading { font-family: 'Montserrat', sans-serif; }
     background-color: #f3f4f6;
     color: #00529B;
 }
+/* CORRECCIÓN: Eliminado el border-right que tenías en C, ahora es idéntico a A */
 .nav-link.active {
     background-color: #eef2ff;
     color: #00529B;
     font-weight: 700;
-    border-right: 4px solid #00529B;
 }
 
-/* --- Componentes UI (Extraídos de tus workbooks anteriores) --- */
+/* --- Scrollbar Personalizado (Estaba faltando en C) --- */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+::-webkit-scrollbar-thumb {
+    background: #00529B;
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #003f7a;
+}
+
+/* --- Componentes UI --- */
 .instructions-box {
     background-color: #eff6ff;
     border-left: 4px solid #00529B;
