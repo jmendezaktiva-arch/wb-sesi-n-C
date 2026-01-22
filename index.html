@@ -15,12 +15,13 @@
     <div class="flex flex-col md:flex-row min-h-screen">
         <aside class="w-full md:w-80 bg-white shadow-lg p-6 sticky top-0 h-screen overflow-y-auto flex flex-col z-10">
             <div class="flex items-center justify-center mb-6">
-                <div class="text-3xl font-black text-brand-blue tracking-tighter">LOGO</div>
+                <div class="text-center">
+                    <h2 class="text-2xl font-black text-brand-blue tracking-tighter">MI EMPRESA<br>CRECE</h2>
+                </div>
             </div>
 
             <nav id="nav-menu" class="flex-1">
-                <ul class="space-y-2">
-                    </ul>
+                <ul class="space-y-2"></ul>
             </nav>
 
             <div class="mt-8 border-t pt-6">
@@ -28,7 +29,7 @@
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0011 2H6zm5 6a1 1 0 10-2 0v3.586l-1.293-1.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V8z" clip-rule="evenodd" />
                     </svg>
-                    Descargar PDF
+                    Descargar PDF Completo
                 </button>
                 <div id="loading" class="mt-4 text-center hidden">
                     <p class="text-brand-blue animate-pulse text-sm">Generando PDF...</p>
@@ -39,15 +40,21 @@
         <main class="flex-1 p-6 md:p-10 overflow-y-auto">
             <header class="bg-white shadow-md rounded-xl p-6 mb-8">
                 <h1 class="text-3xl md:text-4xl font-black text-brand-blue mb-2">Workbook de Estrategia</h1>
-                <p class="text-lg text-gray-600">Sesión C</p>
+                <p class="text-lg text-gray-600">Sesión C: Gasto Inteligente e Inversiones</p>
                 
-                <div class="mt-6">
-                    <label class="block text-sm font-semibold text-gray-600 mb-1">Nombre del Participante:</label>
-                    <input type="text" id="participant-name" class="w-full md:w-1/2 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Tu nombre aquí...">
+                <div class="mt-6 flex flex-col md:flex-row gap-4">
+                    <div class="w-full md:w-1/2">
+                        <label class="block text-sm font-semibold text-gray-600 mb-1">Nombre del Participante:</label>
+                        <input type="text" id="participant-name" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Tu nombre...">
+                    </div>
+                    <div class="w-full md:w-1/2">
+                        <label class="block text-sm font-semibold text-gray-600 mb-1">Nombre de la Empresa:</label>
+                        <input type="text" id="company-name" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Tu empresa...">
+                    </div>
                 </div>
             </header>
 
-            <div id="dynamic-content"></div>
+            <div id="dynamic-content" class="min-h-[500px]"></div>
         </main>
     </div>
 
