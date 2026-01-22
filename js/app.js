@@ -1,7 +1,11 @@
 import { sectionsData } from './config.js';
-import { getIcon } from './utils.js';
 import { renderEj1 } from './exercises/ej1.js';
 import { renderEj2 } from './exercises/ej2.js';
+
+const exerciseRenders = {
+    'ej1': renderEj1,
+    'ej2': renderEj2,
+};
 
 document.addEventListener('DOMContentLoaded', function() {
     const mainContent = document.getElementById('main-content');
@@ -11,7 +15,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- 2. GENERACIÓN DINÁMICA DE NAVEGACIÓN Y CONTENEDORES ---
     
-    // Limpiamos contenedores por seguridad
     navMenuContainer.innerHTML = '<ul class="space-y-1"></ul>';
     const navList = navMenuContainer.querySelector('ul');
     sectionsContainer.innerHTML = '';
@@ -52,15 +55,16 @@ document.addEventListener('DOMContentLoaded', function() {
         `;
         sectionsContainer.appendChild(sectionDiv);
 
-        // --- LÓGICA DE INYECCIÓN MODULAR ---
         const contentContainer = sectionDiv.querySelector('.exercise-container');
+        const renderFunction = exerciseRenders[section.id];
 
-            if (section.id === 'ej1') {
-                renderEj1(contentContainer);
-            } else if (section.id === 'ej2') {
-                renderEj2(contentContainer); // <--- NUEVA LÍNEA: Carga el Ejercicio 2
-            }
-    });
+        if (renderFunction) {
+            renderFunction(contentContainer);
+        } else {
+            // Esto te ayudará a ver en consola qué ejercicios faltan por mapear
+            console.warn(`Aún no hay una función de renderizado para: ${section.id}`);
+        }
+            });
 
     // --- 3. SISTEMA DE NAVEGACIÓN ---
     
@@ -73,7 +77,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Remover clases activas de todos
         document.querySelectorAll('.section-content').forEach(el => {
             el.classList.add('hidden');
-            setTimeout(() => el.classList.remove('opacity-100'), 20); // Fade out fix
+            el.classList.remove('opacity-100');
         });
         document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active', 'bg-blue-50', 'text-brand-blue'));
 
@@ -131,7 +135,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function loadData() {
-        setupExercise1();
         const savedJSON = localStorage.getItem('workbook_sesion_c_data');
         if (!savedJSON) return;
         
@@ -197,7 +200,7 @@ document.addEventListener('DOMContentLoaded', function() {
             s.style.opacity = '1';
         });
 
-        const element = document.getElementById('main-content');
+        const element = mainContent;
         
         try {
             const canvas = await html2canvas(element, {
@@ -243,9 +246,11 @@ document.addEventListener('DOMContentLoaded', function() {
             // Restaurar vista actual
             showSection(window.location.hash);
         }
+      
+        
+
     });
 
-   
-    
+    loadData();
 
 });
