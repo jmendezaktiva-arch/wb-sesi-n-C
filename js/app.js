@@ -1642,7 +1642,162 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         },
         
-        // ... AGREGAR AQUÍ EL RESTO DE EJERCICIOS (5, 6, 7, 8, 9, 10) SIGUIENDO EL MISMO PATRÓN
+        {
+            id: 'ej10',
+            title: '10. Evaluación del Propósito',
+            icon: `<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`,
+            content: `
+                <div class="max-w-5xl mx-auto">
+                    <h2 class="text-2xl font-bold text-brand-orange mb-4">10. Evaluación del Propósito</h2>
+                    <div class="instructions-box text-sm mb-8">
+                        <p><strong>Meta Transformacional:</strong> El filtro definitivo. Asegurar que tu inversión esté 100% alineada con las prioridades estratégicas que definiste al inicio.</p>
+                    </div>
+
+                    <div class="space-y-8">
+                        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                            <h3 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">1. Mapa de Alineación Estratégica</h3>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm text-left">
+                                    <thead class="bg-gray-50 text-gray-500 uppercase font-bold text-xs">
+                                        <tr>
+                                            <th class="p-3 w-1/4">Área Clave</th>
+                                            <th class="p-3">Tácticas de Desarrollo</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="e10_tactics_table" class="divide-y divide-gray-100">
+                                        </tbody>
+                                </table>
+                            </div>
+                            
+                            <div class="mt-6 bg-blue-50 p-4 rounded-lg border border-blue-100">
+                                <label class="block text-sm font-bold text-brand-blue mb-2">Reflexión de Impacto:</label>
+                                <p class="text-xs text-gray-600 mb-2">¿Tu inversión actual toca claramente una de estas áreas, o estás invirtiendo en algo que NO es prioridad?</p>
+                                <textarea id="e10_reflexion_impacto" rows="2" class="w-full p-2 text-sm border border-gray-300 rounded focus:border-brand-blue outline-none" placeholder="Escribe tu conclusión..."></textarea>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                            <h3 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">2. Validación contra Prioridades (Del Ejercicio 5)</h3>
+                            <p class="text-sm text-gray-500 mb-4">Selecciona qué iniciativa estratégica estás atacando con esta inversión.</p>
+
+                            <div class="space-y-4">
+                                <div class="p-4 bg-gray-50 border border-gray-200 rounded-lg">
+                                    <h4 class="font-bold text-sm text-gray-700 mb-3">Iniciativa Principal</h4>
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                        <select class="e10-area-select w-full p-2 border rounded text-sm bg-white" data-target="e10_tac_1" id="e10_area_1">
+                                            <option value="">Selecciona Área...</option>
+                                            </select>
+                                        <select id="e10_tac_1" class="w-full p-2 border rounded text-sm bg-white">
+                                            <option value="">Selecciona Táctica...</option>
+                                            </select>
+                                        <input type="text" id="e10_init_1" placeholder="Nombre de la iniciativa..." class="w-full p-2 border rounded text-sm">
+                                    </div>
+                                </div>
+
+                                <div class="p-4 bg-gray-50 border border-gray-200 rounded-lg">
+                                    <h4 class="font-bold text-sm text-gray-700 mb-3">Iniciativa Secundaria (Opcional)</h4>
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                        <select class="e10-area-select w-full p-2 border rounded text-sm bg-white" data-target="e10_tac_2" id="e10_area_2">
+                                            <option value="">Selecciona Área...</option>
+                                        </select>
+                                        <select id="e10_tac_2" class="w-full p-2 border rounded text-sm bg-white">
+                                            <option value="">Selecciona Táctica...</option>
+                                        </select>
+                                        <input type="text" id="e10_init_2" placeholder="Nombre de la iniciativa..." class="w-full p-2 border rounded text-sm">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-6">
+                                <label class="block text-sm font-bold text-gray-700 mb-2">Veredicto Final:</label>
+                                <p class="text-xs text-gray-500 mb-2">¿Esta inversión está 100% justificada por tus prioridades actuales?</p>
+                                <textarea id="e10_veredicto" rows="3" class="w-full p-2 text-sm border border-gray-300 rounded focus:border-brand-blue outline-none bg-green-50 border-green-200" placeholder="Conclusión final..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                `,
+            initFunction: () => {
+                // DATOS MAESTROS (Mismos del Ejercicio 5 para coherencia)
+                const tacticsData = { 
+                    Ventas: ["Incrementar tasa de cierre", "Aumentar canales/prospectos", "Mejorar recompra"], 
+                    Utilidad: ["Precio Premium", "Optimización de Costos", "Eficiencia en Gastos"], 
+                    Operacion: ["Incrementar capacidad", "Mejorar atención", "Desarrollo mandos medios"], 
+                    Expansion: ["Nuevas sucursales", "Nuevos mercados", "Nuevos productos"] 
+                };
+
+                const tableBody = document.getElementById('e10_tactics_table');
+                const areaSelects = document.querySelectorAll('.e10-area-select');
+
+                // 1. LLENAR TABLA DE REFERENCIA
+                tableBody.innerHTML = '';
+                Object.entries(tacticsData).forEach(([area, tactics]) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `<td class="p-3 font-bold text-gray-700 align-top">${area}</td><td class="p-3 text-gray-600 border-l">${tactics.join(', ')}</td>`;
+                    tableBody.appendChild(row);
+                });
+
+                // 2. CONFIGURAR DROPDOWNS ENCADENADOS
+                areaSelects.forEach(sel => {
+                    // Llenar opciones de Área
+                    let opts = '<option value="">Selecciona Área...</option>';
+                    Object.keys(tacticsData).forEach(a => opts += `<option value="${a}">${a}</option>`);
+                    sel.innerHTML = opts;
+
+                    // Evento Change
+                    sel.addEventListener('change', (e) => {
+                        const targetId = sel.dataset.target;
+                        const tacSel = document.getElementById(targetId);
+                        const area = sel.value;
+
+                        // Guardar selección de área
+                        localStorage.setItem('sesionc_' + sel.id, area);
+
+                        // Actualizar Tácticas
+                        if(area && tacticsData[area]) {
+                            let tOpts = '<option value="">Selecciona Táctica...</option>';
+                            tacticsData[area].forEach(t => tOpts += `<option value="${t}">${t}</option>`);
+                            tacSel.innerHTML = tOpts;
+                            tacSel.disabled = false;
+                        } else {
+                            tacSel.innerHTML = '<option value="">Selecciona Táctica...</option>';
+                            tacSel.disabled = true;
+                        }
+                    });
+
+                    // Restaurar Área Guardada
+                    const savedArea = localStorage.getItem('sesionc_' + sel.id);
+                    if(savedArea) {
+                        sel.value = savedArea;
+                        // Disparar evento para llenar el segundo select
+                        sel.dispatchEvent(new Event('change')); 
+                    }
+                });
+
+                // 3. RESTAURAR TÁCTICAS (El segundo nivel)
+                // Esto debe hacerse después de que el evento 'change' del área haya poblado las opciones
+                setTimeout(() => {
+                    document.querySelectorAll('select[id^="e10_tac_"]').forEach(tacSel => {
+                        const savedTac = localStorage.getItem('sesionc_' + tacSel.id);
+                        if(savedTac) tacSel.value = savedTac;
+                        
+                        // Listener para guardar cambio de táctica
+                        tacSel.addEventListener('change', (e) => localStorage.setItem('sesionc_' + e.target.id, e.target.value));
+                    });
+                }, 200);
+
+                // Inputs de texto simples
+                ['e10_init_1', 'e10_init_2', 'e10_reflexion_impacto', 'e10_veredicto'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if(el) {
+                        el.addEventListener('input', (e) => localStorage.setItem('sesionc_' + id, e.target.value));
+                        const saved = localStorage.getItem('sesionc_' + id);
+                        if(saved) el.value = saved;
+                    }
+                });
+            }
+        },
+        
     ];
 
     // --- 2. MOTOR DEL WORKBOOK (NO MODIFICAR MUCHO) ---
