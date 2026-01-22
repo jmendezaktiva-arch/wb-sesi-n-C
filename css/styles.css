@@ -1,0 +1,62 @@
+/* --- Tipografía --- */
+body { font-family: 'Open Sans', sans-serif; }
+h1, h2, h3, h4, h5, h6, .font-heading { font-family: 'Montserrat', sans-serif; }
+
+/* --- Colores de Marca --- */
+.text-brand-blue { color: #00529B; }
+.bg-brand-blue { background-color: #00529B; }
+.text-brand-orange { color: #F68D2E; }
+.bg-brand-orange { background-color: #F68D2E; }
+.border-brand-blue { border-color: #00529B; }
+
+/* --- Navegación --- */
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    color: #4b5563;
+    font-weight: 600;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+.nav-link:hover {
+    background-color: #f3f4f6;
+    color: #00529B;
+}
+.nav-link.active {
+    background-color: #eef2ff;
+    color: #00529B;
+    font-weight: 700;
+    border-right: 4px solid #00529B;
+}
+
+/* --- Animaciones de Sección --- */
+.section-pane {
+    animation: fadeIn 0.4s ease-out;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Scrollbar Personalizado --- */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: #f1f1f1; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+/* --- Utilidades --- */
+.input-standard {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    margin-top: 0.5rem;
+}
+.input-standard:focus {
+    outline: none;
+    border-color: #00529B;
+    box-shadow: 0 0 0 2px rgba(0, 82, 155, 0.1);
+}
