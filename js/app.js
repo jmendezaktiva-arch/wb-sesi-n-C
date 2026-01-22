@@ -384,6 +384,273 @@ document.addEventListener('DOMContentLoaded', () => {
                 setTimeout(calculate, 100);
                 }
         },
+        
+        {
+            id: 'ej4',
+            title: '4. Calculadora FCL',
+            icon: `<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>`,
+            content: `
+                <style>
+                    .fcl-tab-button.active { border-bottom: 4px solid #F68D2E; color: #F68D2E; font-weight: 700; background-color: #fff; }
+                    .fcl-tab-content { display: none; }
+                    .fcl-tab-content.active { display: block; animation: fadeIn 0.3s ease-out; }
+                </style>
+
+                <div class="max-w-6xl mx-auto">
+                    <div class="mb-8">
+                        <h2 class="text-2xl font-bold text-brand-blue mb-4">Calculadora de Flujo de Caja Libre (FCL)</h2>
+                        <div class="instructions-box text-sm">
+                            <h4 class="font-bold mb-2 flex items-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                                Objetivo
+                            </h4>
+                            <p>Transformar el cálculo del FCL de una simple resta a un diagnóstico dinámico de tu capacidad real de inversión.</p>
+                        </div>
+                    </div>
+
+                    <div id="fcl-container" class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                        <div class="border-b border-gray-200 bg-gray-50">
+                            <nav class="flex" aria-label="Tabs">
+                                <button class="fcl-tab-button active flex-1 py-4 text-center font-medium text-gray-500 hover:text-gray-700 transition-all" data-tab="calculator">
+                                    📊 Mi Calculadora FCL
+                                </button>
+                                <button class="fcl-tab-button flex-1 py-4 text-center font-medium text-gray-500 hover:text-gray-700 transition-all" data-tab="example">
+                                    💡 Ejemplo Guiado
+                                </button>
+                            </nav>
+                        </div>
+
+                        <div id="calculator-content" class="fcl-tab-content active p-6">
+                            <div class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
+                                <p class="text-gray-600 text-sm">Proyecta tu flujo de efectivo para los próximos meses:</p>
+                                <div class="inline-flex rounded-lg shadow-sm">
+                                    <button id="view-3m" class="px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-l-lg hover:bg-gray-50 focus:z-10 focus:ring-2 focus:ring-blue-500">3 Meses</button>
+                                    <button id="view-6m" class="px-4 py-2 text-sm font-medium text-white bg-brand-blue border border-brand-blue rounded-r-lg hover:bg-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-500">6 Meses</button>
+                                </div>
+                            </div>
+
+                            <div class="overflow-x-auto mb-8 border rounded-lg">
+                                <table class="min-w-full divide-y divide-gray-200" id="fcl-input-table">
+                                    </table>
+                            </div>
+
+                            <div id="fcl-results-container" class="bg-gray-50 p-6 rounded-xl border border-gray-200 hidden">
+                                <h3 class="text-lg font-bold text-gray-800 mb-6 text-center border-b pb-4">Diagnóstico de Capacidad de Inversión</h3>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                                    <div class="bg-white p-5 rounded-lg shadow-sm text-center border border-gray-100">
+                                        <p class="text-xs text-gray-500 uppercase tracking-wide mb-1">Promedio Mensual Disponible</p>
+                                        <p id="avg-monthly-fcl" class="text-3xl font-black text-brand-blue">$0.00</p>
+                                    </div>
+                                    <div class="bg-white p-5 rounded-lg shadow-sm text-center border border-gray-100">
+                                        <p class="text-xs text-gray-500 uppercase tracking-wide mb-1">Proyección Anualizada</p>
+                                        <p id="annual-fcl" class="text-3xl font-black text-brand-blue">$0.00</p>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <h4 class="font-bold text-gray-700 mb-4 text-sm text-center">Niveles de Riesgo para Inversión (Anual)</h4>
+                                    <div class="space-y-3 text-sm">
+                                        <div id="sem-green" class="flex items-center p-3 bg-green-50 border-l-4 border-green-500 rounded-r">
+                                            <div class="w-2 h-2 rounded-full bg-green-500 mr-3"></div>
+                                            <div class="flex-1 flex justify-between">
+                                                <span class="font-bold text-green-900">Inversión Segura (0-8%)</span>
+                                                <span class="font-mono text-green-700 val">---</span>
+                                            </div>
+                                        </div>
+                                        <div id="sem-blue" class="flex items-center p-3 bg-blue-50 border-l-4 border-blue-500 rounded-r">
+                                            <div class="w-2 h-2 rounded-full bg-blue-500 mr-3"></div>
+                                            <div class="flex-1 flex justify-between">
+                                                <span class="font-bold text-blue-900">Inversión Calculada (8-20%)</span>
+                                                <span class="font-mono text-blue-700 val">---</span>
+                                            </div>
+                                        </div>
+                                        <div id="sem-yellow" class="flex items-center p-3 bg-yellow-50 border-l-4 border-yellow-500 rounded-r">
+                                            <div class="w-2 h-2 rounded-full bg-yellow-500 mr-3"></div>
+                                            <div class="flex-1 flex justify-between">
+                                                <span class="font-bold text-yellow-900">Alto Riesgo (21-70%)</span>
+                                                <span class="font-mono text-yellow-700 val">---</span>
+                                            </div>
+                                        </div>
+                                        <div id="sem-red" class="flex items-center p-3 bg-red-50 border-l-4 border-red-500 rounded-r">
+                                            <div class="w-2 h-2 rounded-full bg-red-500 mr-3"></div>
+                                            <div class="flex-1 flex justify-between">
+                                                <span class="font-bold text-red-900">Peligro / Descapitalización (>70%)</span>
+                                                <span class="font-mono text-red-700 val">---</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="example-content" class="fcl-tab-content p-6">
+                            <div class="bg-blue-50 p-4 rounded-lg border border-blue-100 mb-6">
+                                <h4 class="font-bold text-brand-blue mb-2">Caso: "Creativa Digital"</h4>
+                                <p class="text-sm text-gray-700">Agencia con 5 empleados. Ingresos variables pero gastos fijos altos. En verano sus ventas caen a la mitad.</p>
+                            </div>
+                            <img src="https://placehold.co/800x400/f8fafc/cbd5e1?text=Tabla+de+Ejemplo+FCL+(Imagen+Placeholder)" class="w-full rounded border shadow-sm" alt="Ejemplo FCL">
+                        </div>
+                    </div>
+                </div>
+                `,
+            initFunction: () => {
+                const container = document.getElementById('fcl-container');
+                if (!container) return;
+
+                let period = 6;
+                const formatCurrency = (val) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(val);
+
+                // Configuración de filas
+                const tableConfig = [
+                    { category: 'INGRESOS', type: 'header', color: 'blue' },
+                    { id: 'sales', label: 'Ventas Cobradas', type: 'row' },
+                    { id: 'other_inc', label: 'Otros Ingresos', type: 'row' },
+                    { category: 'EGRESOS FIJOS', type: 'header', color: 'red' },
+                    { id: 'rent', label: 'Renta / Oficina', type: 'row' },
+                    { id: 'payroll', label: 'Nómina Fija', type: 'row' },
+                    { id: 'services', label: 'Servicios / Software', type: 'row' },
+                    { category: 'EGRESOS VARIABLES', type: 'header', color: 'yellow' },
+                    { id: 'cogs', label: 'Costo de Ventas', type: 'row' },
+                    { id: 'ads', label: 'Publicidad / Ads', type: 'row' }
+                ];
+
+                // Función Principal: Construir Tabla
+                const buildTable = () => {
+                    const table = document.getElementById('fcl-input-table');
+                    table.innerHTML = '';
+
+                    // Header
+                    let thead = `<thead class="bg-gray-50"><tr><th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase w-1/3">Concepto</th>`;
+                    for(let i=1; i<=period; i++) thead += `<th class="px-2 py-3 text-center text-xs font-bold text-gray-500 uppercase">Mes ${i}</th>`;
+                    thead += `</tr></thead>`;
+                    table.innerHTML = thead;
+
+                    // Body
+                    const tbody = document.createElement('tbody');
+                    tbody.className = "bg-white divide-y divide-gray-200";
+                    
+                    tableConfig.forEach(row => {
+                        const tr = document.createElement('tr');
+                        if(row.type === 'header') {
+                            const bg = row.color === 'blue' ? 'bg-blue-50 text-blue-800' : (row.color === 'red' ? 'bg-red-50 text-red-800' : 'bg-yellow-50 text-yellow-800');
+                            tr.className = `${bg} font-bold text-xs uppercase tracking-wider`;
+                            tr.innerHTML = `<td colspan="${period+1}" class="px-4 py-2">${row.category}</td>`;
+                        } else {
+                            let html = `<td class="px-4 py-2 text-sm text-gray-600 font-medium">${row.label}</td>`;
+                            for(let i=1; i<=period; i++) {
+                                // ID único: fcl_sales_1, fcl_rent_2, etc.
+                                const inputId = `fcl_${row.id}_${i}`;
+                                // Nota el oninput: guarda en localStorage al escribir
+                                html += `<td class="p-1"><input type="number" id="${inputId}" class="w-full text-right p-1.5 border border-gray-300 rounded text-sm focus:border-brand-blue outline-none" placeholder="0" oninput="localStorage.setItem('sesionc_ej4_'+this.id, this.value)"></td>`;
+                            }
+                            tr.innerHTML = html;
+                        }
+                        tbody.appendChild(tr);
+                    });
+                    table.appendChild(tbody);
+
+                    // Restaurar datos guardados y Recalcular
+                    restoreLocalData();
+                    calculate();
+                };
+
+                const restoreLocalData = () => {
+                    container.querySelectorAll('input').forEach(input => {
+                        const saved = localStorage.getItem('sesionc_ej4_' + input.id);
+                        if(saved) input.value = saved;
+                    });
+                };
+
+                const calculate = () => {
+                    const getData = (id, month) => parseFloat(document.getElementById(`fcl_${id}_${month}`)?.value || 0);
+                    
+                    let totalFCL = 0;
+                    let monthlyFCLs = [];
+
+                    for(let i=1; i<=period; i++) {
+                        const income = getData('sales', i) + getData('other_inc', i);
+                        const expenses = getData('rent', i) + getData('payroll', i) + getData('services', i) + getData('cogs', i) + getData('ads', i);
+                        const fcl = income - expenses;
+                        totalFCL += fcl;
+                        monthlyFCLs.push(fcl);
+                    }
+
+                    const avg = totalFCL / period;
+                    const annual = avg * 12;
+
+                    // Update DOM
+                    document.getElementById('avg-monthly-fcl').textContent = formatCurrency(avg);
+                    document.getElementById('annual-fcl').textContent = formatCurrency(annual);
+                    
+                    const resContainer = document.getElementById('fcl-results-container');
+                    resContainer.classList.remove('hidden');
+
+                    // Semáforos
+                    const ranges = [
+                        { id: 'sem-green', min: 0, max: annual * 0.08 },
+                        { id: 'sem-blue', min: annual * 0.08, max: annual * 0.20 },
+                        { id: 'sem-yellow', min: annual * 0.20, max: annual * 0.70 },
+                        { id: 'sem-red', min: annual * 0.70, max: annual }
+                    ];
+
+                    ranges.forEach(r => {
+                        const el = document.querySelector(`#${r.id} .val`);
+                        if(annual > 0) {
+                            el.textContent = `${formatCurrency(r.min)} - ${formatCurrency(r.max)}`;
+                        } else {
+                            el.textContent = "---";
+                        }
+                    });
+                };
+
+                // Event Listeners
+                container.addEventListener('input', calculate);
+
+                // Tabs
+                container.querySelectorAll('.fcl-tab-button').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const tab = btn.dataset.tab;
+                        container.querySelectorAll('.fcl-tab-button').forEach(b => b.classList.remove('active', 'border-brand-orange', 'text-brand-orange', 'bg-white'));
+                        btn.classList.add('active');
+                        
+                        container.querySelectorAll('.fcl-tab-content').forEach(c => c.classList.remove('active'));
+                        document.getElementById(`${tab}-content`).classList.add('active');
+                    });
+                });
+
+                // Period Toggle
+                document.getElementById('view-3m').addEventListener('click', (e) => {
+                    period = 3;
+                    buildTable();
+                    e.target.classList.replace('bg-white', 'bg-brand-blue');
+                    e.target.classList.replace('text-gray-900', 'text-white');
+                    e.target.classList.remove('border-gray-200');
+                    e.target.classList.add('border-brand-blue');
+                    
+                    const other = document.getElementById('view-6m');
+                    other.classList.replace('bg-brand-blue', 'bg-white');
+                    other.classList.replace('text-white', 'text-gray-900');
+                    other.classList.add('border-gray-200');
+                });
+
+                document.getElementById('view-6m').addEventListener('click', (e) => {
+                    period = 6;
+                    buildTable();
+                    e.target.classList.replace('bg-white', 'bg-brand-blue');
+                    e.target.classList.replace('text-gray-900', 'text-white');
+                    
+                    const other = document.getElementById('view-3m');
+                    other.classList.replace('bg-brand-blue', 'bg-white');
+                    other.classList.replace('text-white', 'text-gray-900');
+                });
+
+                // Inicializar
+                buildTable();
+            }
+        },
+        
+        
         // ... AGREGAR AQUÍ EL RESTO DE EJERCICIOS (5, 6, 7, 8, 9, 10) SIGUIENDO EL MISMO PATRÓN
     ];
 
