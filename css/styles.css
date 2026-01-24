@@ -1,61 +1,16 @@
-/* --- Tipografía --- */
+/* --- ESTILOS COMPARTIDOS (MANTENIDOS) --- */
 body { font-family: 'Open Sans', sans-serif; }
-h1, h2, h3, h4, h5, h6, .font-heading { font-family: 'Montserrat', sans-serif; }
-
-/* --- Colores de Marca --- */
-.text-brand-blue { color: #00529B; }
-.bg-brand-blue { background-color: #00529B; }
-.text-brand-orange { color: #F68D2E; }
-.bg-brand-orange { background-color: #F68D2E; }
-/* Esta clase es vital para que coincida con el H1 de la Sesión A */
-.brand-blue { color: #00529B; } 
+h1, h2, h3, h4, h5, h6 { font-family: 'Montserrat', sans-serif; }
+.brand-blue { color: #00529B; }
 .brand-orange { color: #F68D2E; }
-.border-brand-blue { border-color: #00529B; }
-.border-brand-orange { border-color: #F68D2E; }
+.bg-brand-blue { background-color: #00529B; }
+.bg-brand-orange { background-color: #F68D2E; }
 
-/* --- Navegación --- */
-.nav-link {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.75rem 1rem;
-    border-radius: 0.5rem;
-    color: #4b5563;
-    font-weight: 600;
-    transition: all 0.2s;
-    cursor: pointer;
-}
-.nav-link:hover {
-    background-color: #f3f4f6;
-    color: #00529B;
-}
-/* CORRECCIÓN: Eliminado el border-right que tenías en C, ahora es idéntico a A */
-.nav-link.active {
-    background-color: #eef2ff;
-    color: #00529B;
-    font-weight: 700;
-}
-
-/* --- Scrollbar Personalizado (Estaba faltando en C) --- */
-::-webkit-scrollbar {
-    width: 8px;
-}
-::-webkit-scrollbar-track {
-    background: #f1f1f1;
-}
-::-webkit-scrollbar-thumb {
-    background: #00529B;
-    border-radius: 10px;
-}
-::-webkit-scrollbar-thumb:hover {
-    background: #003f7a;
-}
-
-/* --- Componentes UI --- */
+/* --- NUEVOS COMPONENTES PARA SESIÓN C --- */
 .instructions-box {
     background-color: #eff6ff;
     border-left: 4px solid #00529B;
-    padding: 1rem;
+    padding: 1.5rem;
     margin-bottom: 2rem;
     border-radius: 0 0.5rem 0.5rem 0;
 }
@@ -68,32 +23,87 @@ h1, h2, h3, h4, h5, h6, .font-heading { font-family: 'Montserrat', sans-serif; }
     border-radius: 0 0.5rem 0.5rem 0;
 }
 
-.analysis-point { 
-    background-color: #eff6ff; 
-    border-left: 4px solid #3b82f6; 
-    padding: 1rem; 
-    border-radius: 0 0.5rem 0.5rem 0; 
+/* Tabs para Calculadora FCL (Ej. 4) */
+.fcl-tab-button-2-2.active { 
+    border-bottom: 2px solid #F68D2E; 
+    color: #F68D2E; 
+    font-weight: 700; 
 }
+.fcl-tab-content-2-2 { display: none; }
+.fcl-tab-content-2-2.active { display: block; animation: fadeIn 0.3s ease; }
 
-/* --- Animaciones --- */
-.section-pane {
-    animation: fadeIn 0.4s ease-out;
-}
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
-/* --- Inputs --- */
-.autosave-input {
+/* Radios tipo botón para Diagnóstico (Ej. 3) */
+input[type="radio"].ej3-radio { display: none; }
+input[type="radio"].ej3-radio + label {
+    cursor: pointer;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.375rem;
+    transition: all 0.2s;
+    border: 2px solid #e5e7eb;
+    background-color: #f9fafb;
+}
+input[type="radio"].ej3-radio[value="2"]:checked + label { background-color: #22c55e; color: white; border-color: #16a34a; }
+input[type="radio"].ej3-radio[value="1"]:checked + label { background-color: #facc15; color: #422006; border-color: #f59e0b; }
+input[type="radio"].ej3-radio[value="0"]:checked + label { background-color: #ef4444; color: white; border-color: #dc2626; }
+
+/* Control de pasos para Ejercicio 5 */
+.step-content { transition: opacity 0.5s, max-height 0.7s; overflow: hidden; }
+.hidden-step { opacity: 0; max-height: 0; padding: 0; margin: 0; }
+
+/* Ocultar todas las secciones por defecto */
+.section-content {
+    display: none;
+}
+
+/* Mostrar solo la sección que tenga la clase 'active' */
+.section-content.active {
+    display: block;
+}
+
+/* Estilo para resaltar el link activo en el menú (opcional) */
+.nav-link.active {
+    background-color: #f3f4f6; /* Un gris claro */
+    border-left: 4px solid #00529B; /* Una marca azul */
+    color: #00529B;
+    font-weight: bold;
+}
+
+/* --- COMPONENTES ESPECÍFICOS: EJERCICIO 3 --- */
+.custom-radio-ui {
+    width: 1.25rem;
+    height: 1.25rem;
+    border: 2px solid #d1d5db;
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Estado de selección usando la clase de marca naranja */
+input[type="radio"]:checked + .custom-radio-ui {
+    background-color: #F68D2E;
+    border-color: #F68D2E;
+}
+
+/* Limpieza de tablas para evitar "recuadros vacíos" */
+.table-clean {
+    border-collapse: separate;
+    border-spacing: 0;
     width: 100%;
-    padding: 0.75rem;
-    border: 1px solid #d1d5db;
-    border-radius: 0.5rem;
-    margin-top: 0.5rem;
 }
-.autosave-input:focus {
-    outline: none;
-    border-color: #00529B;
-    box-shadow: 0 0 0 2px rgba(0, 82, 155, 0.1);
-}
+
+/* Colores condicionales para los selects de la matriz */
+.score-select-green { background-color: #dcfce7; color: #166534; border-color: #166534; }
+.score-select-yellow { background-color: #fef9c3; color: #854d0e; border-color: #854d0e; }
+.score-select-red { background-color: #fee2e2; color: #991b1b; border-color: #991b1b; }
+
+/* Estilo para los scores individuales en el pie de tabla */
+.text-score-low { color: #dc2626; }    /* Rojo */
+.text-score-mid { color: #ca8a04; }    /* Amarillo */
+.text-score-high { color: #16a34a; }   /* Verde */
