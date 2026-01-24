@@ -207,6 +207,167 @@ const FCLManager = {
     }
 };
 
+/* === MOTOR LÓGICO DEL EJERCICIO 6: EVALUACIÓN DEL RENDIMIENTO === */
+
+const PerformanceManager = {
+    calculateROI: function() {
+        const monto = parseFloat(document.getElementById('monto-inversion-e6')?.value) || 0;
+        const rendimiento = parseFloat(document.getElementById('rendimiento-total-e6')?.value) || 0;
+        const plazo = parseFloat(document.getElementById('plazo-e6')?.value) || 0;
+        
+        const display = document.getElementById('rendimiento-anualizado-result');
+        const semaforo = document.getElementById('semaforo-rendimiento');
+
+        if (!display || !semaforo) return;
+
+        if (monto === 0 || plazo === 0) {
+            display.textContent = '0%';
+            semaforo.textContent = 'Introduce datos';
+            semaforo.className = 'semaforo-indicator bg-gray-400 inline-block';
+            return;
+        }
+
+        // FÓRMULA DE NEGOCIO: ROI Anualizado = (Rendimiento / Monto) / (Plazo / 12)
+        const roi = (rendimiento / monto) / (plazo / 12) * 100;
+        display.textContent = `${roi.toFixed(1)}%`;
+
+        // Lógica de semaforización según Workbook2.html
+        if (roi <= 10) {
+            semaforo.textContent = 'Bajo Interés';
+            semaforo.className = 'semaforo-indicator bg-red-500 inline-block';
+        } else if (roi <= 20) {
+            semaforo.textContent = 'Comparable';
+            semaforo.className = 'semaforo-indicator bg-blue-500 inline-block';
+        } else if (roi <= 30) {
+            semaforo.textContent = 'Aceptable';
+            semaforo.className = 'semaforo-indicator bg-blue-700 inline-block';
+        } else {
+            semaforo.textContent = 'Excelente';
+            semaforo.className = 'semaforo-indicator bg-green-500 inline-block';
+        }
+    },
+
+    handleQualitativeChange: function(val) {
+        const calificacion = document.getElementById('calificacion-final-e6');
+        if (!calificacion) return;
+
+        const config = {
+            verde: { t: 'Estratégica', c: 'bg-green-500' },
+            azul: { t: 'Táctica', c: 'bg-blue-500' },
+            amarillo: { t: 'Ordinaria', c: 'bg-yellow-500 text-black' },
+            rojo: { t: 'Bajo Impacto', c: 'bg-red-500' },
+            default: { t: 'Selecciona', c: 'bg-gray-400' }
+        };
+
+        const result = config[val] || config.default;
+        calificacion.textContent = result.t;
+        calificacion.className = `semaforo-indicator inline-block mt-2 ${result.c}`;
+    }
+};
+
+/* === MOTOR LÓGICO DEL EJERCICIO 7: EVALUACIÓN DEL MONTO === */
+
+const AmountManager = {
+    proyectoCount: 0,
+
+    calculateFCLMonths: function() {
+        const fcl = parseFloat(document.getElementById('fcl-mensual-e7')?.value) || 0;
+        const monto = parseFloat(document.getElementById('monto-inversion-e7')?.value) || 0;
+        const res = document.getElementById('meses-fcl-result');
+        const semaforo = document.getElementById('semaforo-meses-fcl');
+
+        if (!res || !semaforo) return;
+
+        if (fcl === 0) {
+            res.textContent = '0';
+            semaforo.textContent = 'Introduce FCL';
+            semaforo.className = 'semaforo-indicator bg-gray-400 inline-block mt-2';
+            return;
+        }
+
+        const meses = monto / fcl;
+        res.textContent = meses.toFixed(1);
+
+        if (meses <= 1) {
+            semaforo.textContent = 'Bajo Impacto';
+            semaforo.className = 'semaforo-indicator bg-green-500 inline-block mt-2';
+        } else if (meses <= 3) {
+            semaforo.textContent = 'Impacto Moderado';
+            semaforo.className = 'semaforo-indicator bg-yellow-500 text-black inline-block mt-2';
+        } else {
+            semaforo.textContent = 'Alto Impacto';
+            semaforo.className = 'semaforo-indicator bg-red-500 inline-block mt-2';
+        }
+        this.updateConsumoFCL();
+    },
+
+    updateConsumoFCL: function() {
+        const fclMensual = parseFloat(document.getElementById('fcl-mensual-e7')?.value) || 0;
+        const fclAnual = fclMensual * 12;
+        const displayAnual = document.getElementById('fcl-anual-display');
+        
+        if (displayAnual) {
+            displayAnual.textContent = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(fclAnual);
+        }
+
+        let totalInv = 0;
+        // Sumar la inversión actual que se está evaluando
+        totalInv += parseFloat(document.getElementById('monto-inversion-e7')?.value) || 0;
+        
+        // Sumar otros proyectos dinámicos
+        document.querySelectorAll('.proyecto-monto-e7').forEach(input => {
+            totalInv += parseFloat(input.value) || 0;
+        });
+
+        const totalDisplay = document.getElementById('total-consumo-e7');
+        const percentDisplay = document.getElementById('porcentaje-consumo-e7');
+        const bar = document.getElementById('consumo-bar-e7');
+        const semaforo = document.getElementById('semaforo-consumo-e7');
+
+        if (totalDisplay) totalDisplay.textContent = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(totalInv);
+
+        if (fclAnual === 0) {
+            if (percentDisplay) percentDisplay.textContent = '0';
+            if (bar) bar.style.width = '0%';
+            return;
+        }
+
+        const p = (totalInv / fclAnual) * 100;
+        if (percentDisplay) percentDisplay.textContent = p.toFixed(1);
+        if (bar) bar.style.width = `${Math.min(p, 100)}%`;
+
+        if (p <= 20) {
+            semaforo.textContent = 'Nivel Saludable';
+            semaforo.className = 'text-center font-bold text-sm p-2 mt-2 rounded-md bg-green-100 text-green-800';
+        } else if (p <= 50) {
+            semaforo.textContent = 'Nivel Considerable';
+            semaforo.className = 'text-center font-bold text-sm p-2 mt-2 rounded-md bg-yellow-100 text-yellow-800';
+        } else {
+            semaforo.textContent = '¡Alerta! Alto Riesgo';
+            semaforo.className = 'text-center font-bold text-sm p-2 mt-2 rounded-md bg-red-100 text-red-800';
+        }
+    },
+
+    addProyecto: function() {
+        if (this.proyectoCount >= 5) return;
+        this.proyectoCount++;
+        
+        const container = document.getElementById('proyectos-container-e7');
+        const div = document.createElement('div');
+        div.className = 'grid grid-cols-3 gap-2 items-center mb-2 animate-fade-in';
+        div.innerHTML = `
+            <input type="text" placeholder="Inversión adicional ${this.proyectoCount}" 
+                class="autosave-input col-span-2 p-2 border rounded text-sm" 
+                data-section="ej7" data-id="ej7_p${this.proyectoCount}_desc">
+            <input type="number" placeholder="$ Monto" 
+                class="autosave-input proyecto-monto-e7 p-2 border rounded text-right text-sm" 
+                data-section="ej7" data-id="ej7_p${this.proyectoCount}_monto"
+                oninput="AmountManager.updateConsumoFCL()">
+        `;
+        container.appendChild(div);
+    }
+};
+
 const PriorityManager = {
     areas: ["Ventas y Marketing", "Operaciones y Procesos", "Equipo y Liderazgo", "Finanzas y Rentabilidad"],
     
@@ -293,17 +454,176 @@ const PriorityManager = {
     }
 };
 
+/* === MOTOR LÓGICO DEL EJERCICIO 8: EVALUACIÓN DEL PLAZO === */
+
+const TimeManager = {
+    evaluate: function() {
+        const input = document.getElementById('plazo-inversion-e8');
+        const semaforo = document.getElementById('semaforo-plazo');
+        const feedback = document.getElementById('feedback-plazo');
+
+        if (!input || !semaforo || !feedback) return;
+
+        const meses = parseFloat(input.value) || 0;
+
+        if (input.value === "" || meses <= 0) {
+            semaforo.textContent = 'Introduce un plazo';
+            semaforo.className = 'semaforo-indicator bg-gray-400 inline-block mt-2 text-lg';
+            feedback.textContent = '';
+            return;
+        }
+
+        // Lógica de semaforización: Menor tiempo = Menor riesgo de liquidez
+        if (meses <= 3) {
+            semaforo.textContent = 'Excelente (0-3 meses)';
+            semaforo.className = 'semaforo-indicator bg-green-500 inline-block mt-2 text-lg';
+            feedback.textContent = 'Recuperación muy rápida. Ideal para mantener alta liquidez y reinvertir pronto.';
+        } else if (meses <= 6) {
+            semaforo.textContent = 'Bueno (3-6 meses)';
+            semaforo.className = 'semaforo-indicator bg-blue-500 inline-block mt-2 text-lg';
+            feedback.textContent = 'Buen plazo de recuperación. Permite una rotación de capital ágil.';
+        } else if (meses <= 12) {
+            semaforo.textContent = 'Aceptable (6-12 meses)';
+            semaforo.className = 'semaforo-indicator bg-yellow-500 text-black inline-block mt-2 text-lg';
+            feedback.textContent = 'Plazo estándar. Evalúa si este tiempo inmoviliza capital necesario para otras áreas.';
+        } else if (meses <= 18) {
+            semaforo.textContent = 'Precaución (12-18 meses)';
+            semaforo.className = 'semaforo-indicator bg-orange-500 inline-block mt-2 text-lg';
+            feedback.textContent = 'Plazo largo. El riesgo aumenta ante cambios imprevistos en el mercado.';
+        } else {
+            semaforo.textContent = 'Alto Riesgo (+18 meses)';
+            semaforo.className = 'semaforo-indicator bg-red-500 inline-block mt-2 text-lg';
+            feedback.textContent = 'Plazo muy largo. Compromete la liquidez operativa por un tiempo considerable.';
+        }
+    }
+};
+
+/* === MOTOR LÓGICO DEL EJERCICIO 9: EVALUACIÓN DEL RIESGO === */
+
+const RiskManager = {
+    riskCount: 0,
+
+    init: function() {
+        // Añadimos 2 filas iniciales por defecto
+        if (this.riskCount === 0) {
+            this.addRiskRow();
+            this.addRiskRow();
+        }
+    },
+
+    addRiskRow: function() {
+        this.riskCount++;
+        const container = document.getElementById('risk-table-body');
+        if (!container) return;
+
+        const tr = document.createElement('tr');
+        tr.className = 'border-b hover:bg-gray-50 transition-colors animate-fade-in';
+        tr.innerHTML = `
+            <td class="p-3">
+                <input type="text" placeholder="Ej: Falla de proveedor" 
+                    class="autosave-input w-full p-2 border rounded text-sm" 
+                    data-section="ej9" data-id="ej9_r${this.riskCount}_desc">
+            </td>
+            <td class="p-3">
+                <select class="autosave-input w-full p-2 border rounded text-sm risk-level-select" 
+                    data-section="ej9" data-id="ej9_r${this.riskCount}_level"
+                    onchange="RiskManager.updateRowStyle(this)">
+                    <option value="bajo">Bajo</option>
+                    <option value="medio" selected>Medio</option>
+                    <option value="alto">Alto</option>
+                    <option value="critico">Crítico</option>
+                </select>
+            </td>
+            <td class="p-3">
+                <textarea placeholder="Plan A: ¿Cómo lo evito?" 
+                    class="autosave-input w-full p-2 border rounded text-xs h-16" 
+                    data-section="ej9" data-id="ej9_r${this.riskCount}_mitigacion"></textarea>
+            </td>
+            <td class="p-3">
+                <textarea placeholder="Plan B: ¿Qué hago si ocurre?" 
+                    class="autosave-input w-full p-2 border rounded text-xs h-16" 
+                    data-section="ej9" data-id="ej9_r${this.riskCount}_contingencia"></textarea>
+            </td>
+        `;
+        container.appendChild(tr);
+        // Disparamos el estilo inicial del select
+        this.updateRowStyle(tr.querySelector('.risk-level-select'));
+    },
+
+    updateRowStyle: function(select) {
+        const colors = {
+            bajo: 'bg-green-100 text-green-800',
+            medio: 'bg-yellow-100 text-yellow-800',
+            alto: 'bg-orange-100 text-orange-800',
+            critico: 'bg-red-100 text-red-800'
+        };
+        const val = select.value;
+        select.className = `autosave-input w-full p-2 border rounded text-sm font-bold ${colors[val]}`;
+    }
+};
+
+/* === MOTOR LÓGICO DEL EJERCICIO 10: EVALUACIÓN DEL PROPÓSITO === */
+
+const PurposeManager = {
+    init: function() {
+        this.populateAreas();
+    },
+
+    populateAreas: function() {
+        const areaSelect = document.getElementById('area-select-e10');
+        if (!areaSelect) return;
+        
+        // Reutilizamos las áreas del PriorityManager
+        const areas = Object.keys(PriorityManager.tacticsData);
+        areaSelect.innerHTML = '<option value="">Selecciona Área Estratégica...</option>' + 
+            areas.map(area => `<option value="${area}">${area}</option>`).join('');
+    },
+
+    handleAreaChange: function(area) {
+        const tacticSelect = document.getElementById('tactic-select-e10');
+        if (!tacticSelect) return;
+
+        const tactics = PriorityManager.tacticsData[area] || [];
+        tacticSelect.innerHTML = '<option value="">Selecciona Táctica...</option>' + 
+            tactics.map(t => `<option value="${t}">${t}</option>`).join('');
+        
+        this.updatePitch();
+    },
+
+    updatePitch: function() {
+        const area = document.getElementById('area-select-e10')?.value || "_______";
+        const tactic = document.getElementById('tactic-select-e10')?.value || "_______";
+        const objetivo = document.getElementById('objetivo-e10')?.value || "_______";
+        const resultado = document.getElementById('resultado-e10')?.value || "_______";
+
+        const pitchDisplay = document.getElementById('pitch-final-display');
+        if (pitchDisplay) {
+            pitchDisplay.innerHTML = `
+                "Esta inversión en el área de <span class="text-brand-blue font-bold">${area}</span> 
+                está diseñada para ejecutar la táctica de <span class="text-brand-blue font-bold">${tactic}</span>. 
+                El propósito fundamental es <span class="text-brand-orange font-bold">${objetivo}</span>, 
+                lo cual nos permitirá alcanzar <span class="text-brand-orange font-bold">${resultado}</span> en el corto/mediano plazo."
+            `;
+        }
+    }
+};
+
 document.addEventListener('DOMContentLoaded', function() {
     const mainContent = document.getElementById('main-content');
     const navMenu = document.getElementById('nav-menu').querySelector('ul');
 
-    // 1. Definición de Secciones de la Sesión C
+    // 1. Definición de Secciones de la Sesión C (Fase 1 y Fase 2 Integradas)
     const sectionsData = [
         { id: 'ej1', title: '1. Diagnóstico de Consolidación', icon: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2' },
         { id: 'ej2', title: '2. Plan de Acción', icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z' },
         { id: 'ej3', title: '3. Gestión de Inversiones', icon: 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6' },
         { id: 'ej4', title: '4. Flujo de Caja Libre', icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z' },
-        { id: 'ej5', title: '5. Prioridades de Negocio', icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z' }
+        { id: 'ej5', title: '5. Prioridades de Negocio', icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z' },
+        { id: 'ej6', title: '6. Evaluación del Rendimiento', icon: 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6' },
+        { id: 'ej7', title: '7. Evaluación del Monto', icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1' },
+        { id: 'ej8', title: '8. Evaluación del Plazo', icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z' },
+        { id: 'ej9', title: '9. Evaluación del Riesgo', icon: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z' },
+        { id: 'ej10', title: '10. Evaluación del Propósito', icon: 'M13 10V3L4 14h7v7l9-11h-7z' }
     ];
 
     // 2. Generación dinámica de la navegación y contenedores
@@ -802,6 +1122,281 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // CONEXIÓN QUIRÚRGICA: Inicializamos el motor del Ejercicio 5 tras inyectar el HTML
             PriorityManager.init();
+
+    // 3.6 INYECCIÓN DEL EJERCICIO 6 (EVALUACIÓN DEL RENDIMIENTO)
+    document.getElementById('ej6').innerHTML = `
+        <h2 class="text-2xl font-bold brand-orange mb-4">${sectionsData[5].title}</h2>
+        <div class="instructions-box">
+            <p><strong>Meta Transformacional:</strong> Traducir tu inversión a un lenguaje universal (numérico o estratégico) para tomar decisiones objetivas y comparar proyectos de distinta naturaleza.</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="bg-gray-50 p-6 rounded-lg border">
+                <h3 class="text-lg font-bold text-gray-800 mb-2">Análisis Cuantitativo (ROI)</h3>
+                <p class="text-sm text-gray-500 mb-4">Usa esta sección para inversiones con beneficio medible en dinero (ej: maquinaria, marketing).</p>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium">A. Monto Inversión</label>
+                        <input type="number" id="monto-inversion-e6" placeholder="$100,000" 
+                            class="autosave-input w-full mt-1 p-2 border rounded-md" 
+                            data-section="ej6" data-id="ej6_monto_inversion"
+                            oninput="PerformanceManager.calculateROI()">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium">B. Rendimiento Total Esperado</label>
+                        <input type="number" id="rendimiento-total-e6" placeholder="$50,000" 
+                            class="autosave-input w-full mt-1 p-2 border rounded-md" 
+                            data-section="ej6" data-id="ej6_rendimiento_total"
+                            oninput="PerformanceManager.calculateROI()">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium">C. Plazo en Meses</label>
+                        <input type="number" id="plazo-e6" placeholder="24" 
+                            class="autosave-input w-full mt-1 p-2 border rounded-md" 
+                            data-section="ej6" data-id="ej6_plazo"
+                            oninput="PerformanceManager.calculateROI()">
+                    </div>
+                </div>
+                <div class="text-center mt-6 p-4 bg-white rounded-xl border shadow-inner">
+                    <p class="text-xs text-gray-500 uppercase font-bold tracking-widest">Rendimiento Anualizado</p>
+                    <div id="rendimiento-anualizado-result" class="text-5xl font-black my-2 text-gray-400">0%</div>
+                    <div id="semaforo-rendimiento" class="semaforo-indicator bg-gray-400 inline-block">Introduce datos</div>
+                </div>
+            </div>
+
+            <div class="bg-gray-50 p-6 rounded-lg border">
+                <h3 class="text-lg font-bold text-gray-800 mb-2">Análisis Cualitativo</h3>
+                <p class="text-sm text-gray-500 mb-4">Usa esta sección para inversiones estratégicas (ej: software de gestión, cultura organizacional).</p>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium">¿Qué problema clave resuelve?</label>
+                        <textarea id="problema-e6" rows="2" placeholder="Ej: Alta rotación de personal técnico..." 
+                            class="autosave-input w-full mt-1 p-2 border rounded-md" 
+                            data-section="ej6" data-id="ej6_problema_resuelve"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium">Calidad de la Solución</label>
+                        <select id="calidad-solucion-e6" class="autosave-input w-full mt-1 p-2 border rounded-md" 
+                            data-section="ej6" data-id="ej6_calidad_solucion"
+                            onchange="PerformanceManager.handleQualitativeChange(this.value)">
+                            <option value="default">Selecciona...</option>
+                            <option value="verde">Verde: Estratégica (Resuelve causa raíz)</option>
+                            <option value="azul">Azul: Táctica (Resuelve un síntoma importante)</option>
+                            <option value="amarillo">Amarillo: Ordinaria (Mejora marginal)</option>
+                            <option value="rojo">Rojo: Bajo Impacto (No resuelve problema clave)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="text-center mt-6 p-4 bg-white rounded-xl border shadow-inner">
+                    <p class="text-xs text-gray-500 uppercase font-bold tracking-widest">Calificación de Impacto</p>
+                    <div id="calificacion-final-e6" class="semaforo-indicator bg-gray-400 inline-block mt-2">Selecciona</div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    // 3.7 INYECCIÓN DEL EJERCICIO 7 (EVALUACIÓN DEL MONTO)
+    document.getElementById('ej7').innerHTML = `
+        <h2 class="text-2xl font-bold brand-orange mb-4">${sectionsData[6].title}</h2>
+        <div class="instructions-box">
+            <p><strong>Meta Transformacional:</strong> Cuantificar el peso de tus decisiones. Aquí entenderás si una inversión es un "ligero ajuste" o si compromete meses enteros de tu capacidad operativa.</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="bg-gray-50 p-6 rounded-lg border">
+                <h3 class="text-lg font-bold mb-4">Impacto en Liquidez</h3>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium">Tu FCL Mensual (Promedio Ej. 4)</label>
+                        <input type="number" id="fcl-mensual-e7" placeholder="$20,000" 
+                            class="autosave-input w-full mt-1 p-2 border rounded-md" 
+                            data-section="ej7" data-id="ej7_fcl_mensual"
+                            oninput="AmountManager.calculateFCLMonths()">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium">Monto de la Inversión que evalúas</label>
+                        <input type="number" id="monto-inversion-e7" placeholder="$30,000" 
+                            class="autosave-input w-full mt-1 p-2 border rounded-md" 
+                            data-section="ej7" data-id="ej7_monto_inversion"
+                            oninput="AmountManager.calculateFCLMonths()">
+                    </div>
+                </div>
+                <div class="text-center mt-6 p-4 bg-white rounded-xl border shadow-inner">
+                    <p class="text-xs text-gray-500 uppercase font-bold tracking-widest">Esta inversión equivale a:</p>
+                    <div id="meses-fcl-result" class="text-5xl font-black my-2 text-brand-blue">0</div>
+                    <p class="text-sm font-bold text-gray-600 uppercase">Meses de tu Flujo Libre</p>
+                    <div id="semaforo-meses-fcl" class="semaforo-indicator bg-gray-400 inline-block mt-2">Introduce datos</div>
+                </div>
+            </div>
+
+            <div class="bg-gray-50 p-6 rounded-lg border flex flex-col">
+                <h3 class="text-lg font-bold mb-4">Capacidad Anual Comprometida</h3>
+                <div class="mb-4">
+                    <label class="block text-xs font-bold text-gray-500 uppercase">Tu FCL Anual proyectado</label>
+                    <p id="fcl-anual-display" class="text-xl font-bold brand-blue p-2 bg-blue-50 rounded-md mt-1 border border-blue-100">$0.00</p>
+                </div>
+                
+                <p class="text-xs text-gray-600 mb-2 font-semibold">Agrega otros proyectos activos o planeados para este año:</p>
+                <div id="proyectos-container-e7" class="space-y-2 flex-grow max-h-48 overflow-y-auto pr-2 custom-scrollbar">
+                    </div>
+                
+                <button onclick="AmountManager.addProyecto()" class="mt-4 text-xs bg-white border border-brand-blue text-brand-blue font-bold py-2 px-4 rounded-lg hover:bg-blue-50 transition-colors">
+                    + Agregar otra inversión al análisis
+                </button>
+
+                <div class="mt-6 pt-4 border-t">
+                    <div class="flex justify-between font-bold text-sm mb-1">
+                        <span>Compromiso Total: <span id="total-consumo-e7" class="brand-orange">$0</span></span>
+                        <span><span id="porcentaje-consumo-e7">0</span>% del FCL Anual</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-4 overflow-hidden shadow-inner">
+                        <div id="consumo-bar-e7" class="bg-brand-blue h-full transition-all duration-700 ease-out" style="width: 0%;"></div>
+                    </div>
+                    <div id="semaforo-consumo-e7" class="text-center font-bold text-sm p-2 mt-3 rounded-md bg-gray-100 text-gray-400">
+                        Pendiente de datos
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    // 3.8 INYECCIÓN DEL EJERCICIO 8 (EVALUACIÓN DEL PLAZO)
+    document.getElementById('ej8').innerHTML = `
+        <h2 class="text-2xl font-bold brand-orange mb-4">${sectionsData[7].title}</h2>
+        <div class="instructions-box">
+            <p><strong>Meta Transformacional:</strong> Medir la velocidad con la que tu capital volverá a estar disponible. En finanzas, el tiempo es un factor de riesgo: a mayor plazo, mayor incertidumbre.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+            <div class="bg-gray-50 p-6 rounded-lg border space-y-4 shadow-sm">
+                <h3 class="text-lg font-bold text-gray-800">Semaforización del Plazo</h3>
+                <p class="text-sm text-gray-500 mb-4">Introduce el plazo estimado para recuperar la inversión inicial.</p>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Plazo propuesto (en Meses)</label>
+                    <input type="number" id="plazo-inversion-e8" placeholder="6" 
+                        class="autosave-input w-full mt-1 p-2 border rounded-md focus:ring-2 focus:ring-brand-blue outline-none" 
+                        data-section="ej8" data-id="ej8_plazo_propuesto"
+                        oninput="TimeManager.evaluate()">
+                </div>
+            </div>
+            
+            <div class="text-center p-6 bg-white rounded-xl border border-gray-100 shadow-sm">
+                <p class="text-xs text-gray-500 uppercase font-bold tracking-widest">Diagnóstico de Velocidad</p>
+                <div id="semaforo-plazo" class="semaforo-indicator bg-gray-400 inline-block mt-2 text-lg shadow-sm">
+                    Introduce un plazo
+                </div>
+                <div class="mt-6 p-4 bg-blue-50 rounded-lg">
+                    <p id="feedback-plazo" class="text-sm font-semibold text-gray-700 leading-relaxed"></p>
+                </div>
+            </div>
+        </div>
+    `;
+
+    // 3.9 INYECCIÓN DEL EJERCICIO 9 (EVALUACIÓN DEL RIESGO)
+    document.getElementById('ej9').innerHTML = `
+        <h2 class="text-2xl font-bold brand-orange mb-4">${sectionsData[8].title}</h2>
+        <div class="instructions-box">
+            <p><strong>Meta Transformacional:</strong> Dejar de "reaccionar" a los problemas para empezar a "gestionarlos". Identificar los riesgos no es ser pesimista, es asegurar la supervivencia y rentabilidad de tu inversión.</p>
+        </div>
+
+        <div class="bg-white rounded-xl border shadow-sm overflow-hidden">
+            <div class="p-4 bg-gray-800 text-white flex justify-between items-center">
+                <h3 class="font-bold">Matriz de Mitigación de Riesgos</h3>
+                <button onclick="RiskManager.addRiskRow()" class="text-xs bg-brand-orange hover:bg-orange-600 text-white font-bold py-2 px-4 rounded transition-colors">
+                    + Agregar Riesgo
+                </button>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-gray-100 text-gray-700 text-xs uppercase font-black">
+                            <th class="p-4 border-b w-1/4">Riesgo Identificado</th>
+                            <th class="p-4 border-b w-1/6">Nivel de Impacto</th>
+                            <th class="p-4 border-b w-1/4">Acción de Mitigación (Plan A)</th>
+                            <th class="p-4 border-b w-1/4">Plan de Contingencia (Plan B)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="risk-table-body">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="pro-tip mt-6">
+            <p><strong>Consejo de Inversión:</strong> Si identificas un riesgo con impacto "Crítico" y no tienes un Plan B sólido, considera reducir el monto de la inversión o posponerla hasta tener mayor control sobre esa variable.</p>
+        </div>
+    `;
+
+    // Inicializamos el Manager después de inyectar el HTML
+    RiskManager.init();
+
+    // 3.10 INYECCIÓN DEL EJERCICIO 10 (EVALUACIÓN DEL PROPÓSITO)
+    document.getElementById('ej10').innerHTML = `
+        <h2 class="text-2xl font-bold brand-orange mb-4">${sectionsData[9].title}</h2>
+        <div class="instructions-box">
+            <p><strong>Meta Transformacional:</strong> Articular el "Por Qué" detrás del gasto. Una inversión sin propósito claro es solo un costo; una inversión con propósito es un escalón hacia tu visión empresarial.</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="space-y-6 bg-gray-50 p-6 rounded-lg border shadow-sm">
+                <h3 class="text-lg font-bold text-gray-800 border-b pb-2">Definición Estratégica</h3>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">1. Área de Impacto</label>
+                    <select id="area-select-e10" class="autosave-input w-full mt-1 p-2 border rounded-md focus:ring-2 focus:ring-brand-blue" 
+                        data-section="ej10" data-id="ej10_area"
+                        onchange="PurposeManager.handleAreaChange(this.value)">
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">2. Táctica Específica</label>
+                    <select id="tactic-select-e10" class="autosave-input w-full mt-1 p-2 border rounded-md focus:ring-2 focus:ring-brand-blue" 
+                        data-section="ej10" data-id="ej10_tactic"
+                        onchange="PurposeManager.updatePitch()">
+                        <option value="">Selecciona primero un área...</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">3. ¿Qué problema u oportunidad ataca? (El Objetivo)</label>
+                    <textarea id="objetivo-e10" placeholder="Ej: Reducir el cuello de botella en producción..." 
+                        class="autosave-input w-full mt-1 p-2 border rounded-md h-20 text-sm" 
+                        data-section="ej10" data-id="ej10_objetivo"
+                        oninput="PurposeManager.updatePitch()"></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">4. ¿Cómo se ve el éxito? (El Resultado)</label>
+                    <textarea id="resultado-e10" placeholder="Ej: Poder procesar un 20% más de pedidos diarios..." 
+                        class="autosave-input w-full mt-1 p-2 border rounded-md h-20 text-sm" 
+                        data-section="ej10" data-id="ej10_resultado"
+                        oninput="PurposeManager.updatePitch()"></textarea>
+                </div>
+            </div>
+
+            <div class="flex flex-col justify-center">
+                <div class="bg-blue-900 text-white p-8 rounded-2xl shadow-2xl relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-4 opacity-10">
+                        <svg class="w-24 h-24" fill="currentColor" viewBox="0 0 20 20"><path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1a1 1 0 112 0v1a1 1 0 11-2 0zM13 16v-1a1 1 0 112 0v1a1 1 0 11-2 0zM14.243 15.657a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM6.464 14.243a1 1 0 00-1.414 1.414l.707.707a1 1 0 001.414-1.414l-.707-.707z"></path></svg>
+                    </div>
+                    
+                    <h3 class="text-brand-orange font-black uppercase tracking-tighter mb-4 border-b border-blue-800 pb-2">Pitch Estratégico de Inversión</h3>
+                    <p id="pitch-final-display" class="text-xl italic font-light leading-relaxed">
+                        Completa los pasos a la izquierda para generar tu declaración de propósito...
+                    </p>
+                </div>
+                
+                <div class="mt-8 p-4 bg-green-50 border border-green-200 rounded-lg text-center">
+                    <p class="text-green-800 font-bold text-sm">¡Felicidades! Has completado el diagnóstico integral de inversión.</p>
+                    <p class="text-green-700 text-xs mt-1">Ahora tienes datos, plazos, riesgos y propósito para decidir con maestría.</p>
+                </div>
+            </div>
+        </div>
+    `;
+
+    // Inicializamos el Manager para cargar las áreas
+    PurposeManager.init();
 
     // 4. Lógica de Navegación y Persistencia (Heredada de Sesión A)
     function showSection(hash) {
