@@ -61,6 +61,7 @@ const FCLManager = {
         this.renderTable();
         this.bindEvents();
         this.setupTabs();
+        this.calculate();
     },
 
     // A. Manejo de Pestañas (Síntoma 1 corregido)
@@ -167,7 +168,22 @@ const FCLManager = {
 
     updateDashboard: function(total, results) {
         const container = document.getElementById('fcl-results-container-2-2');
+        if (!container) return;
+        
         container.classList.remove('hidden');
+
+        // 1. Población de la cuadrícula mensual
+        const monthlyContainer = document.getElementById('monthly-fcl-results-2-2');
+        if (monthlyContainer) {
+            monthlyContainer.innerHTML = results.map((val, i) => `
+                <div class="bg-white p-2 rounded border shadow-sm">
+                    <p class="text-[10px] uppercase font-bold text-gray-400">Mes ${i + 1}</p>
+                    <p class="font-bold ${val < 0 ? 'text-red-500' : 'text-green-600'}">
+                        ${new Intl.NumberFormat('es-MX', {style: 'currency', currency: 'MXN', maximumFractionDigits: 0}).format(val)}
+                    </p>
+                </div>
+            `).join('');
+        }
 
         const avg = total / this.currentMonths;
         const annual = avg * 12;
@@ -175,8 +191,15 @@ const FCLManager = {
         document.getElementById('avg-monthly-fcl-2-2').innerText = new Intl.NumberFormat('es-MX', {style: 'currency', currency: 'MXN'}).format(avg);
         document.getElementById('annual-fcl-2-2').innerText = new Intl.NumberFormat('es-MX', {style: 'currency', currency: 'MXN'}).format(annual);
 
-        // Semáforos de Inversión (Integridad de reglas original)
-        this.updateSemaphores(annual);
+        // 2. Validación de Capacidad de Inversión
+        const semaphoreContainer = document.querySelector('#fcl-results-container-2-2 .space-y-3');
+        if (annual <= 0) {
+            // Si no hay flujo positivo, ocultamos rangos y avisamos al usuario
+            document.querySelectorAll('[id^="semaphore-"] p.text-sm').forEach(p => p.innerText = "Sin capacidad (FCL Negativo)");
+        } else {
+            // Si hay flujo positivo, procedemos con los cálculos de semáforos
+            this.updateSemaphores(annual);
+        }
     },
 
     updateSemaphores: function(annual) {
@@ -193,11 +216,13 @@ const FCLManager = {
             this.currentMonths = 3;
             this.renderTable();
             this.updateButtonUI('view-3m-2-2', 'view-6m-2-2');
+            this.calculate(); // Sincroniza el dashboard inmediatamente con la nueva vista
         });
         document.getElementById('view-6m-2-2').addEventListener('click', () => {
             this.currentMonths = 6;
             this.renderTable();
             this.updateButtonUI('view-6m-2-2', 'view-3m-2-2');
+            this.calculate(); // Sincroniza el dashboard inmediatamente con la nueva vista
         });
     },
 
