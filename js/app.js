@@ -1511,7 +1511,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 <div class="mt-8 p-4 bg-green-50 border border-green-200 rounded-lg text-center">
                     <p class="text-green-800 font-bold text-sm">¡Felicidades! Has completado el diagnóstico integral de inversión.</p>
-                    <p class="text-green-700 text-xs mt-1">Ahora tienes datos, plazos, riesgos y propósito para decidir con maestría.</p>
+                    <button id="btn-submit-workbook" onclick="DataSyncManager.submitWorkbook()" 
+                            class="mt-4 bg-blue-900 hover:bg-blue-800 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-all">
+                        FINALIZAR Y ENVIAR RESPUESTAS
+                    </button>
+                </div>
+
+                <div class="mt-10 p-6 bg-white border-2 border-brand-blue rounded-2xl shadow-inner text-center">
+                    <h4 class="text-lg font-bold brand-blue mb-3">¿Listo para consolidar tu diagnóstico?</h4>
+                    <p class="text-sm text-gray-500 mb-5">Al finalizar, tus respuestas se guardarán en tu expediente de consultoría.</p>
+                    <button id="btn-submit-workbook" onclick="DataSyncManager.submitWorkbook()" 
+                            class="bg-brand-orange hover:bg-orange-600 text-white font-black py-4 px-10 rounded-xl transition-all shadow-lg transform hover:scale-105">
+                        FINALIZAR Y ENVIAR RESULTADOS
+                    </button>
                 </div>
             </div>
         </div>
@@ -1538,3 +1550,49 @@ document.addEventListener('DOMContentLoaded', function() {
 
     showSection(window.location.hash);
 });
+
+const DataSyncManager = {
+    // Reemplaza con la URL que copiaste de Google Apps Script
+    SCRIPT_URL: "https://script.google.com/macros/s/AKfycbxEIKwUuEIlXSUN57ier5DlMtUu5_UBZZ5dLfmhNSqOIeq3ZxBlgLK4V9SUr2VMMpPu9w/exec",
+
+    async submitWorkbook() {
+        const btn = document.getElementById('btn-submit-workbook');
+        if (btn) btn.disabled = true; // Evitar múltiples envíos
+
+        const name = document.querySelector('[data-id="sesionc_nombre_participante"]')?.value || "Sin Nombre";
+        const inputs = document.querySelectorAll('.autosave-input');
+        
+        const payload = {
+            // DEBE SER LA MISMA QUE PUSISTE EN EL SCRIPT DE GOOGLE
+            token: "PROYECTO_DREAMS_2026", 
+            timestamp: new Date().toLocaleString(),
+            participante: name,
+            respuestas: {}
+        };
+
+        // Recolección automática basada en data-id
+        inputs.forEach(input => {
+            const id = input.getAttribute('data-id');
+            if (id) {
+                // Manejo de valores según tipo de input
+                payload.respuestas[id] = input.value;
+            }
+        });
+
+        try {
+            const response = await fetch(this.SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors', // Importante para Google Apps Script
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            alert(`¡Excelente ${name}! Tus respuestas han sido sincronizadas. Ahora puedes exportar tu PDF.`);
+            if (btn) btn.innerText = "✓ Información Sincronizada";
+        } catch (error) {
+            console.error("Error en sincronización:", error);
+            alert("Hubo un problema al conectar con la base de datos. Por favor, intenta de nuevo.");
+            if (btn) btn.disabled = false;
+        }
+    }
+};
