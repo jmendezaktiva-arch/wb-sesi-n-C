@@ -930,7 +930,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const ej4HTML = `
                 <h2 class="text-2xl font-bold brand-orange mb-4">4. Cálculo de Flujo de Caja Libre</h2>
                 <div class="instructions-box">
-                    <p><strong>:</strong> Transformar el cálculo del FCL de una simple resta a un diagnóstico dinámico de tu capacidad real de inversión, capturando la estacionalidad de tu negocio para tomar decisiones financieras más inteligentes.</p>
+                    <p><strong>:Objetivo Transformacional</strong> Transformar el cálculo del FCL de una simple resta a un diagnóstico dinámico de tu capacidad real de inversión, capturando la estacionalidad de tu negocio para tomar decisiones financieras más inteligentes.</p>
                 </div>
             
                 <div id="fcl-container-2-2" class="mt-6">
