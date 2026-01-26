@@ -645,10 +645,10 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('ej1').innerHTML = `
         <h2 class="text-2xl font-bold brand-orange mb-4">${sectionsData[0].title}</h2>
     <div class="instructions-box">
-        <p><strong>Objetivo Transformacional:</strong> Internalizar que tú no eres la empresa. Crear reglas claras te da libertad y protege tanto tu patrimonio como el negocio. Este es el primer paso para tomar decisiones de inversión profesionales.</p>
+        <p><strong>Objetivo Transformacional:</strong> Internalizar que tú no eres la empresa, para convertirte en el Arquitecto de tu patrimonio. Separar tu identidad de la del negocio es el primer filtro para tomar decisiones de inversión con la cabeza fría y no con el bolsillo personal.</p>
     </div>
     <div class="instructions-box !bg-gray-50 !border-brand-orange">
-        <p><strong>Instrucciones:</strong> Responde con sinceridad a las siguientes preguntas para identificar el estado actual de tu relación financiera con tu empresa y definir un sueldo base de mercado.</p>
+        <p><strong>Instrucciones:</strong> El desorden entre la cartera del dueño y la caja de la empresa es el mayor enemigo del crecimiento. Responde con objetividad para identificar tu nivel de consolidación financiera actual. El objetivo es definir un salario de mercado que permita a la empresa operar con costos reales y a ti tener estabilidad personal independiente de la operación diaria.</p>
     </div>
     
     <div class="space-y-10">
@@ -695,7 +695,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
             <div class="mb-6">
                 <label class="block font-semibold text-gray-700 mb-2">2. Define un sueldo de mercado para tu puesto si contrataras a un externo competente para tus funciones operativas.</label>
-                 <div class="pro-tip !mt-0 !mb-4"><p>(Opcional) Busca en bolsas de trabajo perfiles de referencia (Gerente comercial, de operaciones, etc.) para validar tu criterio.</p></div>
+                 <div class="pro-tip !mt-0 !mb-4">
+                    <p><strong>Pro-Tip del Consultor:</strong> Imagina que tu empresa es adquirida mañana. El nuevo dueño decide contratarte como Director General: ¿Qué sueldo te ofrecería el mercado para asegurar que el negocio siga operando y creciendo con tu talento, pero bajo una estructura profesional? Ese es tu verdadero <strong>valor de mercado</strong>; usar esta cifra hace que tu estructura de costos sea real.</p>
+                </div>
                 <textarea placeholder="Basado en el mercado, un sueldo justo para mi rol sería..." class="autosave-input w-full p-3 border border-gray-300 rounded-lg h-24" data-section="ej1" data-id="ej1_salario_mercado"></textarea>
             </div>
 
@@ -712,10 +714,10 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('ej2').innerHTML = `
                 <h2 class="text-2xl font-bold brand-orange mb-4">2. Plan de Acción para la Consolidación Financiera</h2>
                 <div class="instructions-box">
-                    <p><strong>Objetivo Transformacional:</strong> Internalizar que tú no eres la empresa. Crear reglas claras te da libertad y protege tanto tu patrimonio como el negocio. Este es el primer paso para tomar decisiones de inversión profesionales.</p>
+                    <p><strong>Objetivo Transformacional:</strong> Pasarás del caos reactivo al control estratégico. Al definir reglas claras de compensación y prioridades de reinversión, dejas de "sacar dinero" de la empresa para empezar a gestionar una entidad financiera profesional que alimenta tu visión a largo plazo.</p>
                 </div>
                 <div class="instructions-box !bg-gray-50 !border-brand-orange">
-                    <p><strong>Instrucciones:</strong> Responde con sinceridad a las siguientes preguntas para identificar el estado actual de tu relación financiera con tu empresa y definir un sueldo base de mercado.</p>
+                    <p><strong>Instrucciones:</strong> Un plan sin políticas es solo una lista de deseos. Utiliza este apartado para formalizar cómo te pagará la empresa y qué destino prioritario tendrán las utilidades. Establecer estas "reglas de la casa" ahora es lo que permitirá que tus futuros proyectos de inversión tengan fondos etiquetados y protegidos del gasto corriente.</p>
                 </div>
 
                 <div class="space-y-10">
@@ -856,10 +858,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     <h2 class="text-3xl font-black brand-blue uppercase mb-6 font-montserrat">${sectionsData[2].title}</h2>
                     
                     <div class="instructions-box">
-                        <p><strong>Objetivo Transformacional:</strong> Internalizar que tú no eres la empresa. Crear reglas claras te da libertad y protege tanto tu patrimonio como el negocio. Este es el primer paso para tomar decisiones de inversión profesionales.</p>
+                        <p><strong>Objetivo Transformacional:</strong> Identificarás tus "puntos ciegos" financieros. Al evaluar tus decisiones pasadas bajo la lupa del rigor técnico, descubrirás por qué algunas inversiones no dieron el fruto esperado y, lo más importante, aprenderás a calibrar tu brújula para no repetir errores costosos.</p>
                     </div>
                     <div class="instructions-box !bg-gray-50 !border-brand-orange">
-                        <p><strong>Instrucciones:</strong> Responde con sinceridad a las siguientes preguntas para identificar el estado actual de tu relación financiera con tu empresa y definir un sueldo base de mercado.</p>
+                        <p><strong>Instrucciones:</strong> Selecciona las 3 inversiones más representativas de tu último año (aquellas que más capital comprometieron o que más impacto esperabas). Califícate con total honestidad: no estamos juzgando el pasado, estamos construyendo tu nuevo criterio de <strong>Arquitecto de Inversiones</strong>. Tu Score de Madurez final te indicará qué tan cerca estás de un proceso de decisión profesional.</p>
                     </div>
 
                     <div class="mb-10 p-6 bg-white rounded-xl shadow-sm border border-gray-100">
@@ -939,10 +941,10 @@ document.addEventListener('DOMContentLoaded', function() {
             const ej4HTML = `
                 <h2 class="text-2xl font-bold brand-orange mb-4">4. Cálculo de Flujo de Caja Libre</h2>
                 <div class="instructions-box">
-                    <p><strong>Objetivo Transformacional:</strong> Internalizar que tú no eres la empresa. Crear reglas claras te da libertad y protege tanto tu patrimonio como el negocio. Este es el primer paso para tomar decisiones de inversión profesionales.</p>
+                    <p><strong>Objetivo Transformacional:</strong> Descubrirás el "Oxígeno Real" de tu negocio. El Flujo de Caja Libre (FCL) es el capital que queda tras cumplir con todas tus obligaciones operativas; es el único recurso con el que puedes comprar el futuro sin asfixiar el presente.</p>
                 </div>
                 <div class="instructions-box !bg-gray-50 !border-brand-orange">
-                    <p><strong>Instrucciones:</strong> Responde con sinceridad a las siguientes preguntas para identificar el estado actual de tu relación financiera con tu empresa y definir un sueldo base de mercado.</p>
+                    <p><strong>Instrucciones:</strong> Registra tus ingresos cobrados y egresos pagados de los últimos meses. Te recomendamos un análisis de <strong>6 meses</strong> para neutralizar la estacionalidad y obtener un promedio robusto. Si buscas una visibilidad rápida de tu liquidez inmediata, utiliza el modo de 3 meses. <em>Nota: Este no es un ejercicio contable fiscal, es un diagnóstico de capacidad de maniobra.</em></p>
                 </div>
             
                 <div id="fcl-container-2-2" class="mt-6">
@@ -954,7 +956,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                     <div id="calculator-content-2-2" class="fcl-tab-content-2-2 active">
                         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-                            <p class="text-gray-600">Introduce los datos de tu empresa para un análisis de 3 o 6 meses.</p>
+                            <p class="text-gray-600 font-medium">Proyecta tu capacidad de inversión real basándote en tu flujo de efectivo histórico:</p>
                             <div class="inline-flex rounded-lg shadow-sm flex-shrink-0">
                                 <button id="view-3m-2-2" class="px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-l-lg hover:bg-gray-100 focus:z-10 focus:ring-2 focus:ring-blue-500">3 Meses</button>
                                 <button id="view-6m-2-2" class="px-4 py-2 text-sm font-medium text-white bg-brand-blue border border-gray-200 rounded-r-lg hover:bg-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-500">6 Meses</button>
@@ -1073,16 +1075,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div class="max-w-7xl mx-auto">
                     <h2 class="text-2xl font-bold brand-orange mb-4">5. Análisis Rápido de Prioridades de Negocio</h2>
                     <div class="instructions-box">
-                        <p><strong>Objetivo Transformacional:</strong> Internalizar que tú no eres la empresa. Crear reglas claras te da libertad y protege tanto tu patrimonio como el negocio. Este es el primer paso para tomar decisiones de inversión profesionales.</p>
+                        <p><strong>Objetivo Transformacional:</strong> Pasarás de la dispersión al enfoque láser. El recurso más escaso de un dueño no es el dinero, sino su atención. Este ejercicio te obliga a sacrificar lo "bueno" para perseguir lo "extraordinario", asegurando que tu inversión se inyecte en el área que realmente desbloqueará tu siguiente nivel de escala.</p>
                     </div>
                     <div class="instructions-box !bg-gray-50 !border-brand-orange">
-                        <p><strong>Instrucciones:</strong> Responde con sinceridad a las siguientes preguntas para identificar el estado actual de tu relación financiera con tu empresa y definir un sueldo base de mercado.</p>
+                        <p><strong>Instrucciones:</strong> No todas las metas tienen el mismo peso. Inicia vaciando tus ideas actuales y luego utiliza los filtros de prioridad para seleccionar el **Área Estratégica** donde una inversión hoy generará el mayor efecto multiplicador. Recuerda: invertir en el área equivocada, por más rentable que parezca, es solo un gasto costoso.</p>
                     </div>
 
                     <div class="space-y-8">
                         <div id="step-1" class="step-content">
-                            <h3 class="text-xl font-bold text-gray-800 mb-2">Paso 1: Lluvia de Ideas Estratégicas</h3>
-                            <label class="text-gray-600 mb-4 block">Primero, haz una lluvia de ideas. Escribe hasta 5 prioridades de mejora o crecimiento que tengas en mente para tu negocio.</label>
+                            <h3 class="text-xl font-bold text-gray-800 mb-2">Paso 1: Vaciado de Iniciativas de Crecimiento</h3>
+                            <label class="text-gray-600 mb-4 block">Captura las 5 prioridades o proyectos que tienes en mente. No te limites, este es tu inventario de posibilidades antes del filtro estratégico.</label>
                             <div class="space-y-2">
                                 <input type="text" placeholder="Prioridad 1..." class="autosave-input w-full p-3 border border-gray-300 rounded-lg" data-section="ej5" data-id="ej5_prio1">
                                 <input type="text" placeholder="Prioridad 2..." class="autosave-input w-full p-3 border border-gray-300 rounded-lg" data-section="ej5" data-id="ej5_prio2">
@@ -1142,10 +1144,10 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('ej6').innerHTML = `
         <h2 class="text-2xl font-bold brand-orange mb-4">${sectionsData[5].title}</h2>
         <div class="instructions-box">
-            <p><strong>Objetivo Transformacional:</strong> Internalizar que tú no eres la empresa. Crear reglas claras te da libertad y protege tanto tu patrimonio como el negocio. Este es el primer paso para tomar decisiones de inversión profesionales.</p>
+            <p><strong>Objetivo Transformacional:</strong> Dejarás de "apostar" dinero para empezar a "sembrar" resultados. Evaluarás si una inversión es un motor de flujo inmediato o un andamio de infraestructura. El objetivo es que ningún peso salga de tu caja sin una expectativa clara de retorno o de resolución de un problema raíz.</p>
         </div>
         <div class="instructions-box !bg-gray-50 !border-brand-orange">
-            <p><strong>Instrucciones:</strong> Responde con sinceridad a las siguientes preguntas para identificar el estado actual de tu relación financiera con tu empresa y definir un sueldo base de mercado.</p>
+            <p><strong>Instrucciones:</strong> Clasifica tu proyecto. Si genera ingresos directamente (maquinaria, marketing), utiliza el <strong>Análisis Cuantitativo</strong> para calcular tu rendimiento anualizado. Si mejora la estructura o el talento, utiliza el <strong>Análisis Cualitativo</strong> para calificar su impacto estratégico. Una inversión profesional debe ser excelente en rentabilidad o indispensable en estrategia.</p>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -1217,10 +1219,10 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('ej7').innerHTML = `
         <h2 class="text-2xl font-bold brand-orange mb-4">${sectionsData[6].title}</h2>
         <div class="instructions-box">
-            <p><strong>Objetivo Transformacional:</strong> Internalizar que tú no eres la empresa. Crear reglas claras te da libertad y protege tanto tu patrimonio como el negocio. Este es el primer paso para tomar decisiones de inversión profesionales.</p>
+            <p><strong>Objetivo Transformacional:</strong> Aprenderás a medir el "Peso Específico" de tu inversión. No importa si algo es barato o caro en términos absolutos, lo que importa es cuántos meses de tu "oxígeno" (FCL) consume. El objetivo es asegurar que tu crecimiento no se convierta en tu sentencia de muerte por falta de liquidez.</p>
         </div>
         <div class="instructions-box !bg-gray-50 !border-brand-orange">
-            <p><strong>Instrucciones:</strong> Responde con sinceridad a las siguientes preguntas para identificar el estado actual de tu relación financiera con tu empresa y definir un sueldo base de mercado.</p>
+            <p><strong>Instrucciones:</strong> Utiliza el FCL promedio que calculaste en el Ejercicio 4 para determinar a cuántos meses de operación equivale este desembolso. Además, suma otros proyectos que tengas activos este año; si el total compromete más del 50% de tu FCL anual, estás entrando en zona de alto riesgo. Una inversión inteligente es aquella que el negocio puede "digerir" sin detenerse.</p>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -1285,10 +1287,10 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('ej8').innerHTML = `
         <h2 class="text-2xl font-bold brand-orange mb-4">${sectionsData[7].title}</h2>
         <div class="instructions-box">
-            <p><strong>Objetivo Transformacional:</strong> Internalizar que tú no eres la empresa. Crear reglas claras te da libertad y protege tanto tu patrimonio como el negocio. Este es el primer paso para tomar decisiones de inversión profesionales.</p>
+            <p><strong>Objetivo Transformacional:</strong> Dominarás el "Factor Tiempo" como medida de riesgo. En el mundo de las PYMES, el dinero detenido es dinero vulnerable. El objetivo es que visualices la velocidad de retorno como una póliza de seguro: mientras más rápido recuperes tu inversión, más pronto estarás listo para capturar la siguiente gran oportunidad.</p>
         </div>
         <div class="instructions-box !bg-gray-50 !border-brand-orange">
-            <p><strong>Instrucciones:</strong> Responde con sinceridad a las siguientes preguntas para identificar el estado actual de tu relación financiera con tu empresa y definir un sueldo base de mercado.</p>
+            <p><strong>Instrucciones:</strong> Define el plazo proyectado de recuperación (Payback) en meses. Este indicador no solo mide el éxito, mide tu exposición a la incertidumbre. Utiliza el semáforo de velocidad para validar si el tiempo de recuperación es saludable para tu flujo actual o si estás inmovilizando capital por un periodo que podría comprometer tu agilidad operativa.</p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
@@ -1320,10 +1322,10 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('ej9').innerHTML = `
         <h2 class="text-2xl font-bold brand-orange mb-4">${sectionsData[8].title}</h2>
         <div class="instructions-box">
-            <p><strong>Objetivo Transformacional:</strong> Internalizar que tú no eres la empresa. Crear reglas claras te da libertad y protege tanto tu patrimonio como el negocio. Este es el primer paso para tomar decisiones de inversión profesionales.</p>
+            <p><strong>Objetivo Transformacional:</strong> Visualizarás las amenazas antes de que ocurran para diseñar tu "escudo de protección". Dejarás de temer al riesgo para empezar a gestionarlo, asegurando que un imprevisto no derribe todo tu plan de crecimiento.</p>
         </div>
         <div class="instructions-box !bg-gray-50 !border-brand-orange">
-            <p><strong>Instrucciones:</strong> Responde con sinceridad a las siguientes preguntas para identificar el estado actual de tu relación financiera con tu empresa y definir un sueldo base de mercado.</p>
+            <p><strong>Instrucciones:</strong> Toda inversión conlleva riesgos; el error no es tenerlos, sino ignorarlos. Identifica los eventos que podrían comprometer el éxito de este proyecto. Clasifícalos por su nivel de impacto y define con claridad un <strong>Plan A (Mitigación)</strong> para evitar que sucedan, y un <strong>Plan B (Contingencia)</strong> por si llegan a ocurrir. Gestionar el riesgo es lo que separa a un estratega de un apostador.</p>
         </div>
 
         <div class="bg-white rounded-xl border shadow-sm overflow-hidden">
@@ -1361,10 +1363,10 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('ej10').innerHTML = `
         <h2 class="text-2xl font-bold brand-orange mb-4">${sectionsData[9].title}</h2>
         <div class="instructions-box">
-            <p><strong>Objetivo Transformacional:</strong> Internalizar que tú no eres la empresa. Crear reglas claras te da libertad y protege tanto tu patrimonio como el negocio. Este es el primer paso para tomar decisiones de inversión profesionales.</p>
+            <p><strong>Objetivo Transformacional:</strong> Conectarás el "alma" de tu empresa con tus decisiones de capital. Una inversión puede ser rentable y segura, pero si no te acerca a tu visión a 3 años, es una distracción costosa. Aquí es donde validas que el crecimiento tiene un sentido estratégico superior.</p>
         </div>
         <div class="instructions-box !bg-gray-50 !border-brand-orange">
-            <p><strong>Instrucciones:</strong> Responde con sinceridad a las siguientes preguntas para identificar el estado actual de tu relación financiera con tu empresa y definir un sueldo base de mercado.</p>
+            <p><strong>Instrucciones:</strong> Sintetiza todo tu análisis en una declaración de propósito poderosa. Define el área de impacto, la táctica y el resultado esperado. Al terminar, el sistema generará tu <strong>Pitch Estratégico</strong>: la herramienta definitiva para comunicar esta decisión a tus socios, equipo o para auto-validar tu convicción como dueño del negocio.</p>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
