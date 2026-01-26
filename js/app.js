@@ -49,7 +49,45 @@
         if (percentage < 40) feedback.innerText = "Nivel Crítico: Estructura técnica débil.";
         else if (percentage < 75) feedback.innerText = "Nivel Moderado: Ejecución inconsistente.";
         else feedback.innerText = "Nivel Avanzado: Proceso de decisión sólido.";
+
+        // Identificación de Áreas de Oportunidad (Sin consejos)
+        const practiceLabels = [
+            "Conocimiento del FCL", "Ponderación vs FCL", "Análisis de Alternativas", 
+            "Respaldo Documental", "Cálculo de ROI", "Definición de Plazos", 
+            "Identificación de Riesgos", "Mitigación de Riesgos"
+        ];
+        
+        const opportunityAreas = [];
+        for (let pIdx = 0; pIdx < 8; pIdx++) {
+            let pScore = 0;
+            for (let i = 1; i <= 3; i++) {
+                pScore += parseInt(document.querySelector(`[data-id="ej3_score_p${pIdx}_i${i}"]`)?.value || 0);
+            }
+            if (pScore < 4) opportunityAreas.push(practiceLabels[pIdx]); // Si el promedio es menor a "Parcial" en las 3 inversiones
+        }
+
+        const areasList = document.getElementById('ej3-areas-list');
+        const areasConclusion = document.getElementById('ej3-areas-conclusion');
+        const ctaContainer = document.getElementById('cta-container-ej3');
+
+        if (opportunityAreas.length > 0) {
+            areasConclusion.classList.remove('hidden');
+            ctaContainer.classList.remove('hidden');
+            areasList.innerHTML = opportunityAreas.map(area => `<span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-xs font-bold border border-gray-200">${area}</span>`).join('');
+        }
     }
+};
+
+// Función Global de CTA para Consultoría
+window.sendConsultancyEmail = function(exerciseId) {
+    const email = "contacto@miempresacrece.com.mx";
+    const reflection = document.getElementById('reflection')?.value || "No se incluyó reflexión adicional.";
+    const name = document.querySelector('[data-id="sesionc_nombre_participante"]')?.value || "Empresario";
+    
+    let subject = `Solicitud de Asesoría - Workbook Sesión C`;
+    let body = `Hola equipo de Mi Empresa Crece,\n\nMi nombre es ${name}.\n\nHe terminado mi autodiagnóstico de inversión y he identificado la siguiente reflexión como mi prioridad actual:\n\n"${reflection}"\n\nMe gustaría recibir apoyo para profesionalizar mi proceso de toma de decisiones.`;
+
+    window.location.href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 };
 
 /* === MOTOR LÓGICO DEL EJERCICIO 4: CALCULADORA FCL === */
@@ -836,7 +874,7 @@ document.addEventListener('DOMContentLoaded', function() {
     <div class="space-y-6">
         <div>
             <h4 class="font-semibold text-gray-700">Borrador de Metas Anuales Vigentes</h4>
-            <p class="text-sm text-gray-600 mb-2 italic">(1. Define una meta que te parezca realista y deseable)</p>
+            <p class="text-sm text-gray-600 mb-2 italic">(Define una meta que te parezca realista y deseable)</p>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2">
                 <input type="text" placeholder="Meta de Ingreso Vigente" class="autosave-input p-2 border rounded-md" data-section="ej2" data-id="ej2_meta_ingreso">
                 <input type="text" placeholder="Meta de Utilidad Vigente" class="autosave-input p-2 border rounded-md" data-section="ej2" data-id="ej2_meta_utilidad">
@@ -848,7 +886,7 @@ document.addEventListener('DOMContentLoaded', function() {
         </div>
         <div>
             <h4 class="font-semibold text-gray-700">Iniciativas de Inversión Estratégicas</h4>
-            <p class="text-sm text-gray-600 mb-2 italic">(2. Entre tus líneas de producto y proyectos actuales en acción o planeados, define 3 que juntos te permitirían alcanzar esa meta)</p>
+            <p class="text-sm text-gray-600 mb-2 italic">(Entre tus líneas de producto y proyectos actuales en acción o planeados, define 3 que juntos te permitirían alcanzar esa meta)</p>
             <div class="space-y-2 mt-2">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
                     <input type="text" placeholder="Proyecto 1: Nombre" class="autosave-input p-2 border rounded-md" data-section="ej2" data-id="ej2_proy1_nombre">
@@ -904,7 +942,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     <div class="mb-10 p-6 bg-white rounded-xl shadow-sm border border-gray-100">
                         <h3 class="text-xl font-bold text-gray-800 mb-4 font-montserrat">Paso 1: Define tus Inversiones a Evaluar</h3>
-                        <p class="text-gray-600 mb-4">Piensa en las 3 inversiones más importantes (contrataciones, equipo, marketing, etc.) que has realizado en los últimos 12 meses.</p>
+                        <p class="text-gray-600 mb-4">Consulta tu registro histórico y piensa en las 3 inversiones más importantes (contrataciones, equipo, marketing, etc.) que has realizado en los **últimos 12 meses**.</p>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             ${[1, 2, 3].map(i => `
                                 <input type="text" id="inv-name-${i}" placeholder="Inversión (Nuevo Vendedor/Maquinaria/Campaña Ads)${i}" 
@@ -967,9 +1005,23 @@ document.addEventListener('DOMContentLoaded', function() {
                             <p id="score-feedback" class="text-gray-600 italic">Define tus inversiones para comenzar.</p>
                         </div>
                         <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
-                            <h3 class="text-lg font-bold brand-blue mb-4">Paso 3: Reflexión Estratégica</h3>
-                            <label for="reflection" class="text-gray-600 mb-2 block">Basado en tu score, ¿cuál es el área de oportunidad N°1 que revela este diagnóstico en tu proceso de toma de decisiones?</label>
-                         <textarea id="reflection" rows="4" placeholder="Ej: Necesito calcular siempre el Flujo de Caja Libre antes de decidir..." class="autosave-input w-full p-3 border border-gray-300 rounded-lg" data-section="ej3" data-id="ej3_reflection"></textarea>
+                            <h3 class="text-lg font-bold brand-blue mb-4">Paso 3: Conclusión y Próximos Pasos</h3>
+                            
+                            <div id="ej3-areas-conclusion" class="mb-6 hidden">
+                                <p class="text-sm font-bold text-gray-500 uppercase mb-2">Áreas de Oportunidad Detectadas:</p>
+                                <div id="ej3-areas-list" class="flex flex-wrap gap-2 mb-4"></div>
+                            </div>
+
+                            <label for="reflection" class="text-gray-600 mb-2 block font-semibold">Basado en tu score, ¿cuál es el área de oportunidad N°1 que revela este diagnóstico en tu proceso de toma de decisiones?</label>
+                            <textarea id="reflection" rows="4" placeholder="Ej: Necesito calcular siempre el Flujo de Caja Libre antes de decidir..." class="autosave-input w-full p-3 border border-gray-300 rounded-lg mb-4" data-section="ej3" data-id="ej3_reflection"></textarea>
+                            
+                            <div id="cta-container-ej3" class="hidden animate-fade-in">
+                                <button onclick="window.sendConsultancyEmail('ej3')" class="w-full bg-brand-orange hover:bg-orange-600 text-white font-black py-4 px-6 rounded-xl transition-all shadow-lg flex items-center justify-center gap-3">
+                                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                                    SOLICITAR APOYO EN MI ÁREA DE OPORTUNIDAD
+                                </button>
+                                <p class="text-[10px] text-gray-400 text-center mt-2">Se enviará un correo automático a contacto@miempresacrece.com.mx</p>
+                            </div>
                         </div>
                     </div>
                 `;
