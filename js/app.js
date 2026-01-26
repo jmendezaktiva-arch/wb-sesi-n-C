@@ -691,11 +691,16 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
 
             <div class="mb-6">
-                 <h4 class="font-semibold text-gray-700 mb-2">Tablas de Referencia (Sueldos en MXN/mes)</h4>
+                 <h4 class="font-semibold text-gray-700 mb-2">Tablas de Referencia (Sueldo autoasignado para un director)</h4>
                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="overflow-x-auto">
                         <table class="w-full text-sm">
-                            <thead><tr class="bg-gray-200"><th colspan="2" class="p-2">1. Referentes de mercado</th></tr></thead>
+                            <thead>
+                                <tr class="bg-gray-200">
+                                    <th class="p-2 text-left">1. Referentes de mercado</th>
+                                    <th class="p-2 text-right">Sueldos en MXN/mes</th>
+                                </tr>
+                            </thead>
                             <tbody class="divide-y">
                                 <tr class="bg-white"><td>Microempresa</td><td class="text-right">$25k – $40k</td></tr>
                                 <tr class="bg-gray-50"><td>Pequeña empresa</td><td class="text-right">$30k – $45k</td></tr>
@@ -707,7 +712,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-sm">
-                            <thead><tr class="bg-gray-200"><th colspan="2" class="p-2">2. Límites por facturación</th></tr></thead>
+                            <thead>
+                                <tr class="bg-gray-200">
+                                    <th class="p-2 text-left">2. Rangos de facturación</th>
+                                    <th class="p-2 text-right">Rango de Sueldo recomendable</th>
+                                </tr>
+                            </thead>
                             <tbody class="divide-y">
                                 <tr class="bg-white"><td>$300k – $1M</td><td class="text-right">$18k – $60k</td></tr>
                                 <tr class="bg-gray-50"><td>$1M – $5M</td><td class="text-right">$30k – $90k</td></tr>
@@ -728,6 +738,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             <div class="mb-6">
                 <label class="block font-semibold text-gray-700 mb-2">3. Define o valida un rango de sueldo consistente y coherente con los criterios analizados.</label>
+                <p class="text-sm text-gray-600 mb-2 italic">(De acuerdo con las tablas de referencia 1, referencia 2 y ejercicio de referencia A, definete un sueldo realista coherente con los tres análisis anteriores.)</p>
                 <input type="text" placeholder="Mi sueldo fijo mensual será de..." class="autosave-input w-full p-3 border border-gray-300 rounded-lg" data-section="ej1" data-id="ej1_salario_definido">
             </div>
 
@@ -821,48 +832,50 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
 
                     <div class="bg-gray-50 p-6 rounded-lg border">
-                        <h3 class="text-xl font-bold text-gray-800 mb-4">Apartado B: Alineación Estratégica - Metas y Proyectos</h3>
-                        <div class="space-y-6">
-                            <div>
-                                <h4 class="font-semibold text-gray-700">Borrador de Metas Anuales Vigentes</h4>
-                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2">
-                                    <input type="text" placeholder="Meta de Ingreso Vigente" class="autosave-input p-2 border rounded-md" data-section="ej2" data-id="ej2_meta_ingreso">
-                                    <input type="text" placeholder="Meta de Utilidad Vigente" class="autosave-input p-2 border rounded-md" data-section="ej2" data-id="ej2_meta_utilidad">
-                                    <div>
-                                        <label for="fecha-fijacion-metas" class="block text-xs text-gray-500">Fecha objetivo fijación definitiva</label>
-                                        <input type="date" id="fecha-fijacion-metas" class="autosave-input w-full p-2 border rounded-md" data-section="ej2" data-id="ej2_meta_fecha">
-                                    </div>
-                                </div>
-                            </div>
-                            <div>
-                                <h4 class="font-semibold text-gray-700">Iniciativas de Inversión Estratégicas</h4>
-                                <div class="space-y-2 mt-2">
-                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
-                                        <input type="text" placeholder="Proyecto 1: Nombre" class="autosave-input p-2 border rounded-md" data-section="ej2" data-id="ej2_proy1_nombre">
-                                        <input type="text" placeholder="Enfoque (Ventas, Op, etc.)" class="autosave-input p-2 border rounded-md" data-section="ej2" data-id="ej2_proy1_enfoque">
-                                        <input type="text" placeholder="Monto Estimado" class="autosave-input p-2 border rounded-md" data-section="ej2" data-id="ej2_proy1_monto">
-                                    </div>
-                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
-                                        <input type="text" placeholder="Proyecto 2: Nombre" class="autosave-input p-2 border rounded-md" data-section="ej2" data-id="ej2_proy2_nombre">
-                                        <input type="text" placeholder="Enfoque" class="autosave-input p-2 border rounded-md" data-section="ej2" data-id="ej2_proy2_enfoque">
-                                        <input type="text" placeholder="Monto Estimado" class="autosave-input p-2 border rounded-md" data-section="ej2" data-id="ej2_proy2_monto">
-                                    </div>
-                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
-                                        <input type="text" placeholder="Proyecto 3: Nombre" class="autosave-input p-2 border rounded-md" data-section="ej2" data-id="ej2_proy3_nombre">
-                                        <input type="text" placeholder="Enfoque" class="autosave-input p-2 border rounded-md" data-section="ej2" data-id="ej2_proy3_enfoque">
-                                        <input type="text" placeholder="Monto Estimado" class="autosave-input p-2 border rounded-md" data-section="ej2" data-id="ej2_proy3_monto">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-gray-50 p-6 rounded-lg border">
-                        <h3 class="text-xl font-bold text-gray-800 mb-2">Apartado C: Compromiso de Ejecución</h3>
-                        <label for="fecha-compromiso-proyecto" class="block font-semibold text-gray-700">Fecha compromiso para tener iniciado un proyecto estratégico de crecimiento:</label>
-                        <input type="date" id="fecha-compromiso-proyecto" class="autosave-input w-full md:w-1/2 mt-2 p-3 border rounded-lg" data-section="ej2" data-id="ej2_fecha_compromiso">
-                    </div>
+    <h3 class="text-xl font-bold text-gray-800 mb-4">Apartado B: Alineación Estratégica - Metas y Proyectos</h3>
+    <div class="space-y-6">
+        <div>
+            <h4 class="font-semibold text-gray-700">Borrador de Metas Anuales Vigentes</h4>
+            <p class="text-sm text-gray-600 mb-2 italic">(1. Define una meta que te parezca realista y deseable)</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2">
+                <input type="text" placeholder="Meta de Ingreso Vigente" class="autosave-input p-2 border rounded-md" data-section="ej2" data-id="ej2_meta_ingreso">
+                <input type="text" placeholder="Meta de Utilidad Vigente" class="autosave-input p-2 border rounded-md" data-section="ej2" data-id="ej2_meta_utilidad">
+                <div>
+                    <label for="fecha-fijacion-metas" class="block text-xs text-gray-500">Fecha objetivo fijación definitiva</label>
+                    <input type="date" id="fecha-fijacion-metas" class="autosave-input w-full p-2 border rounded-md" data-section="ej2" data-id="ej2_meta_fecha">
                 </div>
+            </div>
+        </div>
+        <div>
+            <h4 class="font-semibold text-gray-700">Iniciativas de Inversión Estratégicas</h4>
+            <p class="text-sm text-gray-600 mb-2 italic">(2. Entre tus líneas de producto y proyectos actuales en acción o planeados, define 3 que juntos te permitirían alcanzar esa meta)</p>
+            <div class="space-y-2 mt-2">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                    <input type="text" placeholder="Proyecto 1: Nombre" class="autosave-input p-2 border rounded-md" data-section="ej2" data-id="ej2_proy1_nombre">
+                    <input type="text" placeholder="Enfoque (Ventas, Op, etc.)" class="autosave-input p-2 border rounded-md" data-section="ej2" data-id="ej2_proy1_enfoque">
+                    <input type="text" placeholder="Monto Estimado" class="autosave-input p-2 border rounded-md" data-section="ej2" data-id="ej2_proy1_monto">
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                    <input type="text" placeholder="Proyecto 2: Nombre" class="autosave-input p-2 border rounded-md" data-section="ej2" data-id="ej2_proy2_nombre">
+                    <input type="text" placeholder="Enfoque" class="autosave-input p-2 border rounded-md" data-section="ej2" data-id="ej2_proy2_enfoque">
+                    <input type="text" placeholder="Monto Estimado" class="autosave-input p-2 border rounded-md" data-section="ej2" data-id="ej2_proy2_monto">
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                    <input type="text" placeholder="Proyecto 3: Nombre" class="autosave-input p-2 border rounded-md" data-section="ej2" data-id="ej2_proy3_nombre">
+                    <input type="text" placeholder="Enfoque" class="autosave-input p-2 border rounded-md" data-section="ej2" data-id="ej2_proy3_enfoque">
+                    <input type="text" placeholder="Monto Estimado" class="autosave-input p-2 border rounded-md" data-section="ej2" data-id="ej2_proy3_monto">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="bg-gray-50 p-6 rounded-lg border">
+    <h3 class="text-xl font-bold text-gray-800 mb-2">Apartado C: Compromiso de Ejecución</h3>
+    <p class="text-sm text-gray-600 mb-4 italic">(Incorporar en video clip: comprométete a que empiece a suceder 1 de estos 3 proyectos de crecimiento, ponle fecha (mínimo producto viable, ejecución ágil, describe el proceso de iterar).)</p>
+    <label for="fecha-compromiso-proyecto" class="block font-semibold text-gray-700">Fecha compromiso para tener iniciado un proyecto estratégico de crecimiento:</label>
+    <input type="date" id="fecha-compromiso-proyecto" class="autosave-input w-full md:w-1/2 mt-2 p-3 border rounded-lg" data-section="ej2" data-id="ej2_fecha_compromiso">
+</div>
             `;
 
             // Dentro de la función que gestiona el contenido del Ejercicio 3 en app.js
