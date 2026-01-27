@@ -90,6 +90,15 @@ window.sendConsultancyEmail = function(exerciseId) {
     window.location.href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 };
 
+window.sendConsultancyEmailCustom = function(customSubject) {
+    const email = "contacto@miempresacrece.com.mx";
+    const name = document.querySelector('[data-id="sesionc_nombre_participante"]')?.value || "Empresario";
+    
+    let body = `Hola equipo de Mi Empresa Crece,\n\nMi nombre es ${name}.\n\nTras realizar el cálculo de mi Flujo de Caja Libre (FCL) en el Workbook, me interesa recibir apoyo especializado en este punto.\n\nQuedo atento a su respuesta.`;
+
+    window.location.href = `mailto:${email}?subject=${encodeURIComponent(customSubject)}&body=${encodeURIComponent(body)}`;
+};
+
 /* === MOTOR LÓGICO DEL EJERCICIO 4: CALCULADORA FCL === */
 
 const FCLManager = {
@@ -238,6 +247,8 @@ const FCLManager = {
             // Si hay flujo positivo, procedemos con los cálculos de semáforos
             this.updateSemaphores(annual);
         }
+
+        this.renderCTA(annual);
     },
 
     updateSemaphores: function(annual) {
@@ -247,6 +258,49 @@ const FCLManager = {
         document.querySelector('#semaphore-blue-2-2 p.text-sm').innerText = `${fmt(annual * 0.081)} - ${fmt(annual * 0.20)}`;
         document.querySelector('#semaphore-yellow-2-2 p.text-sm').innerText = `${fmt(annual * 0.21)} - ${fmt(annual * 0.70)}`;
         document.querySelector('#semaphore-red-2-2 p.text-sm').innerText = `${fmt(annual * 0.71)} - ${fmt(annual * 1.00)}`;
+    },
+
+    renderCTA: function(annual) {
+        const container = document.getElementById('fcl-cta-container-2-2');
+        if (!container) return;
+        container.classList.remove('hidden');
+
+        let config = {};
+        
+        if (annual <= 0) {
+            config = {
+                style: "border-red-200 bg-red-50",
+                buttonClass: "bg-red-600 hover:bg-red-700",
+                text: "Te gustaría que un consultor especializado te ayudara a realizar ajustes para que en 2 o 3 meses puedas empezar a tener margen para realizar inversiones en crecimiento?",
+                subject: "Asesoría FCL - Ajuste de Márgenes (FCL Crítico)"
+            };
+        } else if (annual < 150000) {
+            config = {
+                style: "border-yellow-200 bg-yellow-50",
+                buttonClass: "bg-yellow-500 hover:bg-yellow-600",
+                text: "Te gustaría recibir ayuda de un consultor que ayude a implementar microinversiones que te ayuden a incrementar tus ingresos y utilidades?",
+                subject: "Asesoría FCL - Implementación de Microinversiones"
+            };
+        } else {
+            config = {
+                style: "border-blue-200 bg-blue-50",
+                buttonClass: "bg-brand-blue hover:bg-blue-800",
+                text: "Te gustaría que un consultor te ayudara a encontrar las mejores inversiones para maximizar tu crecimiento e independientemente de lo que ya tienes, traerte avenidas nuevas de crecimiento?",
+                subject: "Asesoría FCL - Maximizar Crecimiento y Nuevas Avenidas"
+            };
+        }
+
+        container.innerHTML = `
+            <div class="p-6 border-2 border-dashed rounded-2xl flex flex-col md:flex-row items-center gap-6 ${config.style}">
+                <div class="flex-1">
+                    <p class="text-gray-800 font-semibold text-lg leading-tight">${config.text}</p>
+                </div>
+                <button onclick="window.sendConsultancyEmailCustom('${config.subject}')" 
+                        class="whitespace-nowrap ${config.buttonClass} text-white font-black py-4 px-8 rounded-xl shadow-lg transition-all transform hover:scale-105">
+                    SOLICITAR ASESORÍA
+                </button>
+            </div>
+        `;
     },
 
     bindEvents: function() {
@@ -920,8 +974,8 @@ document.addEventListener('DOMContentLoaded', function() {
             const renderEjercicio3Completo = () => {
                 const container = document.getElementById('ej3');
                 const practices = [
-                    "Conocías tu Flujo de Caja Libre (FCL) al momento de invertir.",
-                    "Ponderaste la inversión según tu FCL contra otras posibles inversiones.",
+                    "Conocías tu Flujo de Caja Libre (FCL) al momento de invertir. <button class='fcl-trigger' onclick='openFCLInfo(event)'>i</button>",
+                    "Ponderaste la inversión según tu FCL contra otras posibles inversiones. <button class='fcl-trigger' onclick='openFCLInfo(event)'>i</button>",
                     "Evaluaste alternativas con posibilidad de mayor rentabilidad.",
                     "Respaldaste el monto requerido por escrito (cotización, plan, etc.).",
                     "Hiciste un cálculo para determinar una Rentabilidad Esperada (ROI).",
@@ -1029,7 +1083,10 @@ document.addEventListener('DOMContentLoaded', function() {
             renderEjercicio3Completo();
 
             const ej4HTML = `
-                <h2 class="text-2xl font-bold brand-orange mb-4">4. Cálculo de Flujo de Caja Libre</h2>
+                <h2 class="text-2xl font-bold brand-orange mb-4 flex items-center">
+                    4. Cálculo de Flujo de Caja Libre
+                    <button class="fcl-trigger" onclick="openFCLInfo(event)" title="¿Qué es el FCL?">i</button>
+                </h2>
                 <div class="instructions-box">
                     <p><strong>Objetivo Transformacional:</strong> Descubrirás el "Oxígeno Real" de tu negocio. El Flujo de Caja Libre (FCL) es el capital que queda tras cumplir con todas tus obligaciones operativas; es el único recurso con el que puedes comprar el futuro sin asfixiar el presente.</p>
                 </div>
@@ -1105,6 +1162,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 </div>
                             </div>
                         </div>
+                        <div id="fcl-cta-container-2-2" class="mt-8 hidden animate-fade-in"></div>
                     </div>
                     <div id="example-content-2-2" class="fcl-tab-content-2-2">
                         <div class="bg-white p-2 sm:p-6 rounded-lg">
@@ -1174,7 +1232,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="space-y-8">
                         <div id="step-1" class="step-content">
                             <h3 class="text-xl font-bold text-gray-800 mb-2">Paso 1: Vaciado de Iniciativas de Crecimiento</h3>
-                            <label class="text-gray-600 mb-4 block">Captura las 5 prioridades o proyectos que tienes en mente. No te limites, este es tu inventario de posibilidades antes del filtro estratégico.</label>
+                            <label class="text-gray-600 mb-4 block">Captura las 5 prioridades o proyectos que tienes en mente. No te limites, este es tu inventario de posibilidades antes del filtro estratégico <strong>(Recuerda que no pueden existir dos prioridades con el mismo nivel)</strong>.</label>
                             <div class="space-y-2">
                                 <input type="text" placeholder="Prioridad 1..." class="autosave-input w-full p-3 border border-gray-300 rounded-lg" data-section="ej5" data-id="ej5_prio1">
                                 <input type="text" placeholder="Prioridad 2..." class="autosave-input w-full p-3 border border-gray-300 rounded-lg" data-section="ej5" data-id="ej5_prio2">
@@ -1197,7 +1255,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                             <div id="step-2" class="step-content">
                                 <h3 class="text-xl font-bold text-gray-800 mb-2">Paso 2: Priorización de Áreas Clave</h3>
-                                <p class="text-gray-600 mb-4">Ahora, vamos a estructurar. Asigna una prioridad del 1 (más importante) al 4 a cada área estratégica y explica brevemente tu razonamiento.</p>
+                                <p class="text-gray-600 mb-4">Ahora, vamos a estructurar. Asigna una prioridad del 1 (más importante) al 4 a cada área estratégica y explica brevemente tu razonamiento <strong>(Recuerda que no pueden existir dos prioridades con el mismo nivel)</strong>.</p>
                                 <div id="priority-areas-container" class="space-y-4">
                                     </div>
                             </div>
@@ -1307,7 +1365,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 3.7 INYECCIÓN DEL EJERCICIO 7 (EVALUACIÓN DEL MONTO)
     document.getElementById('ej7').innerHTML = `
-        <h2 class="text-2xl font-bold brand-orange mb-4">${sectionsData[6].title}</h2>
+        <h2 class="text-2xl font-bold brand-orange mb-4 flex items-center">
+            ${sectionsData[6].title}
+            <button class="fcl-trigger" onclick="openFCLInfo(event)" title="¿Qué es el FCL?">i</button>
+        </h2>
         <div class="instructions-box">
             <p><strong>Objetivo Transformacional:</strong> Aprenderás a medir el "Peso Específico" de tu inversión. No importa si algo es barato o caro en términos absolutos, lo que importa es cuántos meses de tu "oxígeno" (FCL) consume. El objetivo es asegurar que tu crecimiento no se convierta en tu sentencia de muerte por falta de liquidez.</p>
         </div>
@@ -1596,3 +1657,38 @@ const DataSyncManager = {
         }
     }
 };
+
+/* --- CONTROLADOR DE LA BURBUJA INFORMATIVA FCL --- */
+const FCLInfoController = {
+    init: function() {
+        const modal = document.getElementById('fcl-modal');
+        const overlay = document.getElementById('fcl-overlay');
+        const closeBtn = document.getElementById('fcl-close');
+
+        // Verificamos que los elementos existan en el DOM
+        if (!modal || !overlay || !closeBtn) return;
+
+        const toggle = (show) => {
+            modal.classList.toggle('active', show);
+            overlay.classList.toggle('active', show);
+        };
+
+        // Exponemos la función globalmente para los botones (i)
+        window.openFCLInfo = (e) => {
+            if (e) e.preventDefault();
+            toggle(true);
+        };
+
+        // Eventos de cierre
+        closeBtn.onclick = () => toggle(false);
+        overlay.onclick = () => toggle(false);
+        
+        // Cerrar con tecla ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') toggle(false);
+        });
+    }
+};
+
+// Inicialización automática
+document.addEventListener('DOMContentLoaded', () => FCLInfoController.init());
