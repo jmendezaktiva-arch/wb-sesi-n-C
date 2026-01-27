@@ -1255,9 +1255,21 @@ document.addEventListener('DOMContentLoaded', function() {
 
                             <div id="step-2" class="step-content">
                                 <h3 class="text-xl font-bold text-gray-800 mb-2">Paso 2: Priorización de Áreas Clave</h3>
-                                <p class="text-gray-600 mb-4">Ahora, vamos a estructurar. Asigna una prioridad del 1 (más importante) al 4 a cada área estratégica y explica brevemente tu razonamiento <strong>(Recuerda que no pueden existir dos prioridades con el mismo nivel)</strong>.</p>
-                                <div id="priority-areas-container" class="space-y-4">
+                                <p class="text-gray-600 mb-4">Ahora, vamos a estructurar. Asigna una prioridad del 1 (más importante) al 4 a cada área estratégica y explica brevemente tu razonamiento.</p>
+                                
+                                <div id="priority-areas-container" class="space-y-4"></div>
+
+                                <div class="mt-8 p-6 bg-orange-50 border-2 border-dashed border-brand-orange rounded-2xl flex flex-col md:flex-row items-center gap-6 animate-fade-in">
+                                    <div class="flex-1">
+                                        <p class="text-gray-800 font-semibold text-lg leading-tight">
+                                            ¿Te gustaría una llamada de 1 a 1 para definir esto con tu consultor de Mi Empresa Crece?
+                                        </p>
                                     </div>
+                                    <button onclick="window.sendConsultancyEmailCustom('Solicitud de Sesión 1 a 1 - Prioridades de Negocio')" 
+                                            class="whitespace-nowrap bg-brand-orange hover:bg-orange-600 text-white font-black py-4 px-8 rounded-xl shadow-lg transition-all transform hover:scale-105 uppercase tracking-tight">
+                                        SOLICITAR SESIÓN 1 A 1
+                                    </button>
+                                </div>
                             </div>
 
                             <div id="step-3" class="step-content hidden-step">
