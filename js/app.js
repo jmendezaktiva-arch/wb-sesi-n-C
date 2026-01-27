@@ -1,11 +1,23 @@
+    // Variable para persistir los selectores en memoria y no buscarlos cada vez
+    let memoizedEj3Selects = null;
+
     window.calculateEj3Scores = function() {
     let totalPoints = 0;
     const maxPossible = 48;
 
+    // Si es la primera vez, cacheamos los selectores para optimizar rendimiento
+    if (!memoizedEj3Selects) {
+        memoizedEj3Selects = {
+            1: document.querySelectorAll('[data-id*="_i1"]'),
+            2: document.querySelectorAll('[data-id*="_i2"]'),
+            3: document.querySelectorAll('[data-id*="_i3"]')
+        };
+    }
+
     // 1. Procesar cada inversión (columna)
     for (let inv = 1; inv <= 3; inv++) {
         let invScore = 0;
-        const columnSelects = document.querySelectorAll(`[data-id*="_i${inv}"]`);
+        const columnSelects = memoizedEj3Selects[inv];
         
         columnSelects.forEach(select => {
             const val = parseInt(select.value) || 0;
@@ -99,6 +111,20 @@ window.sendConsultancyEmailCustom = function(customSubject) {
     window.location.href = `mailto:${email}?subject=${encodeURIComponent(customSubject)}&body=${encodeURIComponent(body)}`;
 };
 
+/* --- UTILIDADES DE LIMPIEZA FINANCIERA --- */
+const FinanceUtils = {
+    /**
+     * Limpia un valor de entrada y lo convierte en un número seguro.
+     * Si el campo está vacío o no es un número, devuelve 0.
+     */
+    parseSafeFloat: function(value) {
+        if (!value) return 0;
+        // Elimina comas (por si el usuario pega valores con formato) y convierte a float
+        const cleanValue = parseFloat(value.toString().replace(/,/g, ''));
+        return isNaN(cleanValue) ? 0 : cleanValue;
+    }
+};
+
 /* === MOTOR LÓGICO DEL EJERCICIO 4: CALCULADORA FCL === */
 
 const FCLManager = {
@@ -187,18 +213,19 @@ const FCLManager = {
 
         for (let i = 0; i < this.currentMonths; i++) {
             // Sumar Ingresos
-            const ing = (parseFloat(document.querySelector(`[data-id="ej4_m${i}_ing_ventas"]`)?.value) || 0) +
-                        (parseFloat(document.querySelector(`[data-id="ej4_m${i}_ing_otros"]`)?.value) || 0);
+            // Sumar Ingresos usando el limpiador centralizado
+            const ing = FinanceUtils.parseSafeFloat(document.querySelector(`[data-id="ej4_m${i}_ing_ventas"]`)?.value) +
+                        FinanceUtils.parseSafeFloat(document.querySelector(`[data-id="ej4_m${i}_ing_otros"]`)?.value);
             
             // Sumar Gastos Fijos
-            const gf = (parseFloat(document.querySelector(`[data-id="ej4_m${i}_fix_renta"]`)?.value) || 0) +
-                       (parseFloat(document.querySelector(`[data-id="ej4_m${i}_fix_sueldos"]`)?.value) || 0) +
-                       (parseFloat(document.querySelector(`[data-id="ej4_m${i}_fix_otros"]`)?.value) || 0);
+            const gf = FinanceUtils.parseSafeFloat(document.querySelector(`[data-id="ej4_m${i}_fix_renta"]`)?.value) +
+                       FinanceUtils.parseSafeFloat(document.querySelector(`[data-id="ej4_m${i}_fix_sueldos"]`)?.value) +
+                       FinanceUtils.parseSafeFloat(document.querySelector(`[data-id="ej4_m${i}_fix_otros"]`)?.value);
             
             // Sumar Gastos Variables
-            const gv = (parseFloat(document.querySelector(`[data-id="ej4_m${i}_var_costo"]`)?.value) || 0) +
-                       (parseFloat(document.querySelector(`[data-id="ej4_m${i}_var_promo"]`)?.value) || 0) +
-                       (parseFloat(document.querySelector(`[data-id="ej4_m${i}_var_otros"]`)?.value) || 0);
+            const gv = FinanceUtils.parseSafeFloat(document.querySelector(`[data-id="ej4_m${i}_var_costo"]`)?.value) +
+                       FinanceUtils.parseSafeFloat(document.querySelector(`[data-id="ej4_m${i}_var_promo"]`)?.value) +
+                       FinanceUtils.parseSafeFloat(document.querySelector(`[data-id="ej4_m${i}_var_otros"]`)?.value);
 
             const fcl = ing - gf - gv;
             results.push(fcl);
@@ -1390,16 +1417,41 @@ document.addEventListener('DOMContentLoaded', function() {
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div class="bg-gray-50 p-6 rounded-lg border">
-                <h3 class="text-lg font-bold mb-4">Impacto en Liquidez</h3>
+                <h3 class="text-lg font-bold mb-4">Configuración de Capacidad (FCL)</h3>
+                
+                <div class="mb-6 bg-white p-4 rounded-lg border border-blue-100">
+                    <p class="text-xs font-black text-gray-400 uppercase mb-3">¿Qué flujo usar para este análisis?</p>
+                    <div class="flex gap-2">
+                        <button onclick="toggleFCLSource('real')" class="flex-1 py-2 px-3 text-xs font-bold border rounded-lg hover:bg-blue-50 transition-all border-brand-blue text-brand-blue">
+                            USAR DATO REAL (EJ. 4)
+                        </button>
+                        <button onclick="toggleFCLSource('manual')" class="flex-1 py-2 px-3 text-xs font-bold border rounded-lg hover:bg-gray-50 transition-all border-gray-300 text-gray-500">
+                            ESCENARIO HIPOTÉTICO
+                        </button>
+                    </div>
+                </div>
+
                 <div class="space-y-4">
+                    <input type="hidden" id="fcl-mensual-e7" value="0">
+                    
+                    <div id="hypothetical-fcl-field" class="hidden-field transition-all duration-300 overflow-hidden" style="max-height: 0;">
+                        <label class="block text-sm font-bold text-orange-600 mb-1 italic">Ingresa FCL Hipotético:</label>
+                        <input type="number" class="autosave-input w-full p-2 border-2 border-orange-200 rounded-md bg-orange-50" 
+                               data-section="ej7" data-id="ej7_fcl_manual_value" placeholder="Ej: 50000">
+                    </div>
+
+                    <div class="p-4 bg-blue-900 rounded-xl text-white shadow-lg">
+                        <p class="text-[10px] uppercase font-black opacity-60">FCL Mensual para evaluación:</p>
+                        <p id="fcl-display-value" class="text-3xl font-black">$ 0.00</p>
+                    </div>
+
                     <div>
-                        <label class="block text-sm font-medium">Tu FCL Mensual (Promedio Ej. 4)</label>
-                        <input type="number" id="fcl-mensual-e7" placeholder="$20,000" 
+                        <label class="block text-sm font-medium text-gray-700">Monto de la Inversión que evalúas</label>
+                        <input type="number" id="monto-inversion-e7" placeholder="$30,000" 
                             class="autosave-input w-full mt-1 p-2 border rounded-md" 
-                            data-section="ej7" data-id="ej7_fcl_mensual"
+                            data-section="ej7" data-id="ej7_monto_inversion"
                             oninput="AmountManager.calculateFCLMonths()">
                     </div>
-                    <div>
                         <label class="block text-sm font-medium">Monto de la Inversión que evalúas</label>
                         <input type="number" id="monto-inversion-e7" placeholder="$30,000" 
                             class="autosave-input w-full mt-1 p-2 border rounded-md" 
@@ -1652,20 +1704,40 @@ const DataSyncManager = {
             }
         });
 
+        // Validación previa de conexión a internet
+        if (!window.navigator.onLine) {
+            alert("⚠️ No tienes conexión a internet. Revisa tu red para poder sincronizar tus respuestas.");
+            if (btn) btn.disabled = false;
+            return;
+        }
+
         try {
-            const response = await fetch(this.SCRIPT_URL, {
+            // Cambiamos el texto del botón para dar feedback de "Cargando"
+            if (btn) btn.innerText = "⏳ Sincronizando...";
+
+            await fetch(this.SCRIPT_URL, {
                 method: 'POST',
-                mode: 'no-cors', // Importante para Google Apps Script
+                mode: 'no-cors',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             });
 
-            alert(`¡Excelente ${name}! Tus respuestas han sido sincronizadas. Ahora puedes exportar tu PDF.`);
-            if (btn) btn.innerText = "✓ Información Sincronizada";
+            // Al ser no-cors, si el fetch no lanzó error de red, asumimos éxito tras una breve pausa
+            setTimeout(() => {
+                alert(`¡Excelente ${name}! Tus respuestas han sido enviadas a tu expediente. Ahora puedes exportar tu PDF.`);
+                if (btn) {
+                    btn.innerText = "✓ Información Sincronizada";
+                    btn.classList.replace('bg-brand-orange', 'bg-green-600');
+                }
+            }, 1000);
+
         } catch (error) {
             console.error("Error en sincronización:", error);
-            alert("Hubo un problema al conectar con la base de datos. Por favor, intenta de nuevo.");
-            if (btn) btn.disabled = false;
+            alert("❌ Error de comunicación: No se pudo conectar con el servidor. Verifica tu internet e intenta de nuevo.");
+            if (btn) {
+                btn.disabled = false;
+                btn.innerText = "REINTENTAR ENVÍO";
+            }
         }
     }
 };
@@ -1704,3 +1776,51 @@ const FCLInfoController = {
 
 // Inicialización automática
 document.addEventListener('DOMContentLoaded', () => FCLInfoController.init());
+
+/* --- LÓGICA DE CONTROL DE FUENTE FCL (EJERCICIO 7) --- */
+window.toggleFCLSource = function(source) {
+    const manualContainer = document.getElementById('hypothetical-fcl-field');
+    const displayValue = document.getElementById('fcl-display-value');
+    const manualInput = document.querySelector('[data-id="ej7_fcl_manual_value"]');
+
+    if (source === 'real') {
+        manualContainer.classList.remove('active');
+        // Recuperamos el promedio del Ejercicio 4 calculado en el Dashboard
+        const realFCLText = document.getElementById('avg-monthly-fcl-2-2')?.innerText || "$ 0.00";
+        displayValue.innerText = realFCLText;
+        
+        // Sincronizamos el valor numérico para los cálculos del Ejercicio 7
+        const cleanValue = parseFloat(realFCLText.replace(/[^0-9.-]+/g,"")) || 0;
+        const targetInput = document.getElementById('fcl-mensual-e7');
+        if (targetInput) {
+            targetInput.value = cleanValue;
+            AmountManager.calculateFCLMonths(); // Recalcular automáticamente
+        }
+    } else {
+        manualContainer.classList.add('active');
+        // Al cambiar a hipotético, usamos lo que esté en el input manual
+        const manualVal = parseFloat(manualInput?.value) || 0;
+        displayValue.innerText = new Intl.NumberFormat('es-MX', {style: 'currency', currency: 'MXN'}).format(manualVal);
+        
+        const targetInput = document.getElementById('fcl-mensual-e7');
+        if (targetInput) {
+            targetInput.value = manualVal;
+            AmountManager.calculateFCLMonths();
+        }
+    }
+};
+
+// Listener para actualizar el display en tiempo real si el usuario escribe en el campo manual
+document.addEventListener('input', (e) => {
+    if (e.target.getAttribute('data-id') === 'ej7_fcl_manual_value') {
+        const displayValue = document.getElementById('fcl-display-value');
+        const val = parseFloat(e.target.value) || 0;
+        displayValue.innerText = new Intl.NumberFormat('es-MX', {style: 'currency', currency: 'MXN'}).format(val);
+        
+        const targetInput = document.getElementById('fcl-mensual-e7');
+        if (targetInput) {
+            targetInput.value = val;
+            AmountManager.calculateFCLMonths();
+        }
+    }
+});
