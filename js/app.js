@@ -262,8 +262,22 @@ const FCLManager = {
         const avg = total / this.currentMonths;
         const annual = avg * 12;
 
-        document.getElementById('avg-monthly-fcl-2-2').innerText = new Intl.NumberFormat('es-MX', {style: 'currency', currency: 'MXN'}).format(avg);
-        document.getElementById('annual-fcl-2-2').innerText = new Intl.NumberFormat('es-MX', {style: 'currency', currency: 'MXN'}).format(annual);
+        // Inyectamos los valores formateados
+        const fmt = new Intl.NumberFormat('es-MX', {style: 'currency', currency: 'MXN', maximumFractionDigits: 0});
+        
+        document.getElementById('avg-monthly-fcl-2-2').innerText = fmt.format(avg);
+        document.getElementById('annual-fcl-2-2').innerText = fmt.format(annual);
+
+        // SINCRONIZACIÓN FORZADA: Si el ejercicio 7 está en modo "Real", actualizamos su valor de inmediato
+        const ej7Display = document.getElementById('fcl-display-value');
+        const ej7HiddenInput = document.getElementById('fcl-mensual-e7');
+        
+        // Solo actualizamos si el usuario no está en modo manual en el Ejercicio 7
+        if (ej7Display && !document.getElementById('hypothetical-fcl-field').classList.contains('active')) {
+            ej7Display.innerText = fmt.format(avg);
+            if (ej7HiddenInput) ej7HiddenInput.value = avg;
+            if (typeof AmountManager !== 'undefined') AmountManager.calculateFCLMonths();
+        }
 
         // 2. Validación de Capacidad de Inversión
         const semaphoreContainer = document.querySelector('#fcl-results-container-2-2 .space-y-3');
@@ -414,34 +428,78 @@ const PerformanceManager = {
 const AmountManager = {
     proyectoCount: 0,
 
+    // 1. DICCIONARIO DE CONSEJOS (CONFIGURACIÓN CENTRALIZADA)
+    ADVICE_CONFIG: {
+        GREEN: {
+            title: "✅ Interpretación: Bajo Impacto",
+            text: "Tu capacidad financiera actual absorbe esta inversión sin estrés. Ejecuta con confianza (si el ROI es positivo). Puedes pagar de contado sin descapitalizarte.",
+            style: "bg-green-50 border-green-500 text-green-900"
+        },
+        YELLOW: {
+            title: "⚠️ Interpretación: Impacto Moderado",
+            text: "Cuidado. Esta inversión compromete tu liquidez libre de hasta un trimestre. Evita el pago de contado. Negocia plazos con tu proveedor o busca financiamiento a corto plazo.",
+            style: "bg-yellow-50 border-yellow-500 text-yellow-900"
+        },
+        RED: {
+            title: "🚨 Interpretación: Alto Impacto",
+            text: "Alerta. Intentar pagar esto con flujo operativo pondrá en riesgo tu nómina. Detente. Esta compra requiere Estructura de Capital (crédito largo plazo o inyección), no flujo de caja.",
+            style: "bg-red-50 border-red-500 text-red-900"
+        }
+    },
+
     calculateFCLMonths: function() {
         const fcl = parseFloat(document.getElementById('fcl-mensual-e7')?.value) || 0;
         const monto = parseFloat(document.getElementById('monto-inversion-e7')?.value) || 0;
         const res = document.getElementById('meses-fcl-result');
         const semaforo = document.getElementById('semaforo-meses-fcl');
+        
+        // Referencias a elementos del consejo
+        const adviceBox = document.getElementById('fcl-advice-box');
+        const adviceContent = document.getElementById('fcl-advice-content');
+        const adviceTitle = document.getElementById('fcl-advice-title');
+        const adviceText = document.getElementById('fcl-advice-text');
 
         if (!res || !semaforo) return;
 
-        if (fcl === 0) {
+        // Limpieza si faltan datos (ocultamos el consejo)
+        if (fcl === 0 || monto === 0) {
             res.textContent = '0';
-            semaforo.textContent = 'Introduce FCL';
-            semaforo.className = 'semaforo-indicator bg-gray-400 inline-block mt-2';
+            semaforo.textContent = 'Introduce FCL y Monto';
+            semaforo.className = 'semaforo-indicator bg-gray-400 inline-block mt-2 mb-4';
+            if(adviceBox) adviceBox.classList.add('hidden');
             return;
         }
 
         const meses = monto / fcl;
         res.textContent = meses.toFixed(1);
+        
+        let config = null;
 
+        // Lógica de Semáforo y Selección de Consejo
         if (meses <= 1) {
             semaforo.textContent = 'Bajo Impacto';
-            semaforo.className = 'semaforo-indicator bg-green-500 inline-block mt-2';
+            semaforo.className = 'semaforo-indicator bg-green-500 inline-block mt-2 mb-4';
+            config = this.ADVICE_CONFIG.GREEN;
         } else if (meses <= 3) {
             semaforo.textContent = 'Impacto Moderado';
-            semaforo.className = 'semaforo-indicator bg-yellow-500 text-black inline-block mt-2';
+            semaforo.className = 'semaforo-indicator bg-yellow-500 text-black inline-block mt-2 mb-4';
+            config = this.ADVICE_CONFIG.YELLOW;
         } else {
             semaforo.textContent = 'Alto Impacto';
-            semaforo.className = 'semaforo-indicator bg-red-500 inline-block mt-2';
+            semaforo.className = 'semaforo-indicator bg-red-500 inline-block mt-2 mb-4';
+            config = this.ADVICE_CONFIG.RED;
         }
+
+        // Renderizado del Consejo
+        if (adviceBox && config) {
+            adviceTitle.innerText = config.title;
+            adviceText.innerText = config.text;
+            // Aplicamos estilos dinámicos (borde, fondo, texto)
+            adviceContent.className = `text-left text-sm p-4 rounded-lg border-l-4 shadow-sm transition-colors duration-300 ${config.style}`;
+            // Mostramos la caja
+            adviceBox.classList.remove('hidden');
+        }
+
         this.updateConsumoFCL();
     },
 
@@ -1115,7 +1173,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <button class="fcl-trigger" onclick="openFCLInfo(event)" title="¿Qué es el FCL?">i</button>
                 </h2>
                 <div class="instructions-box">
-                    <p><strong>Objetivo Transformacional:</strong> Descubrirás el "Oxígeno Real" de tu negocio. El Flujo de Caja Libre (FCL) es el capital que queda tras cumplir con todas tus obligaciones operativas; es el único recurso con el que puedes comprar el futuro sin asfixiar el presente.</p>
+                    <p><strong>Objetivo Transformacional:</strong> Descubrirás la "liquidez Real" de tu negocio. El Flujo de Caja Libre (FCL) es el capital que queda tras cumplir con todas tus obligaciones operativas; es el único recurso con el que puedes comprar el futuro sin asfixiar el presente.</p>
                 </div>
                 <div class="instructions-box !bg-gray-50 !border-brand-orange">
                     <p><strong>Instrucciones:</strong> Registra tus ingresos cobrados y egresos pagados de los últimos meses. Te recomendamos un análisis de <strong>6 meses</strong> para neutralizar la estacionalidad y obtener un promedio robusto. Si buscas una visibilidad rápida de tu liquidez inmediata, utiliza el modo de 3 meses. <em>Nota: Este no es un ejercicio contable fiscal, es un diagnóstico de capacidad de maniobra.</em></p>
@@ -1409,7 +1467,7 @@ document.addEventListener('DOMContentLoaded', function() {
             <button class="fcl-trigger" onclick="openFCLInfo(event)" title="¿Qué es el FCL?">i</button>
         </h2>
         <div class="instructions-box">
-            <p><strong>Objetivo Transformacional:</strong> Aprenderás a medir el "Peso Específico" de tu inversión. No importa si algo es barato o caro en términos absolutos, lo que importa es cuántos meses de tu "oxígeno" (FCL) consume. El objetivo es asegurar que tu crecimiento no se convierta en tu sentencia de muerte por falta de liquidez.</p>
+            <p><strong>Objetivo Transformacional:</strong> Aprenderás a medir el "Peso Específico" de tu inversión. No importa si algo es barato o caro en términos absolutos, lo que importa es cuántos meses de tu "liquidez" (FCL) consume. El objetivo es asegurar que tu crecimiento no se convierta en tu sentencia de muerte por falta de liquidez.</p>
         </div>
         <div class="instructions-box !bg-gray-50 !border-brand-orange">
             <p><strong>Instrucciones:</strong> Utiliza el FCL promedio que calculaste en el Ejercicio 4 para determinar a cuántos meses de operación equivale este desembolso. Además, suma otros proyectos que tengas activos este año; si el total compromete más del 50% de tu FCL anual, estás entrando en zona de alto riesgo. Una inversión inteligente es aquella que el negocio puede "digerir" sin detenerse.</p>
@@ -1419,25 +1477,36 @@ document.addEventListener('DOMContentLoaded', function() {
             <div class="bg-gray-50 p-6 rounded-lg border">
                 <h3 class="text-lg font-bold mb-4">Configuración de Capacidad (FCL)</h3>
                 
-                <div class="mb-6 bg-white p-4 rounded-lg border border-blue-100">
-                    <p class="text-xs font-black text-gray-400 uppercase mb-3">¿Qué flujo usar para este análisis?</p>
-                    <div class="flex gap-2">
-                        <button onclick="toggleFCLSource('real')" class="flex-1 py-2 px-3 text-xs font-bold border rounded-lg hover:bg-blue-50 transition-all border-brand-blue text-brand-blue">
-                            USAR DATO REAL (EJ. 4)
-                        </button>
-                        <button onclick="toggleFCLSource('manual')" class="flex-1 py-2 px-3 text-xs font-bold border rounded-lg hover:bg-gray-50 transition-all border-gray-300 text-gray-500">
-                            ESCENARIO HIPOTÉTICO
-                        </button>
+                <div class="mb-6">
+                    <p class="text-xs font-black text-gray-400 uppercase mb-4">¿Qué flujo usar para este análisis?</p>
+                    <div class="fcl-selector-container">
+                        <label class="fcl-option-card">
+                            <input type="radio" name="fcl_source" value="real" class="autosave-input" data-id="ej7_fcl_source_real" onclick="toggleFCLSource('real')" checked>
+                            <div class="fcl-option-content">
+                                <span class="block text-lg font-bold">Usar FCL Ejercicio 4</span>
+                                <span class="block text-xs text-gray-500 mt-1">(Dato Real)</span>
+                            </div>
+                        </label>
+                        <label class="fcl-option-card">
+                            <input type="radio" name="fcl_source" value="manual" class="autosave-input" data-id="ej7_fcl_source_manual" onclick="toggleFCLSource('manual')">
+                            <div class="fcl-option-content">
+                                <span class="block text-lg font-bold">Escenario Hipotético</span>
+                                <span class="block text-xs text-gray-500 mt-1">(Dato Manual)</span>
+                            </div>
+                        </label>
                     </div>
                 </div>
 
                 <div class="space-y-4">
                     <input type="hidden" id="fcl-mensual-e7" value="0">
                     
-                    <div id="hypothetical-fcl-field" class="hidden-field transition-all duration-300 overflow-hidden" style="max-height: 0;">
-                        <label class="block text-sm font-bold text-orange-600 mb-1 italic">Ingresa FCL Hipotético:</label>
-                        <input type="number" class="autosave-input w-full p-2 border-2 border-orange-200 rounded-md bg-orange-50" 
-                               data-section="ej7" data-id="ej7_fcl_manual_value" placeholder="Ej: 50000">
+                    <div id="hypothetical-fcl-field" class="hypothetical-input-container">
+                        <label class="block text-sm font-bold text-brand-orange mb-1 italic">Indica el FCL Mensual Hipotético:</label>
+                        <input type="number" 
+                               id="ej7_fcl_manual_value" 
+                               class="autosave-input w-full p-2 border-2 border-brand-orange rounded-md bg-orange-50 outline-none" 
+                               data-id="ej7_fcl_manual_value" 
+                               placeholder="Ej: 50000">
                     </div>
 
                     <div class="p-4 bg-blue-900 rounded-xl text-white shadow-lg">
@@ -1447,23 +1516,26 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Monto de la Inversión que evalúas</label>
-                        <input type="number" id="monto-inversion-e7" placeholder="$30,000" 
-                            class="autosave-input w-full mt-1 p-2 border rounded-md" 
-                            data-section="ej7" data-id="ej7_monto_inversion"
-                            oninput="AmountManager.calculateFCLMonths()">
-                    </div>
-                        <label class="block text-sm font-medium">Monto de la Inversión que evalúas</label>
+                        <p class="text-xs text-gray-500 mb-1 italic">Si no tienes un presupuesto real sustentado en cotizaciones, no dejes de elaborarlo, puedes hacer una evaluación preliminar con un estimado.</p>
                         <input type="number" id="monto-inversion-e7" placeholder="$30,000" 
                             class="autosave-input w-full mt-1 p-2 border rounded-md" 
                             data-section="ej7" data-id="ej7_monto_inversion"
                             oninput="AmountManager.calculateFCLMonths()">
                     </div>
                 </div>
+                </div>
                 <div class="text-center mt-6 p-4 bg-white rounded-xl border shadow-inner">
                     <p class="text-xs text-gray-500 uppercase font-bold tracking-widest">Esta inversión equivale a:</p>
                     <div id="meses-fcl-result" class="text-5xl font-black my-2 text-brand-blue">0</div>
                     <p class="text-sm font-bold text-gray-600 uppercase">Meses de tu Flujo Libre</p>
-                    <div id="semaforo-meses-fcl" class="semaforo-indicator bg-gray-400 inline-block mt-2">Introduce datos</div>
+                    <div id="semaforo-meses-fcl" class="semaforo-indicator bg-gray-400 inline-block mt-2 mb-4">Introduce datos</div>
+                    
+                    <div id="fcl-advice-box" class="hidden transition-all duration-500 ease-in-out">
+                        <div id="fcl-advice-content" class="text-left text-sm p-4 rounded-lg border-l-4 shadow-sm">
+                            <p class="font-bold mb-1" id="fcl-advice-title"></p>
+                            <p class="text-gray-700 italic" id="fcl-advice-text"></p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -1777,50 +1849,103 @@ const FCLInfoController = {
 // Inicialización automática
 document.addEventListener('DOMContentLoaded', () => FCLInfoController.init());
 
-/* --- LÓGICA DE CONTROL DE FUENTE FCL (EJERCICIO 7) --- */
-window.toggleFCLSource = function(source) {
-    const manualContainer = document.getElementById('hypothetical-fcl-field');
-    const displayValue = document.getElementById('fcl-display-value');
-    const manualInput = document.querySelector('[data-id="ej7_fcl_manual_value"]');
+/* --- LÓGICA DE CONTROL DE FUENTE FCL (EJERCICIO 7) - CORREGIDA Y UNIFICADA --- */
 
-    if (source === 'real') {
-        manualContainer.classList.remove('active');
-        // Recuperamos el promedio del Ejercicio 4 calculado en el Dashboard
-        const realFCLText = document.getElementById('avg-monthly-fcl-2-2')?.innerText || "$ 0.00";
-        displayValue.innerText = realFCLText;
-        
-        // Sincronizamos el valor numérico para los cálculos del Ejercicio 7
-        const cleanValue = parseFloat(realFCLText.replace(/[^0-9.-]+/g,"")) || 0;
-        const targetInput = document.getElementById('fcl-mensual-e7');
-        if (targetInput) {
-            targetInput.value = cleanValue;
-            AmountManager.calculateFCLMonths(); // Recalcular automáticamente
-        }
+// 1. Función Maestra de Control (Corrige el conflicto Manual vs Hypothetical)
+window.toggleFCLSource = function(source) {
+    // Identificar elementos
+    const container = document.querySelector('.hypothetical-input-container'); 
+    const displayValue = document.getElementById('fcl-display-value'); 
+    const manualInput = document.querySelector('[data-id="ej7_fcl_manual_value"]');
+    const targetInput = document.getElementById('fcl-mensual-e7');
+
+    // A. Gestión de Visibilidad
+    // CORRECCIÓN: Aceptamos 'manual' (del HTML) O 'hypothetical' para evitar fallos
+    const isManualMode = (source === 'manual' || source === 'hypothetical');
+
+    if (isManualMode) {
+        if (container) container.classList.add('active');
+        // Delay para asegurar que el elemento es visible antes del focus
+        setTimeout(() => { if(manualInput) manualInput.focus(); }, 100);
     } else {
-        manualContainer.classList.add('active');
-        // Al cambiar a hipotético, usamos lo que esté en el input manual
-        const manualVal = parseFloat(manualInput?.value) || 0;
-        displayValue.innerText = new Intl.NumberFormat('es-MX', {style: 'currency', currency: 'MXN'}).format(manualVal);
-        
-        const targetInput = document.getElementById('fcl-mensual-e7');
-        if (targetInput) {
-            targetInput.value = manualVal;
+        if (container) container.classList.remove('active');
+    }
+
+    // B. Obtención y Limpieza del Valor
+    let newVal = 0;
+    
+    if (source === 'real') {
+        // Opción 1: Extraer del Ejercicio 4
+        const realText = document.getElementById('avg-monthly-fcl-2-2')?.innerText || "$0.00";
+        newVal = parseMoneySafe(realText);
+    } else {
+        // Opción 2: Usar valor manual ingresado
+        newVal = parseMoneySafe(manualInput?.value || "0");
+    }
+
+    // C. Renderizado y Actualización Global
+    const fmt = new Intl.NumberFormat('es-MX', {style: 'currency', currency: 'MXN'});
+    if (displayValue) displayValue.innerText = fmt.format(newVal);
+    
+    if (targetInput) {
+        targetInput.value = newVal;
+        // Forzamos el recálculo inmediato del Ejercicio 7
+        if (typeof AmountManager !== 'undefined') {
             AmountManager.calculateFCLMonths();
         }
     }
 };
 
-// Listener para actualizar el display en tiempo real si el usuario escribe en el campo manual
-document.addEventListener('input', (e) => {
-    if (e.target.getAttribute('data-id') === 'ej7_fcl_manual_value') {
-        const displayValue = document.getElementById('fcl-display-value');
-        const val = parseFloat(e.target.value) || 0;
-        displayValue.innerText = new Intl.NumberFormat('es-MX', {style: 'currency', currency: 'MXN'}).format(val);
-        
-        const targetInput = document.getElementById('fcl-mensual-e7');
-        if (targetInput) {
-            targetInput.value = val;
-            AmountManager.calculateFCLMonths();
-        }
+// 2. Utilidad de Limpieza (Centralizada aquí para asegurar disponibilidad)
+function parseMoneySafe(value) {
+    if (!value) return 0;
+    if (typeof value === 'number') return value;
+    // Elimina todo lo que no sea número, punto o guion (soporta negativos)
+    const cleanStr = value.toString().replace(/[^\d.-]/g, '');
+    return parseFloat(cleanStr) || 0;
+}
+
+// 3. Inicialización de Eventos (DOMContentLoaded)
+document.addEventListener('DOMContentLoaded', () => {
+    
+    // A. Listeners para los Radio Buttons del Ejercicio 7
+    const radios = document.querySelectorAll('input[name="fcl_source"]');
+    radios.forEach(radio => {
+        radio.addEventListener('change', (e) => {
+            window.toggleFCLSource(e.target.value);
+        });
+    });
+
+    // B. Listener para escritura en tiempo real (Input Manual)
+    const manualField = document.querySelector('[data-id="ej7_fcl_manual_value"]');
+    if (manualField) {
+        manualField.addEventListener('input', (e) => {
+            // CORRECCIÓN: Buscamos el radio button con value="manual" que es como está en el HTML
+            const manualRadio = document.querySelector('input[name="fcl_source"][value="manual"]');
+            
+            if (manualRadio && manualRadio.checked) {
+                const val = parseMoneySafe(e.target.value);
+                const displayValue = document.getElementById('fcl-display-value');
+                const targetInput = document.getElementById('fcl-mensual-e7');
+                
+                // Actualizamos visualmente el cuadro azul
+                if (displayValue) displayValue.innerText = new Intl.NumberFormat('es-MX', {style: 'currency', currency: 'MXN'}).format(val);
+                
+                // Actualizamos el dato oculto y recalculamos
+                if (targetInput) {
+                    targetInput.value = val;
+                    if (typeof AmountManager !== 'undefined') {
+                        AmountManager.calculateFCLMonths();
+                    }
+                }
+            }
+        });
+    }
+
+    // C. Restaurar estado inicial al cargar la página
+    // Si el usuario ya había seleccionado una opción, aplicamos la lógica de inmediato
+    const selectedSource = document.querySelector('input[name="fcl_source"]:checked');
+    if (selectedSource) {
+        window.toggleFCLSource(selectedSource.value);
     }
 });
