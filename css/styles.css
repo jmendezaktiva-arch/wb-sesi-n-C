@@ -138,7 +138,8 @@ input[type="radio"]:checked + .custom-radio-ui {
 /* Cuando app.js agrega la clase .active, sobrescribimos los estados ocultos de Tailwind */
 /* El !important asegura que ganemos la especificidad sobre las clases de utilidad */
 
-#fcl-modal.active {
+#fcl-modal.active,
+#plazo-modal.active {
     opacity: 1 !important;
     pointer-events: auto !important;
     transform: translate(-50%, -50%) scale(1) !important; /* Centra y escala al 100% */
@@ -235,4 +236,9 @@ input[type="radio"]:checked + .custom-radio-ui {
 .fcl-tab-button-2-2.active {
     color: #00529B;
     border-bottom-color: #00529B;
+}
+
+/* --- UTILITARIOS DE ANIMACIÓN (FALTANTES) --- */
+.animate-fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
 }

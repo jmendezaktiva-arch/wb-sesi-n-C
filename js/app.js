@@ -268,15 +268,19 @@ const FCLManager = {
         document.getElementById('avg-monthly-fcl-2-2').innerText = fmt.format(avg);
         document.getElementById('annual-fcl-2-2').innerText = fmt.format(annual);
 
-        // SINCRONIZACIÓN FORZADA: Si el ejercicio 7 está en modo "Real", actualizamos su valor de inmediato
+        // SINCRONIZACIÓN ESTRUCTURAL: Asegura que el Ejercicio 7 siempre tenga el dato fresco
         const ej7Display = document.getElementById('fcl-display-value');
         const ej7HiddenInput = document.getElementById('fcl-mensual-e7');
+        const isManual = document.querySelector('input[name="fcl_source"][value="manual"]')?.checked;
         
-        // Solo actualizamos si el usuario no está en modo manual en el Ejercicio 7
-        if (ej7Display && !document.getElementById('hypothetical-fcl-field').classList.contains('active')) {
+        // Solo inyectamos el promedio si el usuario NO ha bloqueado el modo manual
+        if (ej7Display && !isManual) {
             ej7Display.innerText = fmt.format(avg);
-            if (ej7HiddenInput) ej7HiddenInput.value = avg;
-            if (typeof AmountManager !== 'undefined') AmountManager.calculateFCLMonths();
+            if (ej7HiddenInput) {
+                ej7HiddenInput.value = avg;
+                // Disparamos el recálculo de "Meses de FCL" en el Ejercicio 7
+                if (window.AmountManager) window.AmountManager.calculateFCLMonths();
+            }
         }
 
         // 2. Validación de Capacidad de Inversión
@@ -649,9 +653,56 @@ const PriorityManager = {
         container.innerHTML = tactics.map((tactic, i) => `
             <label class="flex items-center p-3 border rounded-lg hover:bg-blue-50 cursor-pointer transition-colors">
                 <input type="checkbox" class="tactic-checkbox h-5 w-5 text-brand-blue" 
-                       value="${tactic}" data-section="ej5" data-id="ej5_tactic_${i}">
+                       value="${tactic}" data-section="ej5" data-id="ej5_tactic_${i}"
+                       onchange="PriorityManager.handleTacticChange()">
                 <span class="ml-3 font-medium text-gray-700">${tactic}</span>
             </label>
+        `).join('');
+    },
+
+    handleTacticChange: function() {
+        const selected = Array.from(document.querySelectorAll('.tactic-checkbox:checked')).map(cb => cb.value);
+        const step4 = document.getElementById('step-4');
+        const step5 = document.getElementById('step-5');
+
+        if (selected.length > 0) {
+            this.renderInitiatives(selected);
+            step4?.classList.remove('hidden-step');
+            step5?.classList.remove('hidden-step');
+        } else {
+            step4?.classList.add('hidden-step');
+            step5?.classList.add('hidden-step');
+        }
+    },
+
+    renderInitiatives: function(tactics) {
+        const container = document.getElementById('initiatives-container');
+        if (!container) return;
+        
+        container.innerHTML = tactics.map((tactic, i) => `
+            <div class="p-4 border border-blue-100 bg-white rounded-xl shadow-sm animate-fade-in">
+                <p class="text-[10px] font-black text-brand-blue uppercase mb-2">Iniciativa para: ${tactic}</p>
+                <textarea class="autosave-input w-full p-3 border rounded-lg text-sm focus:ring-2 focus:ring-brand-blue outline-none" 
+                          data-section="ej5" data-id="ej5_init_desc_${i}"
+                          placeholder="Describe la acción o inversión concreta aquí..."
+                          oninput="PriorityManager.updateSynthesis()"></textarea>
+            </div>
+        `).join('');
+        this.updateSynthesis();
+    },
+
+    updateSynthesis: function() {
+        const container = document.getElementById('synthesis-container');
+        const inits = Array.from(document.querySelectorAll('#initiatives-container textarea'));
+        if (!container) return;
+
+        container.innerHTML = inits.map(txt => `
+            <div class="flex items-start gap-3 bg-white p-3 rounded-lg border border-blue-100 shadow-sm">
+                <div class="mt-1 bg-brand-orange rounded-full p-1 text-white flex-shrink-0">
+                    <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg>
+                </div>
+                <p class="text-gray-700 font-bold text-sm leading-tight">${txt.value || '<span class="text-gray-300 italic">Escribiendo iniciativa...</span>'}</p>
+            </div>
         `).join('');
     }
 };
@@ -1750,7 +1801,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 const DataSyncManager = {
     // Reemplaza con la URL que copiaste de Google Apps Script
-    SCRIPT_URL: "https://script.google.com/macros/s/AKfycbxEIKwUuEIlXSUN57ier5DlMtUu5_UBZZ5dLfmhNSqOIeq3ZxBlgLK4V9SUr2VMMpPu9w/exec",
+    SCRIPT_URL: "https://script.google.com/macros/s/AKfycbzRnmvd8-IliBupS-Tj70_zdO_6_yP8pGuDIDDiRnSJIGZ1-tQcOxfj9z-W7qMs5kFtyw/exec",
 
     async submitWorkbook() {
         const btn = document.getElementById('btn-submit-workbook');
@@ -1846,10 +1897,71 @@ const FCLInfoController = {
     }
 };
 
-// Inicialización automática
-document.addEventListener('DOMContentLoaded', () => FCLInfoController.init());
+/* --- NUEVO: CONTROLADOR DE LA BURBUJA INFORMATIVA PLAZO (EJERCICIO 8) --- */
+const PlazoInfoController = {
+    init: function() {
+        const modal = document.getElementById('plazo-modal');
+        // Reutilizamos el overlay del FCL para no duplicar elementos DOM innecesarios
+        const overlay = document.getElementById('fcl-overlay');
+        const closeBtn = document.getElementById('plazo-close');
 
-/* --- LÓGICA DE CONTROL DE FUENTE FCL (EJERCICIO 7) - CORREGIDA Y UNIFICADA --- */
+        // Protección: Si no existen los elementos (ej. error de carga en HTML), no hacemos nada
+        if (!modal || !overlay || !closeBtn) return;
+
+        const toggle = (show) => {
+            modal.classList.toggle('active', show);
+            // Gestionamos el overlay compartido. Si abrimos, lo activamos.
+            // Si cerramos, quitamos la clase active.
+            if (show) overlay.classList.add('active');
+            else overlay.classList.remove('active');
+        };
+
+        // Exponemos la función globalmente para el botón (i)
+        window.openPlazoInfo = (e) => {
+            if (e) e.preventDefault();
+            e.stopPropagation(); // Evitamos conflictos de clic
+            toggle(true);
+        };
+
+        // Eventos de cierre
+        closeBtn.onclick = () => toggle(false);
+
+        // IMPORTANTE: Usamos addEventListener en lugar de .onclick para el overlay
+        // Esto permite que conviva con el controlador del FCL sin sobrescribir su comportamiento.
+        // Al hacer clic en el fondo oscuro, se cerrarán ambos modales (si estuvieran abiertos).
+        overlay.addEventListener('click', () => toggle(false));
+
+        // Cerrar con tecla ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') toggle(false);
+        });
+    }
+};
+
+// Inicialización de comportamientos dinámicos al cargar la página
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. Reactivación de Modales Informativos
+    if (typeof FCLInfoController !== 'undefined') FCLInfoController.init();
+    if (typeof PlazoInfoController !== 'undefined') PlazoInfoController.init();
+
+    // 2. Control de visibilidad de Políticas de Compensación (Ejercicio 2)
+    const compensacionRadios = document.querySelectorAll('input[name="tipo_compensacion"]');
+    const toggleSections = () => {
+        const selected = document.querySelector('input[name="tipo_compensacion"]:checked')?.value;
+        const fijoSec = document.getElementById('sueldo-fijo-section');
+        const varSec = document.getElementById('sueldo-variable-section');
+
+        if (!fijoSec || !varSec) return;
+
+        // Lógica de visualización quirúrgica
+        fijoSec.style.display = (selected === 'fijo' || selected === 'mixto') ? 'block' : 'none';
+        varSec.style.display = (selected === 'variable' || selected === 'mixto') ? 'block' : 'none';
+    };
+
+    // Escuchar cambios y ejecutar estado inicial
+    compensacionRadios.forEach(r => r.addEventListener('change', toggleSections));
+    toggleSections(); 
+});
 
 // 1. Función Maestra de Control (Corrige el conflicto Manual vs Hypothetical)
 window.toggleFCLSource = function(source) {
