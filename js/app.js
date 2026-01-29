@@ -465,12 +465,18 @@ const AmountManager = {
 
         if (!res || !semaforo) return;
 
-        // Limpieza si faltan datos (ocultamos el consejo)
-        if (fcl === 0 || monto === 0) {
-            res.textContent = '0';
-            semaforo.textContent = 'Introduce FCL y Monto';
-            semaforo.className = 'semaforo-indicator bg-gray-400 inline-block mt-2 mb-4';
-            if(adviceBox) adviceBox.classList.add('hidden');
+        // PROTECCIÓN DE NEGOCIO: Validación de capacidad real
+        if (fcl <= 0 || monto === 0) {
+            res.textContent = fcl < 0 ? 'CRÍTICO' : '0';
+            semaforo.textContent = fcl < 0 ? 'FCL NEGATIVO' : 'Introduce FCL y Monto';
+            semaforo.className = 'semaforo-indicator bg-red-600 text-white inline-block mt-2 mb-4 font-black';
+            
+            if(adviceBox) {
+                adviceTitle.innerText = "🚨 Alerta: Sin capacidad de maniobra";
+                adviceText.innerText = "Tu flujo de caja actual es negativo o nulo. Cualquier inversión en este estado pone en riesgo inminente la operación. Prioriza sanear tu flujo antes de comprometer capital.";
+                adviceContent.className = "text-left text-sm p-4 rounded-lg border-l-4 shadow-sm bg-red-50 border-red-600 text-red-900";
+                adviceBox.classList.remove('hidden');
+            }
             return;
         }
 
@@ -1623,7 +1629,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 3.8 INYECCIÓN DEL EJERCICIO 8 (EVALUACIÓN DEL PLAZO)
     document.getElementById('ej8').innerHTML = `
-        <h2 class="text-2xl font-bold brand-orange mb-4">${sectionsData[7].title}</h2>
+        <h2 class="text-2xl font-bold brand-orange mb-4 flex items-center">
+            ${sectionsData[7].title}
+            <button class="fcl-trigger" onclick="openPlazoInfo(event)" title="Criterio de Plazos">i</button>
+        </h2>
         <div class="instructions-box">
             <p><strong>Objetivo Transformacional:</strong> Dominarás el "Factor Tiempo" como medida de riesgo. En el mundo de las PYMES, el dinero detenido es dinero vulnerable. El objetivo es que visualices la velocidad de retorno como una póliza de seguro: mientras más rápido recuperes tu inversión, más pronto estarás listo para capturar la siguiente gran oportunidad.</p>
         </div>
@@ -1780,22 +1789,64 @@ document.addEventListener('DOMContentLoaded', function() {
     // Inicializamos el Manager para cargar las áreas
     PurposeManager.init();
 
-    // 4. Lógica de Navegación y Persistencia (Heredada de Sesión A)
+    // 4. Lógica de Navegación y Persistencia (Auto-guardado)
+    const PersistenceManager = {
+        save: function() {
+            const data = {};
+            document.querySelectorAll('.autosave-input').forEach(el => {
+                if (el.type === 'checkbox') data[el.dataset.id] = el.checked;
+                else if (el.type === 'radio') {
+                    if (el.checked) data[el.dataset.id] = el.value;
+                } else data[el.dataset.id] = el.value;
+            });
+            localStorage.setItem('workbook_sesion_c', JSON.stringify(data));
+        },
+        load: function() {
+            const data = JSON.parse(localStorage.getItem('workbook_sesion_c') || '{}');
+            Object.keys(data).forEach(id => {
+                const el = document.querySelector(`[data-id="${id}"]`);
+                if (!el) return;
+                if (el.type === 'checkbox') el.checked = data[id];
+                else if (el.type === 'radio') {
+                    const radio = document.querySelector(`[data-id="${id}"][value="${data[id]}"]`);
+                    if (radio) radio.checked = true;
+                } else el.value = data[id];
+            });
+            // Recalcular todo al cargar para refrescar semáforos y resultados
+            setTimeout(() => {
+                if (typeof window.calculateEj3Scores === 'function') window.calculateEj3Scores();
+                if (window.FCLManager) window.FCLManager.calculate();
+                if (window.AmountManager) window.AmountManager.calculateFCLMonths();
+                if (window.TimeManager) window.TimeManager.evaluate();
+                if (window.PerformanceManager) window.PerformanceManager.calculateROI();
+            }, 200);
+        }
+    };
+
     function showSection(hash) {
         const id = hash.replace('#', '') || 'ej1';
         document.querySelectorAll('.section-content').forEach(s => s.classList.remove('active'));
         document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-        
         const target = document.getElementById(id);
         const link = document.querySelector(`a[href="#${id}"]`);
-        
         if (target) target.classList.add('active');
         if (link) link.classList.add('active');
         window.scrollTo(0, 0);
     }
+
+    // Eventos de Navegación y Guardado en Tiempo Real
     window.addEventListener('hashchange', () => showSection(window.location.hash));
+    
+    document.addEventListener('input', (e) => {
+        if (e.target.classList.contains('autosave-input')) PersistenceManager.save();
+    });
+    
+    document.addEventListener('change', (e) => {
+        if (e.target.classList.contains('autosave-input')) PersistenceManager.save();
+    });
 
-
+    // Inicialización al cargar la página
+    PersistenceManager.load();
     showSection(window.location.hash);
 });
 
