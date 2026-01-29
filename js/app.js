@@ -867,26 +867,78 @@ const PurposeManager = {
     }
 };
 
+/* === MOTOR LÓGICO DEL EJERCICIO 11: PLAN DE IMPLEMENTACIÓN (RESUMEN EJECUTIVO) === */
+const ImplementationManager = {
+    init: function() {
+        // Escuchamos cuando el usuario entra a esta sección para refrescar los datos
+        window.addEventListener('hashchange', () => {
+            if (window.location.hash === '#ej11') {
+                this.refreshSummary();
+            }
+        });
+    },
+
+    refreshSummary: function() {
+        // 1. Extraer Pitch del Ejercicio 10
+        const pitch = document.getElementById('pitch-final-display')?.innerHTML || "Pendiente de definir en Ejercicio 10";
+        document.getElementById('summary-pitch').innerHTML = pitch;
+
+        // 2. Extraer Viabilidad Financiera (Ej 6 y 7)
+        const roi = document.getElementById('rendimiento-anualizado-result')?.innerText || "0%";
+        const mesesFcl = document.getElementById('meses-fcl-result')?.innerText || "0";
+        const semaforoMonto = document.getElementById('semaforo-meses-fcl')?.innerText || "Sin datos";
+        
+        document.getElementById('summary-financial').innerHTML = `
+            <div class="flex justify-between items-center p-3 bg-white rounded border">
+                <span class="text-sm font-medium text-gray-600">Retorno Anualizado:</span>
+                <span class="font-bold brand-blue">${roi}</span>
+            </div>
+            <div class="flex justify-between items-center p-3 bg-white rounded border mt-2">
+                <span class="text-sm font-medium text-gray-600">Esfuerzo (Meses FCL):</span>
+                <span class="font-bold brand-orange">${mesesFcl} meses (${semaforoMonto})</span>
+            </div>
+        `;
+
+        // 3. Extraer Riesgos Críticos (Ej 9)
+        const riesgos = Array.from(document.querySelectorAll('#risk-table-body tr')).slice(0, 2); // Tomamos los 2 primeros
+        const riskContainer = document.getElementById('summary-risks');
+        
+        if (riesgos.length > 0 && riesgos[0].querySelector('input')?.value) {
+            riskContainer.innerHTML = riesgos.map(tr => {
+                const desc = tr.querySelector('input')?.value || "Riesgo no definido";
+                const planA = tr.querySelector('textarea')?.value || "Sin plan de mitigación";
+                return `<div class="mb-2 p-2 bg-red-50 rounded border border-red-100">
+                            <p class="text-xs font-bold text-red-800">🚨 ${desc}</p>
+                            <p class="text-[10px] text-red-700 italic">Plan A: ${planA}</p>
+                        </div>`;
+            }).join('');
+        } else {
+            riskContainer.innerHTML = `<p class="text-xs text-gray-400 italic">No se han registrado riesgos en el Ejercicio 9.</p>`;
+        }
+    }
+};
+
 document.addEventListener('DOMContentLoaded', function() {
     const mainContent = document.getElementById('main-content');
     const navMenu = document.getElementById('nav-menu').querySelector('ul');
 
-    // 1. Definición de Secciones de la Sesión C (Fase 1 y Fase 2 Integradas)
+    // 1. Definición de Secciones (Incluye Ejercicio 11)
     const sectionsData = [
         { id: 'ej1', title: '1. Diagnóstico de Consolidación', icon: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2' },
         { id: 'ej2', title: '2. Plan de Acción', icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z' },
-        { id: 'ej3', title: '3. Autoevaluación de gestión de inversiones', icon: 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6' },
+        { id: 'ej3', title: '3. Autoevaluación de gestión', icon: 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6' },
         { id: 'ej4', title: '4. Flujo de Caja Libre', icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z' },
         { id: 'ej5', title: '5. Prioridades de Negocio', icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z' },
         { id: 'ej6', title: '6. Evaluación del Rendimiento', icon: 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6' },
         { id: 'ej7', title: '7. Evaluación del Monto', icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1' },
         { id: 'ej8', title: '8. Evaluación del Plazo', icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z' },
         { id: 'ej9', title: '9. Evaluación del Riesgo', icon: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z' },
-        { id: 'ej10', title: '10. Evaluación del Propósito', icon: 'M13 10V3L4 14h7v7l9-11h-7z' }
+        { id: 'ej10', title: '10. Evaluación del Propósito', icon: 'M13 10V3L4 14h7v7l9-11h-7z' },
+        { id: 'ej11', title: '11. Plan de Implementación', icon: 'M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z' }
     ];
 
-    // 2. Generación dinámica de la navegación y contenedores
-    sectionsData.forEach(data => {
+    // 2. Generación dinámica de navegación por bloques
+    const createNavItem = (data) => {
         const li = document.createElement('li');
         li.innerHTML = `<a href="#${data.id}" class="nav-link flex items-center gap-3 p-3 rounded-lg text-gray-600 hover:bg-gray-100 transition-all">
             <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${data.icon}" /></svg>
@@ -898,7 +950,26 @@ document.addEventListener('DOMContentLoaded', function() {
         section.id = data.id;
         section.className = 'section-content bg-white shadow-xl rounded-2xl p-8 mb-8';
         mainContent.appendChild(section);
-    });
+    };
+
+    const addNavTitle = (text) => {
+        const titleLi = document.createElement('li');
+        titleLi.className = "mt-6 mb-2 px-3 text-[10px] font-black text-gray-400 uppercase tracking-widest";
+        titleLi.innerText = text;
+        navMenu.appendChild(titleLi);
+    };
+
+    // A. Bloque 1: Los primeros 5 ejercicios (Diagnóstico)
+addNavTitle("Diagnóstico inicial");
+sectionsData.slice(0, 5).forEach(createNavItem); 
+
+// B. Bloque 2: Del ejercicio 6 al 10 (Metodología)
+addNavTitle("Metodología para evaluar inversiones");
+sectionsData.slice(5, 10).forEach(createNavItem); 
+
+// C. Bloque 3: El último ejercicio (Cierre)
+addNavTitle("Cierre y Ejecución"); 
+sectionsData.slice(10).forEach(createNavItem);
 
     // 3. INYECCIÓN DEL EJERCICIO 1 (Contenido y Lógica)
     document.getElementById('ej1').innerHTML = `
@@ -1102,14 +1173,14 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
         </div>
     </div>
-</div>
+    </div>
 
-<div class="bg-gray-50 p-6 rounded-lg border">
-    <h3 class="text-xl font-bold text-gray-800 mb-2">Apartado C: Compromiso de Ejecución</h3>
-    <p class="text-sm text-gray-600 mb-4 italic">(Incorporar en video clip: comprométete a que empiece a suceder 1 de estos 3 proyectos de crecimiento, ponle fecha (mínimo producto viable, ejecución ágil, describe el proceso de iterar).)</p>
-    <label for="fecha-compromiso-proyecto" class="block font-semibold text-gray-700">Fecha compromiso para tener iniciado un proyecto estratégico de crecimiento:</label>
-    <input type="date" id="fecha-compromiso-proyecto" class="autosave-input w-full md:w-1/2 mt-2 p-3 border rounded-lg" data-section="ej2" data-id="ej2_fecha_compromiso">
-</div>
+    <div class="bg-gray-50 p-6 rounded-lg border">
+        <h3 class="text-xl font-bold text-gray-800 mb-2">Apartado C: Compromiso de Ejecución</h3>
+        <p class="text-sm text-gray-600 mb-4 italic">(Incorporar en video clip: comprométete a que empiece a suceder 1 de estos 3 proyectos de crecimiento, ponle fecha (mínimo producto viable, ejecución ágil, describe el proceso de iterar).)</p>
+        <label for="fecha-compromiso-proyecto" class="block font-semibold text-gray-700">Fecha compromiso para tener iniciado un proyecto estratégico de crecimiento:</label>
+        <input type="date" id="fecha-compromiso-proyecto" class="autosave-input w-full md:w-1/2 mt-2 p-3 border rounded-lg" data-section="ej2" data-id="ej2_fecha_compromiso">
+    </div>
             `;
 
             // Dentro de la función que gestiona el contenido del Ejercicio 3 en app.js
@@ -1786,6 +1857,58 @@ document.addEventListener('DOMContentLoaded', function() {
         </div>
     `;
 
+    // 3.11 INYECCIÓN DEL EJERCICIO 11 (PLAN DE IMPLEMENTACIÓN)
+    document.getElementById('ej11').innerHTML = `
+        <h2 class="text-2xl font-bold brand-orange mb-4">11. Plan de Implementación Estratégico</h2>
+        <div class="instructions-box">
+            <p><strong>Objetivo Transformacional:</strong> Este es tu tablero de comando. Aquí consolidamos tu visión, tu capacidad financiera y tu gestión de riesgos en un solo plan de acción. No es solo un resumen; es la hoja de ruta que llevarás a la ejecución real.</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            <div class="lg:col-span-2 bg-blue-900 text-white p-6 rounded-2xl shadow-lg">
+                <h3 class="text-brand-orange font-black text-xs uppercase mb-3 tracking-widest">Resumen del Propósito (Pitch)</h3>
+                <div id="summary-pitch" class="text-lg italic font-light leading-relaxed opacity-90">
+                    Cargando tu declaración de propósito...
+                </div>
+            </div>
+
+            <div class="bg-gray-50 p-6 rounded-2xl border border-gray-200">
+                <h3 class="text-gray-800 font-black text-xs uppercase mb-3 tracking-widest">Viabilidad Financiera</h3>
+                <div id="summary-financial"></div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="p-6 bg-white rounded-2xl border border-gray-100 shadow-sm">
+                <h3 class="text-red-600 font-black text-xs uppercase mb-3 tracking-widest">Riesgos Críticos a Monitorear</h3>
+                <div id="summary-risks"></div>
+            </div>
+
+            <div class="p-6 bg-brand-orange/5 rounded-2xl border-2 border-dashed border-brand-orange">
+                <h3 class="text-brand-orange font-black text-xs uppercase mb-3 tracking-widest">Primer Paso Inmediato (Ejecución)</h3>
+                <p class="text-xs text-gray-600 mb-3 italic">¿Cuál es la acción específica que realizarás en las próximas 48 horas para arrancar este proyecto?</p>
+                <textarea class="autosave-input w-full p-3 border border-brand-orange/30 rounded-xl text-sm focus:ring-2 focus:ring-brand-orange outline-none h-24" 
+                          data-section="ej11" data-id="ej11_first_step" 
+                          placeholder="Ej: Llamar al proveedor para confirmar existencias y tiempos de entrega..."></textarea>
+            </div>
+        </div>
+
+        <div class="mt-8 p-8 bg-gray-900 rounded-3xl text-center text-white">
+            <h3 class="text-2xl font-bold mb-4 italic">"Una visión sin ejecución es solo una alucinación."</h3>
+            <p class="text-gray-400 mb-6 max-w-2xl mx-auto">Has completado el rigor técnico necesario para ser un Arquitecto de Inversiones. Tu siguiente paso es descargar tu PDF y agendar la sesión de revisión con tu consultor.</p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <button onclick="window.scrollTo(0,0); document.querySelector('a[href=\\'#ej10\\']').click();" 
+                        class="px-6 py-3 border border-white/20 rounded-xl hover:bg-white/10 transition-all text-sm font-bold uppercase">
+                    Revisar Detalles
+                </button>
+                <button onclick="DataSyncManager.submitWorkbook()" 
+                        class="px-10 py-3 bg-brand-orange text-white rounded-xl font-black shadow-lg hover:scale-105 transition-all uppercase">
+                    Sincronizar y Cerrar Plan
+                </button>
+            </div>
+        </div>
+    `;
+
     // Inicializamos el Manager para cargar las áreas
     PurposeManager.init();
 
@@ -1804,13 +1927,26 @@ document.addEventListener('DOMContentLoaded', function() {
         load: function() {
             const data = JSON.parse(localStorage.getItem('workbook_sesion_c') || '{}');
             Object.keys(data).forEach(id => {
-                const el = document.querySelector(`[data-id="${id}"]`);
-                if (!el) return;
-                if (el.type === 'checkbox') el.checked = data[id];
-                else if (el.type === 'radio') {
-                    const radio = document.querySelector(`[data-id="${id}"][value="${data[id]}"]`);
-                    if (radio) radio.checked = true;
-                } else el.value = data[id];
+                const elements = document.querySelectorAll(`[data-id="${id}"]`);
+                
+                elements.forEach((el, index) => {
+                    // 1. Cargar el valor
+                    if (el.type === 'checkbox') {
+                        el.checked = data[id];
+                    } else if (el.type === 'radio') {
+                        if (el.value === data[id]) el.checked = true;
+                    } else {
+                        el.value = data[id];
+                    }
+
+                    // 2. Bloqueo Quirúrgico: Si es nombre/empresa y NO es el primero (el Master), bloquear.
+                    const isIdentityField = (id === 'sesionc_nombre_participante' || id === 'sesionc_nombre_empresa');
+                    if (isIdentityField && index > 0) {
+                        el.readOnly = true;
+                        el.classList.add('bg-gray-100', 'cursor-not-allowed', 'opacity-75');
+                        el.placeholder = "Sincronizado...";
+                    }
+                });
             });
             // Recalcular todo al cargar para refrescar semáforos y resultados
             setTimeout(() => {
@@ -1838,7 +1974,19 @@ document.addEventListener('DOMContentLoaded', function() {
     window.addEventListener('hashchange', () => showSection(window.location.hash));
     
     document.addEventListener('input', (e) => {
-        if (e.target.classList.contains('autosave-input')) PersistenceManager.save();
+        if (e.target.classList.contains('autosave-input')) {
+            const dataId = e.target.getAttribute('data-id');
+
+            // Sincronización Quirúrgica: Si el campo es de identidad, replicar en todos los espejos
+            if (dataId === 'sesionc_nombre_participante' || dataId === 'sesionc_nombre_empresa') {
+                const mirrors = document.querySelectorAll(`[data-id="${dataId}"]`);
+                mirrors.forEach(mirror => {
+                    if (mirror !== e.target) mirror.value = e.target.value;
+                });
+            }
+            
+            PersistenceManager.save();
+        }
     });
     
     document.addEventListener('change', (e) => {
@@ -1848,6 +1996,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // Inicialización al cargar la página
     PersistenceManager.load();
     showSection(window.location.hash);
+
+    // Al final del DOMContentLoaded
+    ImplementationManager.init();
+    
 });
 
 const DataSyncManager = {
