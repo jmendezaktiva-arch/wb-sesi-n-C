@@ -789,11 +789,58 @@ const RiskManager = {
     riskCount: 0,
 
     init: function() {
-        // Añadimos 2 filas iniciales por defecto
+        this.renderInitiativeSelector();
+        // Inicializamos la tabla si está vacía
         if (this.riskCount === 0) {
             this.addRiskRow();
             this.addRiskRow();
         }
+        // Ejecutamos el diagnóstico inicial después de un breve retardo para asegurar que el DOM cargó
+        setTimeout(() => this.updateInterpretation(), 500); 
+    },
+
+    renderInitiativeSelector: function() {
+        const containerSection = document.getElementById('ej9');
+        const tableBlock = containerSection ? containerSection.querySelector('.bg-white.rounded-xl.border.shadow-sm.overflow-hidden') : null;
+        
+        if (!containerSection || !tableBlock || document.getElementById('risk-initiative-selector-container')) return;
+
+        const initiatives = Array.from(document.querySelectorAll('[data-id^="ej5_init_desc_"]'))
+            .map(input => input.value)
+            .filter(val => val && val.trim() !== "");
+
+        let optionsHTML = '<option value="">-- Selecciona qué iniciativa vas a evaluar --</option>';
+        if (initiatives.length > 0) {
+            initiatives.forEach((init, idx) => {
+                const shortText = init.length > 80 ? init.substring(0, 80) + '...' : init;
+                optionsHTML += `<option value="${idx}">${shortText}</option>`;
+            });
+        } else {
+            optionsHTML += '<option value="" disabled>⚠️ No hay iniciativas definidas en el Paso 5</option>';
+        }
+
+        const selectorHTML = document.createElement('div');
+        selectorHTML.id = 'risk-initiative-selector-container';
+        selectorHTML.className = 'mb-6 bg-blue-50 p-5 rounded-xl border border-blue-200 shadow-sm animate-fade-in';
+        
+        selectorHTML.innerHTML = `
+            <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
+                <div class="w-full">
+                    <label class="block text-brand-blue font-black text-xs uppercase tracking-widest mb-2 flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                        Iniciativa a Evaluar
+                    </label>
+                    <select id="current-risk-initiative" class="w-full p-3 border border-blue-300 rounded-lg focus:ring-2 focus:ring-brand-blue outline-none bg-white text-gray-700 font-semibold shadow-inner">
+                        ${optionsHTML}
+                    </select>
+                </div>
+                <div class="hidden md:block w-px h-12 bg-blue-200 mx-2"></div>
+                <div class="w-full md:w-1/3 text-xs text-blue-800 italic leading-tight opacity-80">
+                    <p><strong>Instrucción:</strong> Selecciona una iniciativa del menú y agrega en la tabla inferior todos los riesgos asociados a ella.</p>
+                </div>
+            </div>
+        `;
+        containerSection.insertBefore(selectorHTML, tableBlock);
     },
 
     addRiskRow: function() {
@@ -803,11 +850,14 @@ const RiskManager = {
 
         const tr = document.createElement('tr');
         tr.className = 'border-b hover:bg-gray-50 transition-colors animate-fade-in';
+        
+        // AGREGAMOS TRIGGERS: 'oninput' y 'onchange' ahora llaman a updateInterpretation()
         tr.innerHTML = `
             <td class="p-3">
-                <input type="text" placeholder="Ej: Falla de proveedor" 
-                    class="autosave-input w-full p-2 border rounded text-sm" 
-                    data-section="ej9" data-id="ej9_r${this.riskCount}_desc">
+                <input type="text" placeholder="Describe el riesgo..." 
+                    class="autosave-input w-full p-2 border rounded text-sm focus:border-brand-orange outline-none" 
+                    data-section="ej9" data-id="ej9_r${this.riskCount}_desc"
+                    oninput="RiskManager.updateInterpretation()"> 
             </td>
             <td class="p-3">
                 <select class="autosave-input w-full p-2 border rounded text-sm risk-level-select" 
@@ -820,14 +870,16 @@ const RiskManager = {
                 </select>
             </td>
             <td class="p-3">
-                <textarea placeholder="Plan A: ¿Cómo lo evito?" 
-                    class="autosave-input w-full p-2 border rounded text-xs h-16" 
-                    data-section="ej9" data-id="ej9_r${this.riskCount}_mitigacion"></textarea>
+                <textarea placeholder="Plan A: Prevención" 
+                    class="autosave-input w-full p-2 border rounded text-xs h-16 resize-none focus:border-blue-400 outline-none" 
+                    data-section="ej9" data-id="ej9_r${this.riskCount}_mitigacion"
+                    oninput="RiskManager.updateInterpretation()"></textarea>
             </td>
             <td class="p-3">
-                <textarea placeholder="Plan B: ¿Qué hago si ocurre?" 
-                    class="autosave-input w-full p-2 border rounded text-xs h-16" 
-                    data-section="ej9" data-id="ej9_r${this.riskCount}_contingencia"></textarea>
+                <textarea placeholder="Plan B: Contingencia" 
+                    class="autosave-input w-full p-2 border rounded text-xs h-16 resize-none focus:border-blue-400 outline-none" 
+                    data-section="ej9" data-id="ej9_r${this.riskCount}_contingencia"
+                    oninput="RiskManager.updateInterpretation()"></textarea>
             </td>
             <td class="p-3">
                 <select class="autosave-input w-full p-2 border rounded text-sm risk-level-select bg-green-100 text-green-800" 
@@ -841,19 +893,157 @@ const RiskManager = {
             </td>
         `;
         container.appendChild(tr);
-        // Disparamos el estilo inicial del select
         this.updateRowStyle(tr.querySelector('.risk-level-select'));
+        this.updateInterpretation(); // Actualizar diagnóstico al agregar fila
     },
 
     updateRowStyle: function(select) {
         const colors = {
-            bajo: 'bg-green-100 text-green-800',
-            medio: 'bg-yellow-100 text-yellow-800',
-            alto: 'bg-orange-100 text-orange-800',
-            critico: 'bg-red-100 text-red-800'
+            bajo: 'bg-green-100 text-green-800 border-green-200',
+            medio: 'bg-yellow-100 text-yellow-800 border-yellow-200',
+            alto: 'bg-orange-100 text-orange-800 border-orange-200',
+            critico: 'bg-red-100 text-red-800 border-red-200'
         };
         const val = select.value;
-        select.className = `autosave-input w-full p-2 border rounded text-sm font-bold ${colors[val]}`;
+        select.className = `autosave-input w-full p-2 border rounded text-sm font-bold transition-colors ${colors[val]}`;
+        
+        // Disparamos la reinterpretación global cada vez que cambia un nivel
+        this.updateInterpretation();
+    },
+
+    // --- CEREBRO DE LA TARJETA DINÁMICA ---
+    // --- CEREBRO DE DOBLE DIAGNÓSTICO ---
+    updateInterpretation: function() {
+        const rows = document.querySelectorAll('#risk-table-body tr');
+        
+        // Variables para Tarjeta 1 (Vulnerabilidad)
+        let unmitigatedCount = 0; 
+        let highRiskCount = 0;    
+        let totalRisks = 0;
+
+        // Variables para Tarjeta 2 (Efectividad)
+        let riskReductionScore = 0; // +1 si baja, -1 si sube o se mantiene alto
+        let criticalStagnant = 0;   // Riesgos críticos que NO bajaron
+
+        // Helper para convertir texto a valor numérico
+        const getVal = (val) => {
+            const map = { 'bajo': 1, 'medio': 2, 'alto': 3, 'critico': 4 };
+            return map[val] || 0;
+        };
+
+        rows.forEach(row => {
+            const desc = row.querySelector('input[type="text"]')?.value || "";
+            if(!desc) return; 
+
+            totalRisks++;
+            
+            // 1. Análisis de Vulnerabilidad (Existencia de Plan B)
+            const levelSelect = row.querySelector('select[data-id*="_level"]');
+            const planB = row.querySelector('textarea[data-id*="_contingencia"]')?.value || "";
+            const isMitigated = planB.trim().length > 3;
+            const isHigh = (levelSelect.value === 'alto' || levelSelect.value === 'critico');
+
+            if(isHigh) {
+                highRiskCount++;
+                if(!isMitigated) unmitigatedCount++;
+            }
+
+            // 2. Análisis de Efectividad (Delta entre Inicial vs Reevaluación)
+            const reevalSelect = row.querySelector('select[data-id*="_reevaluacion"]');
+            const initialVal = getVal(levelSelect.value);
+            const finalVal = getVal(reevalSelect.value);
+
+            if (finalVal < initialVal) {
+                riskReductionScore++; // Bien: El riesgo bajó
+            } else if (finalVal > initialVal) {
+                riskReductionScore -= 2; // Mal: El riesgo aumentó (castigo doble)
+            } else {
+                // Si se mantuvo igual
+                if (initialVal >= 3) { 
+                    riskReductionScore--; // Mal: Se mantuvo Alto/Crítico
+                    criticalStagnant++;
+                }
+                // Si se mantuvo Bajo/Medio no sumamos ni restamos (Neutro)
+            }
+        });
+
+        // --- RENDERIZADO TARJETA 1: VULNERABILIDAD ---
+        const card1 = document.getElementById('risk-interpretation-card');
+        const icon1 = document.getElementById('risk-icon-container');
+        const title1 = document.getElementById('risk-interpretation-title');
+        const text1 = document.getElementById('risk-interpretation-text');
+
+        if(card1) {
+            // Reset
+            card1.className = "bg-white p-4 rounded-xl border-l-4 shadow-sm flex items-start gap-3 transition-all duration-500";
+            icon1.className = "p-2 rounded-full flex-shrink-0 transition-colors duration-500";
+
+            if (totalRisks === 0) {
+                card1.classList.add('border-gray-300');
+                icon1.classList.add('bg-gray-100', 'text-gray-400');
+                title1.innerText = "COBERTURA DE PLANES";
+                title1.className = "font-bold text-gray-400 text-xs mb-1 uppercase tracking-wide";
+                text1.innerText = "Sin datos...";
+            } else if (unmitigatedCount > 0) {
+                card1.classList.add('border-red-500', 'bg-red-50');
+                icon1.classList.add('bg-red-100', 'text-red-600');
+                title1.innerText = "⛔ PROYECTO VULNERABLE";
+                title1.className = "font-bold text-red-700 text-xs mb-1 uppercase tracking-wide";
+                text1.innerHTML = `Faltan <strong>${unmitigatedCount} Planes de Contingencia</strong> para riesgos críticos.`;
+            } else if (highRiskCount > 0) {
+                card1.classList.add('border-yellow-500');
+                icon1.classList.add('bg-yellow-100', 'text-yellow-600');
+                title1.innerText = "⚠️ COBERTURA COMPLETA";
+                title1.className = "font-bold text-yellow-700 text-xs mb-1 uppercase tracking-wide";
+                text1.innerText = "Tienes planes definidos, pero el nivel de amenaza inherente sigue siendo considerable.";
+            } else {
+                card1.classList.add('border-green-500');
+                icon1.classList.add('bg-green-100', 'text-green-600');
+                title1.innerText = "✅ COBERTURA SÓLIDA";
+                title1.className = "font-bold text-green-700 text-xs mb-1 uppercase tracking-wide";
+                text1.innerText = "Riesgos bajos y planes definidos. Buen control.";
+            }
+        }
+
+        // --- RENDERIZADO TARJETA 2: EFECTIVIDAD (NUEVA LÓGICA) ---
+        const card2 = document.getElementById('risk-effectiveness-card');
+        const icon2 = document.getElementById('eff-icon-container');
+        const title2 = document.getElementById('eff-title');
+        const text2 = document.getElementById('eff-text');
+
+        if(card2) {
+             // Reset
+            card2.className = "bg-white p-4 rounded-xl border-l-4 shadow-sm flex items-start gap-3 transition-all duration-500";
+            icon2.className = "p-2 rounded-full flex-shrink-0 transition-colors duration-500";
+
+            if (totalRisks === 0) {
+                card2.classList.add('border-gray-300');
+                icon2.classList.add('bg-gray-100', 'text-gray-400');
+                title2.innerText = "IMPACTO ESTRATEGIA";
+                text2.innerText = "Esperando evaluación...";
+            } else if (criticalStagnant > 0) {
+                // CASO ROJO: La estrategia no sirve (siguen críticos)
+                card2.classList.add('border-red-500');
+                icon2.classList.add('bg-red-100', 'text-red-600');
+                title2.innerText = "❌ ESTRATEGIA INEFICAZ";
+                title2.className = "font-bold text-red-700 text-xs mb-1 uppercase tracking-wide";
+                text2.innerHTML = `Tus acciones <strong>NO reducen</strong> el impacto de ${criticalStagnant} riesgo(s) crítico(s). Busca soluciones más agresivas.`;
+            } else if (riskReductionScore > 0) {
+                // CASO VERDE: La mayoría de riesgos bajaron
+                card2.classList.add('border-green-500');
+                icon2.classList.add('bg-green-100', 'text-green-600');
+                title2.innerText = "🚀 MITIGACIÓN EXITOSA";
+                title2.className = "font-bold text-green-700 text-xs mb-1 uppercase tracking-wide";
+                text2.innerText = "Tus planes logran reducir significativamente la exposición al riesgo del proyecto.";
+            } else {
+                // CASO AMARILLO: Resultados mixtos o estancados en nivel medio
+                card2.classList.add('border-yellow-500');
+                icon2.classList.add('bg-yellow-100', 'text-yellow-600');
+                title2.innerText = "⚖️ IMPACTO LIMITADO";
+                title2.className = "font-bold text-yellow-700 text-xs mb-1 uppercase tracking-wide";
+                text2.innerText = "La estrategia contiene los riesgos pero no logra minimizarlos del todo.";
+            }
+        }
     }
 };
 
@@ -886,18 +1076,23 @@ const PurposeManager = {
     },
 
     updatePitch: function() {
+        // 1. Vincular Inversión del Ejercicio 6 (Monto como referencia principal)
+        const montoRaw = document.getElementById('monto-inversion-e6')?.value || 0;
+        const montoFmt = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(montoRaw);
+
+        // 2. Vincular Área y Táctica del Ejercicio 5 (Seleccionadas en Ej10)
         const area = document.getElementById('area-select-e10')?.value || "_______";
         const tactic = document.getElementById('tactic-select-e10')?.value || "_______";
-        const objetivo = document.getElementById('objetivo-e10')?.value || "_______";
-        const resultado = document.getElementById('resultado-e10')?.value || "_______";
 
         const pitchDisplay = document.getElementById('pitch-final-display');
         if (pitchDisplay) {
+            // Estructura de Reflexión Estratégica
             pitchDisplay.innerHTML = `
-                "Esta inversión en el área de <span class="text-brand-blue font-bold">${area}</span> 
-                está diseñada para ejecutar la táctica de <span class="text-brand-blue font-bold">${tactic}</span>. 
-                El propósito fundamental es <span class="text-brand-orange font-bold">${objetivo}</span>, 
-                lo cual nos permitirá alcanzar <span class="text-brand-orange font-bold">${resultado}</span> en el corto/mediano plazo."
+                La inversión de <span class="text-brand-orange font-bold">${montoFmt}</span> 
+                enfocada en <span class="text-brand-blue font-bold">${area}</span> 
+                a través de <span class="text-brand-blue font-bold">${tactic}</span>. 
+                Tras evaluarla, ¿consideras que es la mejor inversión posible para generar crecimiento? 
+                o ¿Podría haber una inversión de mayor impacto en otra área que sería conveniente abordar antes?
             `;
         }
     }
@@ -1826,7 +2021,7 @@ sectionsData.slice(10).forEach(createNavItem);
                             <th class="p-4 border-b w-1/6">Nivel de Impacto Inicial</th>
                             <th class="p-4 border-b w-1/5">Acción de Mitigación (Plan A)</th>
                             <th class="p-4 border-b w-1/5">Plan de Contingencia (Plan B)</th>
-                            <th class="p-4 border-b w-1/6">Reevaluación Impacto</th>
+                            <th class="p-4 border-b w-1/6">Reevaluación del Impacto</th>
                         </tr>
                     </thead>
                     <tbody id="risk-table-body">
@@ -1835,9 +2030,47 @@ sectionsData.slice(10).forEach(createNavItem);
             </div>
         </div>
 
-        <div class="pro-tip mt-6">
-            <p><strong>Consejo de Inversión:</strong> Si identificas un riesgo con impacto "Crítico" y no tienes un Plan B sólido, considera reducir el monto de la inversión o posponerla hasta tener mayor control sobre esa variable.</p>
-        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6 animate-fade-in">
+                
+                <div id="risk-interpretation-card" class="bg-white p-4 rounded-xl border-l-4 border-gray-300 shadow-sm flex items-start gap-3 transition-all duration-500">
+                    <div id="risk-icon-container" class="bg-gray-100 p-2 rounded-full text-gray-500 flex-shrink-0 transition-colors duration-500">
+                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                    </div>
+                    <div>
+                        <h4 id="risk-interpretation-title" class="font-bold text-gray-500 text-xs mb-1 uppercase tracking-wide">Cobertura de Planes</h4>
+                        <p id="risk-interpretation-text" class="text-[10px] text-gray-500 leading-tight">
+                            Esperando datos...
+                        </p>
+                    </div>
+                </div>
+
+                <div id="risk-effectiveness-card" class="bg-white p-4 rounded-xl border-l-4 border-gray-300 shadow-sm flex items-start gap-3 transition-all duration-500">
+                    <div id="eff-icon-container" class="bg-gray-100 p-2 rounded-full text-gray-500 flex-shrink-0 transition-colors duration-500">
+                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+                    </div>
+                    <div>
+                        <h4 id="eff-title" class="font-bold text-gray-500 text-xs mb-1 uppercase tracking-wide">Impacto de la Estrategia</h4>
+                        <p id="eff-text" class="text-[10px] text-gray-500 leading-tight">
+                            Define el nivel de "Reevaluación" para medir tu éxito.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-6 bg-blue-50 border border-blue-200 rounded-xl p-6 flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm animate-fade-in">
+                <div class="flex-1">
+                    <h5 class="font-bold text-brand-blue text-sm mb-1 flex items-center gap-2">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                        ¿Necesitas visión experta?
+                    </h5>
+                    <p class="text-xs text-blue-800 opacity-80 leading-relaxed">
+                        A veces estamos demasiado cerca del proyecto para ver todos los riesgos. Un consultor puede ayudarte a identificar "puntos ciegos" y diseñar planes de contingencia blindados.
+                    </p>
+                </div>
+                <button onclick="window.open('https://miempresacrece.com.mx/contacto', '_blank')" 
+                    class="bg-brand-blue hover:bg-blue-800 text-white text-xs font-bold py-3 px-6 rounded-lg shadow-md transition-transform transform hover:scale-105 whitespace-nowrap">
+                    SOLICITAR AYUDA EXPERTA
+                </button>
+            </div>
     `;
 
     // Inicializamos el Manager después de inyectar el HTML
@@ -1845,83 +2078,117 @@ sectionsData.slice(10).forEach(createNavItem);
 
     // 3.10 INYECCIÓN DEL EJERCICIO 10 (EVALUACIÓN DEL PROPÓSITO)
     document.getElementById('ej10').innerHTML = `
-        <h2 class="text-2xl font-bold brand-orange mb-4">${sectionsData[9].title}</h2>
+        <h2 class="text-2xl font-bold brand-orange mb-4">10. Matriz de Definición Estratégica</h2>
         <div class="instructions-box">
-            <p><strong>Objetivo Transformacional:</strong> Conectarás el "alma" de tu empresa con tus decisiones de capital. Una inversión puede ser rentable y segura, pero si no te acerca a tu visión a 3 años, es una distracción costosa. Aquí es donde validas que el crecimiento tiene un sentido estratégico superior.</p>
-        </div>
-        <div class="instructions-box !bg-gray-50 !border-brand-orange">
-            <p><strong>Instrucciones:</strong> Sintetiza todo tu análisis en una declaración de propósito poderosa. Define el área de impacto, la táctica y el resultado esperado. Al terminar, el sistema generará tu <strong>Pitch Estratégico</strong>: la herramienta definitiva para comunicar esta decisión a tus socios, equipo o para auto-validar tu convicción como dueño del negocio.</p>
+            <p><strong>Objetivo Transformacional:</strong> Esta tabla consolida tu visión completa. Aquí es donde validas que tus prioridades financieras, tácticas y operativas están alineadas con el propósito de la empresa.</p>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div class="space-y-6 bg-gray-50 p-6 rounded-lg border shadow-sm">
-                <h3 class="text-lg font-bold text-gray-800 border-b pb-2">Definición Estratégica</h3>
-                
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">1. Área de Impacto</label>
-                    <select id="area-select-e10" class="autosave-input w-full mt-1 p-2 border rounded-md focus:ring-2 focus:ring-brand-blue" 
-                        data-section="ej10" data-id="ej10_area"
-                        onchange="PurposeManager.handleAreaChange(this.value)">
-                    </select>
-                </div>
+        <div class="overflow-x-auto bg-white rounded-2xl border shadow-sm">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-gray-800 text-white text-[10px] uppercase tracking-widest">
+                        <th class="p-4 border-b w-1/4">Área y Prioridad (Paso 2)</th>
+                        <th class="p-4 border-b w-1/4">Tácticas Seleccionadas (Paso 3)</th>
+                        <th class="p-4 border-b w-1/4">Iniciativas</th>
+                        <th class="p-4 border-b w-1/4">Éxito (El Resultado)</th>
+                    </tr>
+                </thead>
+                <tbody id="matriz-estrategica-body">
+                    </tbody>
+            </table>
+        </div>
 
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">2. Táctica Específica</label>
-                    <select id="tactic-select-e10" class="autosave-input w-full mt-1 p-2 border rounded-md focus:ring-2 focus:ring-brand-blue" 
-                        data-section="ej10" data-id="ej10_tactic"
-                        onchange="PurposeManager.updatePitch()">
-                        <option value="">Selecciona primero un área...</option>
-                    </select>
-                </div>
+        <div class="mt-8 p-8 bg-blue-900 text-white rounded-2xl shadow-2xl relative overflow-hidden">
+            <h3 class="text-brand-orange font-black uppercase tracking-tighter mb-4 border-b border-blue-800 pb-2">Reflexión:</h3>
+            <p id="pitch-final-display" class="text-lg italic font-light leading-relaxed">
+                Completa los campos de la tabla para consolidar tu Pitch Estratégico...
+            </p>
+        </div>
 
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">3. ¿Qué problema u oportunidad ataca? (El Objetivo)</label>
-                    <textarea id="objetivo-e10" placeholder="Ej: Reducir el cuello de botella en producción..." 
-                        class="autosave-input w-full mt-1 p-2 border rounded-md h-20 text-sm" 
-                        data-section="ej10" data-id="ej10_objetivo"
-                        oninput="PurposeManager.updatePitch()"></textarea>
+        <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6 animate-fade-in">
+            <div class="p-6 bg-white border-2 border-dashed border-gray-300 rounded-xl hover:border-brand-orange hover:bg-orange-50 transition-all group text-center shadow-sm">
+                <div class="mb-4 text-brand-orange group-hover:scale-110 transition-transform duration-300">
+                    <svg class="w-10 h-10 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" /></svg>
                 </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">4. ¿Cómo se ve el éxito? (El Resultado)</label>
-                    <textarea id="resultado-e10" placeholder="Ej: Poder procesar un 20% más de pedidos diarios..." 
-                        class="autosave-input w-full mt-1 p-2 border rounded-md h-20 text-sm" 
-                        data-section="ej10" data-id="ej10_resultado"
-                        oninput="PurposeManager.updatePitch()"></textarea>
-                </div>
+                <p class="text-base font-bold text-gray-800 mb-6 leading-tight">¿Te gustaría que te ayudáramos a identificar una mejor opción de inversión?</p>
+                <button onclick="window.sendConsultancyEmailCustom('Solicitud Ej10: Identificar mejor opción de inversión')" 
+                        class="w-full py-3 px-6 bg-brand-blue text-white font-black rounded-xl hover:bg-blue-800 transition-all transform hover:scale-105 text-sm uppercase shadow-md">
+                    Explorar Opciones
+                </button>
             </div>
 
-            <div class="flex flex-col justify-center">
-                <div class="bg-blue-900 text-white p-8 rounded-2xl shadow-2xl relative overflow-hidden">
-                    <div class="absolute top-0 right-0 p-4 opacity-10">
-                        <svg class="w-24 h-24" fill="currentColor" viewBox="0 0 20 20"><path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1a1 1 0 112 0v1a1 1 0 11-2 0zM13 16v-1a1 1 0 112 0v1a1 1 0 11-2 0zM14.243 15.657a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM6.464 14.243a1 1 0 00-1.414 1.414l.707.707a1 1 0 001.414-1.414l-.707-.707z"></path></svg>
-                    </div>
-                    
-                    <h3 class="text-brand-orange font-black uppercase tracking-tighter mb-4 border-b border-blue-800 pb-2">Pitch Estratégico de Inversión</h3>
-                    <p id="pitch-final-display" class="text-xl italic font-light leading-relaxed">
-                        Completa los pasos a la izquierda para generar tu declaración de propósito...
-                    </p>
+            <div class="p-6 bg-white border-2 border-dashed border-gray-300 rounded-xl hover:border-brand-orange hover:bg-orange-50 transition-all group text-center shadow-sm">
+                <div class="mb-4 text-brand-orange group-hover:scale-110 transition-transform duration-300">
+                    <svg class="w-10 h-10 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                 </div>
-                
-                <div class="mt-8 p-4 bg-green-50 border border-green-200 rounded-lg text-center">
-                    <p class="text-green-800 font-bold text-sm">¡Felicidades! Has completado el diagnóstico integral de inversión.</p>
-                    <button id="btn-submit-workbook" onclick="DataSyncManager.submitWorkbook()" 
-                            class="mt-4 bg-blue-900 hover:bg-blue-800 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-all">
-                        FINALIZAR Y ENVIAR RESPUESTAS
-                    </button>
-                </div>
-
-                <div class="mt-10 p-6 bg-white border-2 border-brand-blue rounded-2xl shadow-inner text-center">
-                    <h4 class="text-lg font-bold brand-blue mb-3">¿Listo para consolidar tu diagnóstico?</h4>
-                    <p class="text-sm text-gray-500 mb-5">Al finalizar, tus respuestas se guardarán en tu expediente de consultoría.</p>
-                    <button id="btn-submit-workbook" onclick="DataSyncManager.submitWorkbook()" 
-                            class="bg-brand-orange hover:bg-orange-600 text-white font-black py-4 px-10 rounded-xl transition-all shadow-lg transform hover:scale-105">
-                        FINALIZAR Y ENVIAR RESULTADOS
-                    </button>
-                </div>
+                <p class="text-base font-bold text-gray-800 mb-6 leading-tight">¿Te gustaría que un consultor te ayudara a garantizar el éxito de la inversión definida?</p>
+                 <button onclick="window.sendConsultancyEmailCustom('Solicitud Ej10: Garantía de éxito en inversión')" 
+                        class="w-full py-3 px-6 bg-brand-orange text-white font-black rounded-xl hover:bg-orange-600 transition-all transform hover:scale-105 text-sm uppercase shadow-md">
+                    Asegurar mi Inversión
+                </button>
             </div>
+        </div>
+
+        <div class="mt-10 p-6 bg-white border-2 border-brand-blue rounded-2xl shadow-inner text-center">
+            <h4 class="text-lg font-bold brand-blue mb-3">¿Listo para consolidar tu diagnóstico?</h4>
+            <button onclick="DataSyncManager.submitWorkbook()" 
+                    class="bg-brand-orange hover:bg-orange-600 text-white font-black py-4 px-10 rounded-xl transition-all shadow-lg transform hover:scale-105">
+                FINALIZAR Y ENVIAR RESULTADOS
+            </button>
         </div>
     `;
+
+    // Inyectamos la función de sincronización dentro del PurposeManager o globalmente
+    window.syncStrategicMatrix = function() {
+        const body = document.getElementById('matriz-estrategica-body');
+        if (!body) return;
+
+        body.innerHTML = PriorityManager.areas.map((area, i) => {
+            const prioridad = document.querySelector(`[data-id="ej5_prio_val_${i}"]`)?.value || "N/A";
+            const razon = document.querySelector(`[data-id="ej5_prio_reason_${i}"]`)?.value || "No definida";
+            
+            // Filtramos las tácticas que el usuario marcó en el paso 3 para ESTA área
+            const areaTactics = PriorityManager.tacticsData[area] || [];
+            const seleccionadas = Array.from(document.querySelectorAll('.tactic-checkbox:checked'))
+                .map(cb => cb.value)
+                .filter(val => areaTactics.includes(val));
+
+            const tacticsHtml = seleccionadas.length > 0 
+                ? seleccionadas.map(t => `<span class="block text-[10px] bg-blue-50 text-blue-700 px-2 py-1 rounded mb-1 border border-blue-100 font-bold">${t}</span>`).join('')
+                : '<span class="text-gray-400 italic text-xs">Sin tácticas</span>';
+
+            return `
+                <tr class="border-b hover:bg-gray-50 transition-colors">
+                    <td class="p-4 align-top">
+                        <div class="text-xs font-black text-brand-blue uppercase">${area}</div>
+                        <div class="text-[10px] text-gray-500 mt-1">Prioridad: <strong>${prioridad}</strong></div>
+                        <div class="text-[9px] text-gray-400 italic mt-1">${razon.substring(0,60)}...</div>
+                    </td>
+                    <td class="p-4 align-top">${tacticsHtml}</td>
+                    <td class="p-4 align-top">
+                        <div id="summary-inits-${i}" class="space-y-2">
+                            ${(() => {
+                                // Obtenemos todas las iniciativas guardadas en el Ejercicio 5
+                                const inits = Array.from(document.querySelectorAll('#initiatives-container textarea'))
+                                    .map(txt => txt.value)
+                                    .filter(val => val.trim() !== "");
+                                
+                                // Si el área actual es la seleccionada como prioridad 1, mostramos las iniciativas
+                                return (prioridad === "1" && inits.length > 0) 
+                                    ? inits.map(text => `<p class="text-[10px] bg-orange-50 text-gray-700 p-2 rounded border border-orange-100 font-medium">🎯 ${text}</p>`).join('')
+                                    : '<span class="text-gray-400 italic text-[10px]">Pendiente de iniciativas en Paso 5</span>';
+                            })()}
+                        </div>
+                    </td>
+                    <td class="p-4 align-top">
+                        <textarea class="autosave-input w-full p-2 border rounded text-xs h-20 focus:ring-1 focus:ring-brand-orange" 
+                            data-section="ej10" data-id="ej10_res_${i}" placeholder="Resultado esperado..."
+                            oninput="PurposeManager.updatePitch()"></textarea>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    };
 
     // 3.11 INYECCIÓN DEL EJERCICIO 11 (PLAN DE IMPLEMENTACIÓN)
     document.getElementById('ej11').innerHTML = `
@@ -2048,6 +2315,11 @@ sectionsData.slice(10).forEach(createNavItem);
         if (target) target.classList.add('active');
         if (link) link.classList.add('active');
         window.scrollTo(0, 0);
+        if (id === 'ej10') {
+        window.syncStrategicMatrix();
+        // Cargar datos guardados específicamente para los nuevos textareas generados
+        PersistenceManager.load(); 
+    }
     }
 
     // Eventos de Navegación y Guardado en Tiempo Real
