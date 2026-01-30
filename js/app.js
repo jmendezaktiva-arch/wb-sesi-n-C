@@ -90,26 +90,36 @@
     }
 };
 
-// Función Global de CTA para Consultoría
-window.sendConsultancyEmail = function(exerciseId) {
-    const email = "contacto@miempresacrece.com.mx";
-    const reflection = document.getElementById('reflection')?.value || "No se incluyó reflexión adicional.";
-    const name = document.querySelector('[data-id="sesionc_nombre_participante"]')?.value || "Empresario";
-    
-    let subject = `Solicitud de Asesoría - Workbook Sesión C`;
-    let body = `Hola equipo de Mi Empresa Crece,\n\nMi nombre es ${name}.\n\nHe terminado mi autodiagnóstico de inversión y he identificado la siguiente reflexión como mi prioridad actual:\n\n"${reflection}"\n\nMe gustaría recibir apoyo para profesionalizar mi proceso de toma de decisiones.`;
+/* === MANAGER DE CONSULTORÍA (ESTANDARIZADO) === */
+const ConsultancyManager = {
+    DESTINO: "contacto@miempresacrece.com.mx",
 
-    window.location.href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    send: function(tipo, dataAdicional = "") {
+        const nombre = document.querySelector('[data-id="sesionc_nombre_participante"]')?.value || "Empresario";
+        const empresa = document.querySelector('[data-id="sesionc_nombre_empresa"]')?.value || "Mi Empresa";
+        
+        let asunto = dataAdicional || `Solicitud de Asesoría - ${empresa}`;
+        let mensaje = `Hola equipo de Mi Empresa Crece,\n\nSoy ${nombre}.\n\n`;
+
+        // Construcción inteligente del mensaje según el contexto
+        if (tipo === 'ej3') {
+            const refl = document.getElementById('reflection')?.value || "Sin reflexión específica.";
+            mensaje += `He concluido mi diagnóstico de gestión. Mi prioridad actual es:\n"${refl}"\n\nBusco apoyo para profesionalizar mis decisiones.`;
+        } else if (tipo === 'ej7') {
+            const total = document.getElementById('total-consumo-e7')?.innerText || "$0";
+            const porc = document.getElementById('porcentaje-consumo-e7')?.innerText || "0";
+            mensaje += `Tras analizar mi capacidad de inversión, mi compromiso anual es de ${total} (${porc}% del FCL).\n\nSolicito asesoría para: ${dataAdicional}.`;
+        } else {
+            mensaje += `Me gustaría recibir consultoría sobre los resultados obtenidos en mi Workbook.`;
+        }
+
+        window.location.href = `mailto:${this.DESTINO}?subject=${encodeURIComponent(asunto)}&body=${encodeURIComponent(mensaje)}`;
+    }
 };
 
-window.sendConsultancyEmailCustom = function(customSubject) {
-    const email = "contacto@miempresacrece.com.mx";
-    const name = document.querySelector('[data-id="sesionc_nombre_participante"]')?.value || "Empresario";
-    
-    let body = `Hola equipo de Mi Empresa Crece,\n\nMi nombre es ${name}.\n\nTras realizar el cálculo de mi Flujo de Caja Libre (FCL) en el Workbook, me interesa recibir apoyo especializado en este punto.\n\nQuedo atento a su respuesta.`;
-
-    window.location.href = `mailto:${email}?subject=${encodeURIComponent(customSubject)}&body=${encodeURIComponent(body)}`;
-};
+// Puentes de compatibilidad para no tocar el HTML existente
+window.sendConsultancyEmail = (id) => ConsultancyManager.send(id);
+window.sendConsultancyEmailCustom = (asunto) => ConsultancyManager.send('ej7', asunto);
 
 /* --- UTILIDADES DE LIMPIEZA FINANCIERA --- */
 const FinanceUtils = {
@@ -558,6 +568,22 @@ const AmountManager = {
             semaforo.textContent = '¡Alerta! Alto Riesgo';
             semaforo.className = 'text-center font-bold text-sm p-2 mt-2 rounded-md bg-red-100 text-red-800';
         }
+
+        // --- LÓGICA DE ACTIVACIÓN DINÁMICA DE CTA (EJERCICIO 7) ---
+        // Buscamos el contenedor de las tarjetas que insertamos en el HTML
+        const ctaContainer = document.getElementById('ej7-cta-dynamic-container');
+        
+        if (ctaContainer) {
+            // Si el compromiso del flujo anual supera el 50%, resaltamos visualmente 
+            // el contenedor para invitar a la consultoría técnica.
+            if (p > 50) {
+                // Aplicamos un anillo visual de advertencia y sombra para llamar la atención
+                ctaContainer.classList.add('ring-2', 'ring-red-500', 'ring-offset-2', 'rounded-xl', 'shadow-lg');
+            } else {
+                // Si el nivel de inversión es manejable, mantenemos el estilo original
+                ctaContainer.classList.remove('ring-2', 'ring-red-500', 'ring-offset-2', 'shadow-lg');
+            }
+        }
     },
 
     addProyecto: function() {
@@ -803,6 +829,16 @@ const RiskManager = {
                     class="autosave-input w-full p-2 border rounded text-xs h-16" 
                     data-section="ej9" data-id="ej9_r${this.riskCount}_contingencia"></textarea>
             </td>
+            <td class="p-3">
+                <select class="autosave-input w-full p-2 border rounded text-sm risk-level-select bg-green-100 text-green-800" 
+                    data-section="ej9" data-id="ej9_r${this.riskCount}_reevaluacion"
+                    onchange="RiskManager.updateRowStyle(this)">
+                    <option value="bajo" selected>Bajo</option>
+                    <option value="medio">Medio</option>
+                    <option value="alto">Alto</option>
+                    <option value="critico">Crítico</option>
+                </select>
+            </td>
         `;
         container.appendChild(tr);
         // Disparamos el estilo inicial del select
@@ -883,19 +919,30 @@ const ImplementationManager = {
         const pitch = document.getElementById('pitch-final-display')?.innerHTML || "Pendiente de definir en Ejercicio 10";
         document.getElementById('summary-pitch').innerHTML = pitch;
 
-        // 2. Extraer Viabilidad Financiera (Ej 6 y 7)
+        // 2. Extraer Viabilidad Financiera (Ej 6 y 7) - ACTUALIZADO CON TRAZABILIDAD TOTAL
         const roi = document.getElementById('rendimiento-anualizado-result')?.innerText || "0%";
         const mesesFcl = document.getElementById('meses-fcl-result')?.innerText || "0";
         const semaforoMonto = document.getElementById('semaforo-meses-fcl')?.innerText || "Sin datos";
+        const porcentajeConsumo = document.getElementById('porcentaje-consumo-e7')?.innerText || "0";
+        const totalInversion = document.getElementById('total-consumo-e7')?.innerText || "$0";
         
         document.getElementById('summary-financial').innerHTML = `
-            <div class="flex justify-between items-center p-3 bg-white rounded border">
-                <span class="text-sm font-medium text-gray-600">Retorno Anualizado:</span>
-                <span class="font-bold brand-blue">${roi}</span>
-            </div>
-            <div class="flex justify-between items-center p-3 bg-white rounded border mt-2">
-                <span class="text-sm font-medium text-gray-600">Esfuerzo (Meses FCL):</span>
-                <span class="font-bold brand-orange">${mesesFcl} meses (${semaforoMonto})</span>
+            <div class="space-y-2">
+                <div class="flex justify-between items-center p-3 bg-white rounded border">
+                    <span class="text-sm font-medium text-gray-600">Retorno Anualizado:</span>
+                    <span class="font-bold brand-blue">${roi}</span>
+                </div>
+                <div class="flex justify-between items-center p-3 bg-white rounded border">
+                    <span class="text-sm font-medium text-gray-600">Esfuerzo (Meses FCL):</span>
+                    <span class="font-bold brand-orange">${mesesFcl} meses</span>
+                </div>
+                <div class="p-3 bg-blue-50 rounded border border-blue-100">
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="text-[10px] font-black text-blue-800 uppercase">Capacidad Anual Comprometida</span>
+                        <span class="text-xs font-bold ${porcentajeConsumo > 50 ? 'text-red-600' : 'text-blue-700'}">${porcentajeConsumo}%</span>
+                    </div>
+                    <p class="text-[10px] text-gray-500 italic leading-tight">Esta inversión representa ${totalInversion} de tu liquidez anual disponible.</p>
+                </div>
             </div>
         `;
 
@@ -1694,6 +1741,24 @@ sectionsData.slice(10).forEach(createNavItem);
                         Pendiente de datos
                     </div>
                 </div>
+
+                <div id="ej7-cta-dynamic-container" class="mt-6 space-y-4">
+                    <div class="p-4 bg-white border-2 border-dashed border-blue-200 rounded-xl hover:border-blue-400 transition-all">
+                        <p class="text-sm text-gray-700 font-semibold mb-3 leading-tight">¿Quieres añadir un proyecto de inversión más ambicioso?</p>
+                        <button onclick="window.sendConsultancyEmailCustom('Asesoría: Proyecto de Inversión Ambicioso')" 
+                                class="w-full py-2 bg-brand-blue text-white text-xs font-black rounded-lg hover:bg-blue-800 transition-all uppercase">
+                            Contáctanos
+                        </button>
+                    </div>
+
+                    <div class="p-4 bg-white border-2 border-dashed border-orange-200 rounded-xl hover:border-orange-400 transition-all">
+                        <p class="text-sm text-gray-700 font-semibold mb-3 leading-tight">¿Te gustaría la opinión de un experto para optimizar tu cesta de inversiones?</p>
+                        <button onclick="window.sendConsultancyEmailCustom('Asesoría: Optimización de Cesta de Inversiones')" 
+                                class="w-full py-2 bg-brand-orange text-white text-xs font-black rounded-lg hover:bg-orange-600 transition-all uppercase">
+                            Solicitar Opinión Experta
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     `;
@@ -1757,10 +1822,11 @@ sectionsData.slice(10).forEach(createNavItem);
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="bg-gray-100 text-gray-700 text-xs uppercase font-black">
-                            <th class="p-4 border-b w-1/4">Riesgo Identificado</th>
-                            <th class="p-4 border-b w-1/6">Nivel de Impacto</th>
-                            <th class="p-4 border-b w-1/4">Acción de Mitigación (Plan A)</th>
-                            <th class="p-4 border-b w-1/4">Plan de Contingencia (Plan B)</th>
+                            <th class="p-4 border-b w-1/5">Riesgo Identificado</th>
+                            <th class="p-4 border-b w-1/6">Nivel de Impacto Inicial</th>
+                            <th class="p-4 border-b w-1/5">Acción de Mitigación (Plan A)</th>
+                            <th class="p-4 border-b w-1/5">Plan de Contingencia (Plan B)</th>
+                            <th class="p-4 border-b w-1/6">Reevaluación Impacto</th>
                         </tr>
                     </thead>
                     <tbody id="risk-table-body">
@@ -1948,13 +2014,27 @@ sectionsData.slice(10).forEach(createNavItem);
                     }
                 });
             });
-            // Recalcular todo al cargar para refrescar semáforos y resultados
+            // Recalcular y sincronizar estados dinámicos tras la carga de datos (Hydration)
             setTimeout(() => {
+                // 1. Cálculos base de motores lógicos
                 if (typeof window.calculateEj3Scores === 'function') window.calculateEj3Scores();
                 if (window.FCLManager) window.FCLManager.calculate();
-                if (window.AmountManager) window.AmountManager.calculateFCLMonths();
                 if (window.TimeManager) window.TimeManager.evaluate();
                 if (window.PerformanceManager) window.PerformanceManager.calculateROI();
+
+                // 2. Sincronización crítica del Ejercicio 7 (Fuente de FCL)
+                // Buscamos cuál radio button quedó marcado para disparar su lógica visual
+                const savedFCLSource = document.querySelector('input[name="fcl_source"]:checked')?.value;
+                if (savedFCLSource && typeof window.toggleFCLSource === 'function') {
+                    window.toggleFCLSource(savedFCLSource);
+                } else if (window.AmountManager) {
+                    window.AmountManager.calculateFCLMonths();
+                }
+
+                // 3. Forzar actualización del Resumen si el usuario está en el cierre
+                if (window.location.hash === '#ej11' && window.ImplementationManager) {
+                    window.ImplementationManager.refreshSummary();
+                }
             }, 200);
         }
     };
@@ -2021,11 +2101,19 @@ const DataSyncManager = {
             respuestas: {}
         };
 
-        // Recolección automática basada en data-id
+        // Recolección estandarizada de datos (Soporta Radio, Checkbox y Texto)
         inputs.forEach(input => {
             const id = input.getAttribute('data-id');
-            if (id) {
-                // Manejo de valores según tipo de input
+            if (!id) return;
+
+            if (input.type === 'checkbox') {
+                // Enviamos una respuesta clara para el análisis en Sheets
+                payload.respuestas[id] = input.checked ? "Sí / Marcado" : "No / Sin marcar";
+            } else if (input.type === 'radio') {
+                // IMPORTANTE: Solo guardamos el valor de la opción que el usuario eligió
+                if (input.checked) payload.respuestas[id] = input.value;
+            } else {
+                // Para campos de texto, números y áreas de reflexión
                 payload.respuestas[id] = input.value;
             }
         });

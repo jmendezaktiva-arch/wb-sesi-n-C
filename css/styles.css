@@ -242,3 +242,97 @@ input[type="radio"]:checked + .custom-radio-ui {
 .animate-fade-in {
     animation: fadeIn 0.5s ease-out forwards;
 }
+
+/* --- COMPONENTE: CALL TO ACTION (CTA) EJERCICIO 7 --- */
+.cta-ej7-container {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 2px solid #e5e7eb;
+}
+
+.cta-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.cta-card {
+    background: white;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+    border: 1px solid #e5e7eb;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.cta-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+/* Colores de marca aplicados a los bordes para jerarquía visual */
+.cta-card.primary { border-left: 6px solid #F68D2E; }
+.cta-card.secondary { border-left: 6px solid #00529B; }
+
+.cta-card h4 {
+    font-size: 1.125rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+}
+
+.cta-card p {
+    font-size: 0.875rem;
+    color: #4b5563;
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+}
+
+.cta-btn {
+    width: 100%;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    font-weight: 700;
+    text-align: center;
+    transition: background-color 0.2s;
+    cursor: pointer;
+}
+
+.cta-btn-orange { background-color: #F68D2E; color: white; }
+.cta-btn-orange:hover { background-color: #ea580c; }
+
+.cta-btn-blue { background-color: #00529B; color: white; }
+.cta-btn-blue:hover { background-color: #1e40af; }
+
+/* --- ANIMACIÓN PARA LLAMADA A LA ACCIÓN (CTA) EN EJERCICIO 7 --- */
+#ej7-cta-dynamic-container {
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Estado cuando el sistema detecta Alto Riesgo (>50% de consumo) */
+#ej7-cta-dynamic-container.ring-2 {
+    animation: ctaBreath 2s infinite alternate;
+}
+
+@keyframes ctaBreath {
+    from {
+        background-color: transparent;
+    }
+    to {
+        background-color: rgba(239, 68, 68, 0.03); /* Rojo muy tenue para alertar sin asustar */
+    }
+}
+
+/* Efecto de elevación al pasar el mouse sobre las tarjetas de consultoría */
+#ej7-cta-dynamic-container > div {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+#ej7-cta-dynamic-container > div:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+    border-style: solid; /* Cambia de punteado a sólido al interactuar */
+}
