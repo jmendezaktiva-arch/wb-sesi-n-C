@@ -609,7 +609,13 @@ const AmountManager = {
 
     calculateFCLMonths: function() {
         const fcl = parseFloat(document.getElementById('fcl-mensual-e7')?.value) || 0;
-        const monto = parseFloat(document.getElementById('monto-inversion-e7')?.value) || 0;
+        // Sumatoria Quirúrgica: Consolidamos la inversión principal + adicionales
+        let monto = parseFloat(document.getElementById('monto-inversion-e7')?.value) || 0;
+        
+        // Buscamos todos los montos de proyectos adicionales agregados dinámicamente
+        document.querySelectorAll('.proyecto-monto-e7').forEach(input => {
+            monto += parseFloat(input.value) || 0;
+        });
         const res = document.getElementById('meses-fcl-result');
         const semaforo = document.getElementById('semaforo-meses-fcl');
         
@@ -746,7 +752,7 @@ const AmountManager = {
             <input type="number" placeholder="$ Monto" 
                 class="autosave-input proyecto-monto-e7 p-2 border rounded text-right text-sm" 
                 data-section="ej7" data-id="ej7_p${this.proyectoCount}_monto"
-                oninput="AmountManager.updateConsumoFCL()">
+                oninput="AmountManager.calculateFCLMonths()">
         `;
         container.appendChild(div);
     }
