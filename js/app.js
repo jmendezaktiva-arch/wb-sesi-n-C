@@ -955,8 +955,9 @@ const RiskManager = {
         const containerSection = document.getElementById('ej9');
         const tableBlock = containerSection ? containerSection.querySelector('.bg-white.rounded-xl.border.shadow-sm.overflow-hidden') : null;
         
-        if (!containerSection || !tableBlock || document.getElementById('risk-initiative-selector-container')) return;
+        if (!containerSection || !tableBlock) return;
 
+        // 1. Capturar iniciativas frescas del Ejercicio 5
         const initiatives = Array.from(document.querySelectorAll('[data-id^="ej5_init_desc_"]'))
             .map(input => input.value)
             .filter(val => val && val.trim() !== "");
@@ -971,28 +972,34 @@ const RiskManager = {
             optionsHTML += '<option value="" disabled>⚠️ No hay iniciativas definidas en el Paso 5</option>';
         }
 
-        const selectorHTML = document.createElement('div');
-        selectorHTML.id = 'risk-initiative-selector-container';
-        selectorHTML.className = 'mb-6 bg-blue-50 p-5 rounded-xl border border-blue-200 shadow-sm animate-fade-in';
+        // 2. Lógica Quirúrgica: Actualizar si existe, crear si no existe
+        const existingSelect = document.getElementById('current-risk-initiative');
         
-        selectorHTML.innerHTML = `
-            <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
-                <div class="w-full">
-                    <label class="block text-brand-blue font-black text-xs uppercase tracking-widest mb-2 flex items-center gap-2">
-                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-                        Iniciativa a Evaluar
-                    </label>
-                    <select id="current-risk-initiative" class="w-full p-3 border border-blue-300 rounded-lg focus:ring-2 focus:ring-brand-blue outline-none bg-white text-gray-700 font-semibold shadow-inner">
-                        ${optionsHTML}
-                    </select>
+        if (existingSelect) {
+            existingSelect.innerHTML = optionsHTML;
+        } else {
+            const selectorHTML = document.createElement('div');
+            selectorHTML.id = 'risk-initiative-selector-container';
+            selectorHTML.className = 'mb-6 bg-blue-50 p-5 rounded-xl border border-blue-200 shadow-sm animate-fade-in';
+            selectorHTML.innerHTML = `
+                <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
+                    <div class="w-full">
+                        <label class="block text-brand-blue font-black text-xs uppercase tracking-widest mb-2 flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                            Iniciativa a Evaluar
+                        </label>
+                        <select id="current-risk-initiative" class="w-full p-3 border border-blue-300 rounded-lg focus:ring-2 focus:ring-brand-blue outline-none bg-white text-gray-700 font-semibold shadow-inner">
+                            ${optionsHTML}
+                        </select>
+                    </div>
+                    <div class="hidden md:block w-px h-12 bg-blue-200 mx-2"></div>
+                    <div class="w-full md:w-1/3 text-xs text-blue-800 italic leading-tight opacity-80">
+                        <p><strong>Instrucción:</strong> Selecciona una iniciativa del menú y agrega en la tabla inferior todos los riesgos asociados a ella.</p>
+                    </div>
                 </div>
-                <div class="hidden md:block w-px h-12 bg-blue-200 mx-2"></div>
-                <div class="w-full md:w-1/3 text-xs text-blue-800 italic leading-tight opacity-80">
-                    <p><strong>Instrucción:</strong> Selecciona una iniciativa del menú y agrega en la tabla inferior todos los riesgos asociados a ella.</p>
-                </div>
-            </div>
-        `;
-        containerSection.insertBefore(selectorHTML, tableBlock);
+            `;
+            containerSection.insertBefore(selectorHTML, tableBlock);
+        }
     },
 
     addRiskRow: function() {
@@ -2733,11 +2740,16 @@ window.changeInterpretationStep = (direction) => {
         if (target) target.classList.add('active');
         if (link) link.classList.add('active');
         window.scrollTo(0, 0);
+        // Sincronización dinámica de Iniciativas para Riesgos
+        if (id === 'ej9') {
+            RiskManager.renderInitiativeSelector();
+            PersistenceManager.load(); // Restaura la selección guardada si existe
+        }
+
         if (id === 'ej10') {
-        window.syncStrategicMatrix();
-        // Cargar datos guardados específicamente para los nuevos textareas generados
-        PersistenceManager.load(); 
-    }
+            window.syncStrategicMatrix();
+            PersistenceManager.load(); 
+        }
     }
 
     // Eventos de Navegación y Guardado en Tiempo Real
@@ -3040,5 +3052,55 @@ document.addEventListener('DOMContentLoaded', () => {
     const selectedSource = document.querySelector('input[name="fcl_source"]:checked');
     if (selectedSource) {
         window.toggleFCLSource(selectedSource.value);
+    }
+});
+
+/* === MOTOR DE EXPORTACIÓN PDF (QUIRÚRGICO) === */
+document.addEventListener('DOMContentLoaded', () => {
+    const exportBtn = document.getElementById('export-pdf');
+    
+    if (exportBtn) {
+        exportBtn.addEventListener('click', async () => {
+            const loading = document.getElementById('loading');
+            const mainContent = document.getElementById('main-content');
+            const { jsPDF } = window.jspdf;
+
+            // 1. Feedback visual al usuario
+            if (loading) loading.style.display = 'block';
+            exportBtn.disabled = true;
+            exportBtn.innerText = "Generando...";
+
+            try {
+                // 2. Captura de la pantalla actual (Canvas)
+                const canvas = await html2canvas(mainContent, {
+                    scale: 2, // Alta calidad
+                    useCORS: true,
+                    logging: false,
+                    windowWidth: mainContent.scrollWidth,
+                    windowHeight: mainContent.scrollHeight
+                });
+
+                // 3. Conversión a PDF (A4)
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+                pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+                
+                // 4. Descarga del archivo
+                const nombreEmpresa = document.querySelector('[data-id="sesionc_nombre_empresa"]')?.value || "MiEmpresa";
+                pdf.save(`Workbook_SesionC_${nombreEmpresa}.pdf`);
+
+            } catch (error) {
+                console.error("Error PDF:", error);
+                alert("No se pudo generar el PDF. Verifica que la sección sea visible.");
+            } finally {
+                // 5. Restaurar estado del botón
+                if (loading) loading.style.display = 'none';
+                exportBtn.disabled = false;
+                exportBtn.innerText = "Exportar a PDF";
+            }
+        });
     }
 });
